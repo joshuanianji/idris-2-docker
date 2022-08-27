@@ -7,6 +7,7 @@ on:
         type: choice
         description: Idris Version
         required: true
+        default: "v0.5.1"
 
 jobs:
   build:
