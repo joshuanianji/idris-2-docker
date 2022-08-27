@@ -15,6 +15,9 @@ jobs:
         os: [ubuntu-22.04, ubuntu-20.04, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
       - name: Build Dockerfile
         run: |
           echo "Building Dockerfile for Idris ${{ github.event.inputs.version }}"
