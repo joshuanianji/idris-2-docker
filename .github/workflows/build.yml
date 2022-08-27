@@ -4,7 +4,6 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        type: choice
         description: Idris Version
         required: true
         default: "v0.5.1"
