@@ -10,23 +10,10 @@ on:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        os: [ubuntu-22.04, ubuntu-20.04, macos-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
-
-      # Taken from https://github.com/actions/virtual-environments/issues/1143#issuecomment-652264388
-      - name: Install Docker on Mac
-        if: matrix.os == 'macos-latest'
-        run: |
-          mkdir -p ~/.docker/machine/cache
-          curl -Lo ~/.docker/machine/cache/boot2docker.iso https://github.com/boot2docker/boot2docker/releases/download/v19.03.12/boot2docker.iso
-          brew install docker docker-machine
-          docker-machine create --driver virtualbox default
-          docker-machine env default
 
       - name: Build Dockerfile
         run: |
