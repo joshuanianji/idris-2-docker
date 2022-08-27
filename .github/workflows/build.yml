@@ -1,0 +1,22 @@
+name: Mixed inputs
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: choice
+        description: Idris Version
+        required: true
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, ubuntu-20.04, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Build Dockerfile
+        run: |
+          echo "Building Dockerfile for Idris ${{ github.event.inputs.version }}"
+          docker build -t builder --build-arg IDRIS_VERSION=${{ github.event.inputs.version }} Dockerfile.builder
+          docker run -it builder idris2 --version
