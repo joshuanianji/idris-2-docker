@@ -1,4 +1,4 @@
-name: Mixed inputs
+name: Build Dockerfiles
 
 on:
   workflow_dispatch:
