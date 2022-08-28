@@ -19,4 +19,4 @@ jobs:
         run: docker build -t builder --build-arg IDRIS_VERSION=${{ github.event.inputs.version }} . -f Dockerfile.builder
 
       - name: Test idris2 version
-        run: docker run -it builder idris2 --version
+        run: docker run builder idris2 --version
