@@ -2,7 +2,7 @@ FROM ubuntu:latest
 
 ENV IDRIS2_CG racket
 ENV DEBIAN_FRONTEND noninteractive
-ARG IDRIS_VERSION=v5.1.0
+ARG IDRIS_VERSION=v0.5.1
 
 WORKDIR /root
 
