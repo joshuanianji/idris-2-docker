@@ -8,7 +8,8 @@ WORKDIR /root
 
 RUN apt-get update && \
     apt-get install -y racket git make gcc libc-dev
-RUN git clone --depth 1 --branch ${IDRIS_VERSION} https://github.com/idris-lang/Idris2.git && \
-    cd ./Idris2 && \
-    make bootstrap-racket && \
-    make install
+RUN git clone --depth 1 --branch ${IDRIS_VERSION} https://github.com/idris-lang/Idris2.git
+
+WORKDIR /root/Idris2
+RUN make bootstrap-racket
+RUN make install
