@@ -2,7 +2,7 @@ FROM ubuntu:latest
 
 ENV IDRIS2_CG racket
 ENV DEBIAN_FRONTEND noninteractive
-ARG IDRIS_VERSION=v0.3.0
+ARG IDRIS_VERSION=v5.1.0
 
 WORKDIR /root
 
@@ -13,3 +13,6 @@ RUN git clone --depth 1 --branch ${IDRIS_VERSION} https://github.com/idris-lang/
 WORKDIR /root/Idris2
 RUN make bootstrap-racket
 RUN make install
+
+# add idris2 to path
+ENV PATH="/root/.idris2/bin:${PATH}"
