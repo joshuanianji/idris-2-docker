@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Build Dockerfile
-        run: |
-          echo "Building Dockerfile for Idris ${{ github.event.inputs.version }}"
-          docker build -t builder --build-arg IDRIS_VERSION=${{ github.event.inputs.version }} . -f Dockerfile.builder
-          docker run -it builder idris2 --version
+        run: docker build -t builder --build-arg IDRIS_VERSION=${{ github.event.inputs.version }} . -f Dockerfile.builder
+
+      - name: Test idris2 version
+        run: docker run -it builder idris2 --version
