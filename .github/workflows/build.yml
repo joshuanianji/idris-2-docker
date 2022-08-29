@@ -41,7 +41,7 @@ jobs:
         run: echo $GITHUB_IDRIS_VERSION
 
       - name: Build Dockerfile
-        run: docker build -t builder --build-arg IDRIS_VERSION=$GITHUB_IDRIS_VERSION . -f Dockerfile.builder
+        run: docker build -t builder --build-arg IDRIS_VERSION=$GITHUB_IDRIS_VERSION . -f builder.Dockerfile
 
       - name: Test idris2 version
         run: docker run builder idris2 --version
