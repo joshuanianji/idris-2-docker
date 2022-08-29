@@ -29,6 +29,9 @@ jobs:
         if: ${{ github.event_name != 'workflow_dispatch' }}
         run: echo "IDRIS_VERSION=v0.5.1" >> $GITHUB_ENV
 
+      - name: Test Environment
+        run: echo $IDRIS_VERSION
+
       - name: Build Dockerfile
         run: docker build -t builder --build-arg IDRIS_VERSION=${{ github.event.inputs.version }} . -f Dockerfile.builder
 
