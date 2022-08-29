@@ -1,4 +1,4 @@
-name: Build Dockerfiles
+name: Build Base Docker Image
 
 on:
   push:
@@ -23,6 +23,11 @@ jobs:
       - uses: satackey/action-docker-layer-caching@v0.0.11
         # Ignore the failure of a step and avoid terminating the job.
         continue-on-error: true
+
+      # If we are not doing a workflow dispatch, we have to manually set the idris version
+      - name: Set Environment
+        if: ${{ github.event_name != 'workflow_dispatch' }}
+        run: echo "IDRIS_VERSION=v0.5.1" >> $GITHUB_ENV
 
       - name: Build Dockerfile
         run: docker build -t builder --build-arg IDRIS_VERSION=${{ github.event.inputs.version }} . -f Dockerfile.builder
