@@ -53,7 +53,7 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           # push: ${{ github.event_name != 'pull_request' }}
           build-args: |
-            IDRIS_VERSION=${{ github.event.inputs.version }}
+            IDRIS_VERSION=${{ inputs.version }}
           push: false
           tags: ${{ steps.create-meta.outputs.tags }}
           labels: ${{ steps.create-meta.outputs.labels }}
