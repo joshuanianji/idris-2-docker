@@ -1,6 +1,11 @@
 name: Build Dockerfiles
 
 on:
+  push:
+    paths:
+      - ".github/workflows/build.yml" # this file
+      - "Dockerfile*"
+
   workflow_dispatch:
     inputs:
       version:
