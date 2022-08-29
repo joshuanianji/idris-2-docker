@@ -10,9 +10,10 @@ on:
 
 permissions:
   packages: write
+  contents: read
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
@@ -52,6 +53,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           # push: ${{ github.event_name != 'pull_request' }}
+          file: devcontainer.Dockerfile
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
           push: false
