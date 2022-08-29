@@ -10,7 +10,9 @@ RUN apt-get update && \
     apt-get install -y racket git make gcc libc-dev libgmp3-dev
 RUN git clone --depth 1 --branch $IDRIS_VERSION https://github.com/idris-lang/Idris2.git
 
-RUN cd /root/Idris2 && make bootstrap-racket && make install
+WORKDIR /root/Idris2 
+RUN make bootstrap-racket 
+RUN make install
 
 FROM mcr.microsoft.com/vscode/devcontainers/base:debian
 
