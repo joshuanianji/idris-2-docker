@@ -57,6 +57,3 @@ jobs:
           push: false
           tags: ${{ steps.create-meta.outputs.tags }}
           labels: ${{ steps.create-meta.outputs.labels }}
-
-      - name: Test idris2 version
-        run: docker run builder idris2 --version
