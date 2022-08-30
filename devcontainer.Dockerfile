@@ -1,8 +1,4 @@
-FROM debian:bullseye as builder
-
-ENV IDRIS2_CG racket
-ENV DEBIAN_FRONTEND noninteractive
-ARG IDRIS_VERSION=v0.5.1
+FROM debian:bullseye as scheme-builder
 
 WORKDIR /root
 
@@ -15,6 +11,18 @@ COPY scripts/install-chezscheme.sh ./install-chezscheme-arch.sh
 # if so, install chez scheme from source
 
 RUN if [ $(uname -m) = "aarch64" ] ; then ./install-chezscheme-arch.sh ; else apt-get install -y chezscheme ; fi
+RUN which scheme
+
+FROM debian:bullseye as idris-builder
+
+RUN apt-get update && \
+    apt-get install -y git make gcc libgmp-dev
+
+ENV IDRIS2_CG racket
+ENV DEBIAN_FRONTEND noninteractive
+ARG IDRIS_VERSION=v0.5.1
+
+COPY --from=scheme-builder /usr/bin/scheme /usr/bin/scheme
 
 WORKDIR /root
 RUN git clone --depth 1 --branch $IDRIS_VERSION https://github.com/idris-lang/Idris2.git
@@ -27,8 +35,8 @@ FROM mcr.microsoft.com/vscode/devcontainers/base:debian
 ENV SCHEME=scheme
 
 # add idris2 and scheme from builder
-COPY --from=builder /root/.idris2 /root/.idris2
-COPY --from=builder /usr/bin/scheme /usr/bin/scheme
+COPY --from=idris-builder /root/.idris2 /root/.idris2
+COPY --from=scheme-builder /usr/bin/scheme /usr/bin/scheme
 
 # add idris2 to path
 ENV PATH="/root/.idris2/bin:${PATH}"
