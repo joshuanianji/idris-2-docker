@@ -81,8 +81,7 @@ jobs:
         with:
           context: .
           platforms: linux/arm64,linux/amd64
-          # push: ${{ github.event_name != 'pull_request' }}
-          push: false
+          push: true
           file: devcontainer.Dockerfile
           build-args: |
             IDRIS_VERSION=${{ env.GITHUB_IDRIS_VERSION }}
