@@ -14,7 +14,8 @@ RUN if [ $(uname -m) = "aarch64" ] ; then ./install-chezscheme-arch.sh ; else ap
 RUN which scheme
 
 # copy csv9.5* to /root/move
-RUN cp -r /usr/bin/csv9.5* /root/move
+# this makes it a bit easier for us to move the csv folder to other build steps, since it is necessary for scheme to run
+RUN mkdir move && cp -r /usr/lib/csv9.5* /root/move
 
 FROM debian:bullseye as idris-builder
 
@@ -28,16 +29,6 @@ ARG IDRIS_VERSION=v0.5.1
 COPY --from=scheme-builder /usr/bin/scheme /usr/bin/scheme
 # copy csv9.5* to /usr/lib
 COPY --from=scheme-builder /root/move/ /usr/lib/
-
-# here are stuff we might need for scheme
-# rm -rf /usr/lib/csv9.5.9.4
-# rm -f /usr/bin/petite
-# rm -f /usr/bin/scheme
-# rm -f /usr/bin/scheme-script
-# rm -f /usr/share/man/man1/petite.1
-# rm -f /usr/share/man/man1/petite.1.gz
-# rm -f /usr/share/man/man1/scheme.1
-# rm -f /usr/share/man/man1/scheme.1.gz
 
 WORKDIR /root
 RUN git clone --depth 1 --branch $IDRIS_VERSION https://github.com/idris-lang/Idris2.git
