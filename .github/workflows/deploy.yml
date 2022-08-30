@@ -23,14 +23,34 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v3
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: "arm64,arm"
+      - name: 💻 Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy-key.pem
+          chmod 600 ~/.ssh/deploy-key.pem
+          cat >>~/.ssh/config <<END
+          Host arm-vm
+            HostName $SSH_IP
+            User $SSH_USER
+            IdentityFile ~/.ssh/deploy-key.pem
+            StrictHostKeyChecking no
+          END
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_IP: ${{ secrets.SSH_IP }}
 
-      - name: Set up Docker Buildx
-        id: buildx
+      - name: Setup Buildx (amd64)
+        id: buildx-amd
         uses: docker/setup-buildx-action@v2
+
+      - name: Setup Buildx (arm64 SSH)
+        run: |
+          docker buildx create --name buildx-arm --driver docker-container --platform linux/arm64 ssh://arm-vm
+          docker buildx inspect --bootstrap --builder buildx-arm
+
+      - name: Check Buildx Builders
+        run: docker buildx ls
 
       - name: Setup Docker Layer Caching
         uses: satackey/action-docker-layer-caching@v0.0.11
