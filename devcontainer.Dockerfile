@@ -7,15 +7,17 @@ ARG IDRIS_VERSION=v0.5.1
 WORKDIR /root
 
 RUN apt-get update && \
-    apt-get install -y git make gcc libncurses5-dev libncursesw5-dev libx11-dev
+    apt-get install -y git make gcc libncurses5-dev libncursesw5-dev libx11-dev libgmp-dev
 
-# Build chez scheme (from source)
-# https://github.com/racket/ChezScheme/blob/master/BUILDING
-RUN git clone https://github.com/racket/ChezScheme.git
-WORKDIR /root/ChezScheme 
-RUN git submodule init && git submodule update 
-RUN  ./configure --pb && make tarm64le.bootquick
-RUN make && make install
+COPY scripts/install-chezscheme.sh ./install-chezscheme-arch.sh 
+
+# check if system is arm based
+# if so, install chez scheme from source
+RUN if [ $(uname -m) = "aarch64" ]; then \
+    ./install-chezscheme-arch.sh  \
+    else \
+    apt-get install -y chezscheme; \
+    fi
 
 WORKDIR /root
 RUN git clone --depth 1 --branch $IDRIS_VERSION https://github.com/idris-lang/Idris2.git
