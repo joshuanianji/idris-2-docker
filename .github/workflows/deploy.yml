@@ -12,6 +12,10 @@ on:
       - ".github/workflows/deploy.yml" # this file
       - "devcontainer.Dockerfile"
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 permissions:
   packages: write
   contents: read
@@ -53,17 +57,17 @@ jobs:
         continue-on-error: true
 
       - name: Login to GHCR
-        uses: docker/login-action@v2
+        uses: docker/login-action@be010b42938448d8a286c21d5c4ccf2aae1524a1
         with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Docker meta
         id: create-meta
         uses: docker/metadata-action@v4
         with:
-          images: joshuanianji/idris2
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       # If we are not doing a workflow dispatch/call, we have to manually set the idris version
       - name: Set Environment (Non workflow dispatch/call)
@@ -78,14 +82,14 @@ jobs:
         run: echo $GITHUB_IDRIS_VERSION
 
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94
         with:
           context: .
-          platforms: linux/arm64
+          platforms: linux/arm64,linux/amd64
           # push: ${{ github.event_name != 'pull_request' }}
+          push: false
           file: devcontainer.Dockerfile
           build-args: |
             IDRIS_VERSION=${{ env.GITHUB_IDRIS_VERSION }}
-          push: false
           tags: ${{ steps.create-meta.outputs.tags }}
           labels: ${{ steps.create-meta.outputs.labels }}
