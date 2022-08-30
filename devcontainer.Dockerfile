@@ -13,6 +13,8 @@ COPY scripts/install-chezscheme-arch.sh ./install-chezscheme-arch.sh
 RUN if [ $(uname -m) = "aarch64" ] ; then ./install-chezscheme-arch.sh ; else apt-get install -y chezscheme ; fi
 RUN which scheme
 
+RUN ls -al /usr/lib/csv*/
+
 FROM debian:bullseye as idris-builder
 
 RUN apt-get update && \
@@ -23,7 +25,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ARG IDRIS_VERSION=v0.5.1
 
 COPY --from=scheme-builder /usr/bin/scheme /usr/bin/scheme
-COPY --from=scheme-builder /usr/lib/csv9.5.9.4 /usr/lib/csv9.5.9.4
+COPY --from=scheme-builder /usr/lib/csv*/ /usr/lib/csv9/
 
 # here are stuff we might need for scheme
 # rm -rf /usr/lib/csv9.5.9.4
@@ -48,7 +50,7 @@ ENV SCHEME=scheme
 # add idris2 and scheme from builder
 COPY --from=idris-builder /root/.idris2 /root/.idris2
 COPY --from=scheme-builder /usr/bin/scheme /usr/bin/scheme
-COPY --from=scheme-builder /usr/lib/csv9.5.9.4 /usr/lib/csv9.5.9.4
+COPY --from=scheme-builder /usr/lib/csv*/ /usr/lib/csv9/
 
 # add idris2 to path
 ENV PATH="/root/.idris2/bin:${PATH}"
