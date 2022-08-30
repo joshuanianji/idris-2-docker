@@ -53,7 +53,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           # push: ${{ github.event_name != 'pull_request' }}
           file: devcontainer.Dockerfile
           build-args: |
