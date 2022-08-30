@@ -54,6 +54,18 @@ jobs:
         with:
           images: joshuanianji/idris2
 
+      # If we are not doing a workflow dispatch/call, we have to manually set the idris version
+      - name: Set Environment (Non workflow dispatch/call)
+        if: ${{ github.event_name != 'workflow_dispatch' }}
+        run: echo "GITHUB_IDRIS_VERSION=v0.5.1" >> $GITHUB_ENV
+
+      - name: Set Environment (Workflow call/dispatch)
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: echo "GITHUB_IDRIS_VERSION=${{ inputs.version }}" >> $GITHUB_ENV
+
+      - name: Test Environment
+        run: echo $GITHUB_IDRIS_VERSION
+
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
@@ -62,7 +74,7 @@ jobs:
           # push: ${{ github.event_name != 'pull_request' }}
           file: devcontainer.Dockerfile
           build-args: |
-            IDRIS_VERSION=${{ inputs.version }}
+            IDRIS_VERSION=$GITHUB_IDRIS_VERSION
           push: false
           tags: ${{ steps.create-meta.outputs.tags }}
           labels: ${{ steps.create-meta.outputs.labels }}
