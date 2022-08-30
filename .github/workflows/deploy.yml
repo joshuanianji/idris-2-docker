@@ -42,10 +42,9 @@ jobs:
 
       - name: Setup Buildx Instances
         run: |
-          docker buildx create --name x86-builder --platform linux/amd64 --use
-          docker buildx create --name arm-builder --platform linux/arm64 ssh://arm-vm --use 
-          docker buildx inspect x86-builder --bootstrap
-          docker buildx inspect arm-builder --bootstrap
+          docker buildx create --use --name main-builder --platform=linux/amd64 --driver=docker-container
+          docker buildx create --append --name=main-builder --platform=linux/arm64 ssh://arm-vm
+          docker buildx inspect main-builder --bootstrap
           docker buildx ls
 
       - name: Setup Docker Layer Caching
