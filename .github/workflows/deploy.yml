@@ -7,6 +7,11 @@ on:
         description: Idris Version
         required: true
         default: "v0.5.1"
+  push:
+    main:
+      paths:
+        - ".github/workflows/deploy.yml" # this file
+        - "devcontainer.Dockerfile"
 
 permissions:
   packages: write
