@@ -13,11 +13,8 @@ COPY scripts/install-chezscheme.sh ./install-chezscheme-arch.sh
 
 # check if system is arm based
 # if so, install chez scheme from source
-RUN if [ $(uname -m) = "aarch64" ]; then \
-    ./install-chezscheme-arch.sh  \
-    else \
-    apt-get install -y chezscheme; \
-    fi
+
+RUN if [ $(uname -m) = "aarch64" ] ; then ./install-chezscheme-arch.sh ; else apt-get install -y chezscheme ; fi
 
 WORKDIR /root
 RUN git clone --depth 1 --branch $IDRIS_VERSION https://github.com/idris-lang/Idris2.git
