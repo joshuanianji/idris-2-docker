@@ -40,6 +40,9 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_IP: ${{ secrets.SSH_IP }}
 
+      - name: Test SSH connection
+        run: ssh arm-vm echo "SSH connection successful"
+
       - name: Setup Buildx (amd64)
         id: buildx-amd
         uses: docker/setup-buildx-action@v2
