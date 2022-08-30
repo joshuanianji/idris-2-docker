@@ -1,5 +1,5 @@
 language: bash
-dist: bionic
+dist: focal
 services:
   - docker
 script:
