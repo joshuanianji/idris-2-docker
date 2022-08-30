@@ -42,7 +42,7 @@ jobs:
 
       - name: Setup Buildx Instances
         run: |
-          docker buildx create builder-context --use
+          docker buildx create --name builder-context --use
           docker buildx create --name arm-builder --driver docker-container --platform linux/arm64 ssh://arm-vm --append builder-context
           docker buildx create --name x86-builder --driver docker-container --platform linux/amd64 --append builder-context
           docker buildx inspect --bootstrap
