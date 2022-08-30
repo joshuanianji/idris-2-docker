@@ -1,6 +1,0 @@
-language: bash
-dist: focal
-services:
-  - docker
-script:
-  - docker version
