@@ -51,11 +51,6 @@ jobs:
           docker buildx inspect main-builder --bootstrap
           docker buildx ls
 
-      - name: Setup Docker Layer Caching
-        uses: satackey/action-docker-layer-caching@v0.0.11
-        # Ignore the failure of a step and avoid terminating the job.
-        continue-on-error: true
-
       - name: Login to GHCR
         uses: docker/login-action@be010b42938448d8a286c21d5c4ccf2aae1524a1
         with:
@@ -93,3 +88,5 @@ jobs:
             IDRIS_VERSION=${{ env.GITHUB_IDRIS_VERSION }}
           tags: ${{ steps.create-meta.outputs.tags }}
           labels: ${{ steps.create-meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
