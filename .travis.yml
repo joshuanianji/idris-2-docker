@@ -1,0 +1,6 @@
+language: bash
+dist: bionic
+services:
+  - docker
+script:
+  - docker version
