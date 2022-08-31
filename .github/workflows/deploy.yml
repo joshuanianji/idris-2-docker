@@ -12,8 +12,10 @@ on:
   push:
     paths:
       - ".github/workflows/deploy.yml" # this file
-      - "devcontainer.Dockerfile"
-      - ".github/actions/setup-buildx/action.yml" # deps
+      - "*.Dockerfile"
+      # single
+      - ".github/actions/setup-buildx/action.yml"
+      - ".github/actions/workflows/build-and-deploy-single.yml"
 
 env:
   REGISTRY: ghcr.io
@@ -24,81 +26,27 @@ permissions:
   contents: read
 
 jobs:
-  build-single-version:
+  base-singl:
     if: ${{ github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
-
-      - name: Setup Buildx
-        uses: "./.github/actions/setup-buildx"
+      - uses: ./.github/workflows/build-and-deploy-single
         with:
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh_user: ${{ secrets.SSH_USER }}
-          ssh_ip: ${{ secrets.SSH_IP }}
+          version: ${{ inputs.version }}
+          dockerfile: base.Dockerfile
+          image-name: idris-2-docker/base
+        secrets: inherit
 
-      - name: Login to GHCR
-        uses: docker/login-action@be010b42938448d8a286c21d5c4ccf2aae1524a1
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push
-        uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94
-        with:
-          context: .
-          platforms: linux/arm64,linux/amd64
-          push: true
-          file: devcontainer.Dockerfile
-          build-args: |
-            IDRIS_VERSION=${{ inputs.version }}
-          tags: ${{ steps.create-meta.outputs.tags }}
-          labels: ${{ inputs.version }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-  build-and-deploy:
+  base-matrix:
     if: ${{ github.event_name == 'push' }}
     strategy:
       matrix:
-        idris-version: ["v0.5.0", "v0.5.1"]
+        idris-version: ["v0.5.0", "v0.5.1", "latest"]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
-
-      - name: Setup Buildx
-        uses: "./.github/actions/setup-buildx"
+      - uses: ./.github/workflows/build-and-deploy-single
         with:
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh_user: ${{ secrets.SSH_USER }}
-          ssh_ip: ${{ secrets.SSH_IP }}
-
-      - name: Login to GHCR
-        uses: docker/login-action@be010b42938448d8a286c21d5c4ccf2aae1524a1
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Docker meta
-        id: create-meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
-      - name: Build and push
-        uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94
-        with:
-          context: .
-          platforms: linux/arm64,linux/amd64
-          push: true
-          file: devcontainer.Dockerfile
-          build-args: |
-            IDRIS_VERSION=${{ matrix.idris-version }}
-          tags: ${{ steps.create-meta.outputs.tags }}
-          labels: ${{ matrix.idris-version }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          version: ${{ matrix.idris-version }}
+          dockerfile: base.Dockerfile
+          image-name: idris-2-docker/base
+        secrets: inherit

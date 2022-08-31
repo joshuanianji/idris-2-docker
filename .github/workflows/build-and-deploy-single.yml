@@ -1,0 +1,55 @@
+name: Build and Deploy a Single Docker Image
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      dockerfile:
+        required: true
+        type: string
+      image-name:
+        required: true
+        type: string
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Setup Buildx
+        uses: "./.github/actions/setup-buildx"
+        with:
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh_user: ${{ secrets.SSH_USER }}
+          ssh_ip: ${{ secrets.SSH_IP }}
+
+      - name: Login to GHCR
+        uses: docker/login-action@be010b42938448d8a286c21d5c4ccf2aae1524a1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker meta
+        id: create-meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/${{ inputs.image-name }}
+
+      - name: Build and push
+        uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94
+        with:
+          context: .
+          platforms: linux/arm64,linux/amd64
+          push: true
+          file: ${{ inputs.dockerfile }}
+          build-args: |
+            IDRIS_VERSION=${{ inputs.version }}
+          tags: ${{ inputs.version }}
+          labels: ${{ steps.create-meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
