@@ -1,11 +1,13 @@
 name: Deploy Docker Images
 
 on:
+  # manually deploy a specific
+  # if version isn't specified, it will deploy nightly
   workflow_dispatch:
     inputs:
       version:
         description: Idris Version
-        required: true
+        required: false
         default: "v0.5.1"
   push:
     paths:
@@ -27,6 +29,8 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v3
 
+      # to build the arm image, qemu is too slow (about 3hrs to build)
+      # so we use my personal Oracle VPS as a buildx builder via ssh
       - name: 💻 Configure SSH
         run: |
           mkdir -p ~/.ssh/
@@ -57,12 +61,6 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Docker meta
-        id: create-meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       # If we are not doing a workflow dispatch/call, we have to manually set the idris version
       - name: Set Environment (Non workflow dispatch/call)
