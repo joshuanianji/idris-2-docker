@@ -31,7 +31,10 @@ COPY --from=scheme-builder /usr/bin/scheme /usr/bin/scheme
 COPY --from=scheme-builder /root/move/ /usr/lib/
 
 WORKDIR /root
-RUN git clone --depth 1 --branch $IDRIS_VERSION https://github.com/idris-lang/Idris2.git
+# if IDRIS_VERSION is 'latest', do not switch to a branch
+RUN if [ $IDRIS_VERSION = "latest" ] ; \ 
+    then git clone --depth 1 https://github.com/idris-lang/Idris2.git ; \
+    else git clone --depth 1 --branch $IDRIS_VERSION https://github.com/idris-lang/Idris2.git
 WORKDIR /root/Idris2 
 RUN make bootstrap SCHEME=scheme
 RUN make install
