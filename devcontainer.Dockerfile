@@ -39,7 +39,7 @@ WORKDIR /root/Idris2
 RUN make bootstrap SCHEME=scheme
 RUN make install
 
-FROM mcr.microsoft.com/vscode/devcontainers/base:debian
+FROM mcr.microsoft.com/vscode/devcontainers/base:bullseye
 
 ENV SCHEME=scheme
 
