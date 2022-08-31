@@ -42,3 +42,4 @@ runs:
         docker buildx create --append --name=main-builder --platform=linux/arm64 ssh://arm-vm
         docker buildx inspect main-builder --bootstrap
         docker buildx ls
+      shell: bash
