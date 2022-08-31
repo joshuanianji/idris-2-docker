@@ -15,7 +15,7 @@ on:
       - "*.Dockerfile"
       # single
       - ".github/actions/setup-buildx/action.yml"
-      - ".github/actions/workflows/build-and-deploy-single.yml"
+      - ".github/workflows/build-and-deploy-single.yml"
 
 env:
   REGISTRY: ghcr.io
