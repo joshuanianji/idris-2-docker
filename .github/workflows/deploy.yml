@@ -13,7 +13,7 @@ on:
     paths:
       - ".github/workflows/deploy.yml" # this file
       - "devcontainer.Dockerfile"
-      - "./github/actions/setup-buildx/action.yml" # deps
+      - ".github/actions/setup-buildx/action.yml" # deps
 
 env:
   REGISTRY: ghcr.io
