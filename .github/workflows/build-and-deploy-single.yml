@@ -12,15 +12,6 @@ on:
       image-name:
         required: true
         type: string
-    secrets:
-      SSH_PRIVATE_KEY:
-        required: true
-      SSH_USER:
-        required: true
-      SSH_IP:
-        required: true
-      GITHUB_TOKEN:
-        required: true
 
 jobs:
   build-and-deploy:
