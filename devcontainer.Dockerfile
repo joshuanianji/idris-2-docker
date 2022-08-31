@@ -24,7 +24,7 @@ RUN apt-get update && \
 
 ENV IDRIS2_CG racket
 ENV DEBIAN_FRONTEND noninteractive
-ARG IDRIS_VERSION=v0.5.1
+ARG IDRIS_VERSION
 
 COPY --from=scheme-builder /usr/bin/scheme /usr/bin/scheme
 # copy csv9.5* to /usr/lib
