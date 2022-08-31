@@ -16,6 +16,7 @@ runs:
   using: composite
   steps:
     - name: 💻 Configure SSH
+      shell: bash
       run: |
         mkdir -p ~/.ssh/
         echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy-key.pem
@@ -37,9 +38,9 @@ runs:
     # https://www.docker.com/blog/speed-up-building-with-docker-buildx-and-graviton2-ec2/
     # this allows u to still use build-push-action, but docker will automatically choose which builder to use based on the platform
     - name: Setup Buildx Instances
+      shell: bash
       run: |
         docker buildx create --use --name main-builder --platform=linux/amd64 --driver=docker-container
         docker buildx create --append --name=main-builder --platform=linux/arm64 ssh://arm-vm
         docker buildx inspect main-builder --bootstrap
         docker buildx ls
-      shell: bash
