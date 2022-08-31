@@ -34,7 +34,9 @@ WORKDIR /root
 # if IDRIS_VERSION is 'latest', do not switch to a branch
 RUN if [ $IDRIS_VERSION = "latest" ] ; \ 
     then git clone --depth 1 https://github.com/idris-lang/Idris2.git ; \
-    else git clone --depth 1 --branch $IDRIS_VERSION https://github.com/idris-lang/Idris2.git
+    else git clone --depth 1 --branch $IDRIS_VERSION https://github.com/idris-lang/Idris2.git ; \
+    fi
+
 WORKDIR /root/Idris2 
 RUN make bootstrap SCHEME=scheme
 RUN make install
