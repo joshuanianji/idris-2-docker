@@ -31,6 +31,20 @@ jobs:
       image-name: ${{ github.repository }}/base
     secrets: inherit
 
+  # consumers of the base image are devcontainer, ubuntu and debian
+  consumer-single:
+    needs: base-single
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    strategy:
+      matrix:
+        consumer: [devcontainer, ubuntu, debian]
+    uses: ./.github/workflows/build-and-deploy-single.yml
+    with:
+      version: ${{ inputs.version }}
+      dockerfile: ${{ matrix.consumer }}.Dockerfile
+      image-name: ${{ github.repository }}/${{ matrix.consumer }}
+    secrets: inherit
+
   base-matrix:
     if: ${{ github.event_name == 'push' }}
     strategy:
@@ -41,4 +55,18 @@ jobs:
       version: ${{ matrix.idris-version }}
       dockerfile: base.Dockerfile
       image-name: ${{ github.repository }}/base
+    secrets: inherit
+
+  consumer-matrix:
+    needs: base-matrix
+    if: ${{ github.event_name == 'push' }}
+    strategy:
+      matrix:
+        idris-version: ["v0.5.0", "v0.5.1", "latest"]
+        consumer: [devcontainer, ubuntu, debian]
+    uses: ./.github/workflows/build-and-deploy-single.yml
+    with:
+      version: ${{ matrix.idris-version }}
+      dockerfile: ${{ matrix.consumer }}.Dockerfile
+      image-name: ${{ github.repository }}/${{ matrix.consumer }}
     secrets: inherit
