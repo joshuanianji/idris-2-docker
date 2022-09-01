@@ -16,4 +16,4 @@ ENV PATH="/root/.idris2/bin:${PATH}"
 # https://gist.github.com/YBogomolov/dc49c610cf7d92c60fb4678bae3ab753#file-dockerfile-L21
 RUN ln -s /root/.idris2/bin/idris2 /bin/idris
 
-ENTRYPOINT ["/root/.idris2/bin/idris2"]
+ENTRYPOINT ["idris2"]

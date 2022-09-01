@@ -13,4 +13,4 @@ COPY --from=base /root/scheme-lib/ /usr/lib/
 # add idris2 to path
 ENV PATH="/root/.idris2/bin:${PATH}"
 
-ENTRYPOINT ["/root/.idris2/bin/idris2"]
+ENTRYPOINT ["idris2"]
