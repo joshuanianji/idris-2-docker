@@ -12,6 +12,8 @@ COPY --from=base /root/scheme-lib/ /usr/lib/
 
 # add idris2 to path
 ENV PATH="/root/.idris2/bin:${PATH}"
+# add idris lib to LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH="/root/.idris2/lib:${LD_LIBRARY_PATH}"
 # Also make idris available via `idris`, so the idris extension can find it
 # https://gist.github.com/YBogomolov/dc49c610cf7d92c60fb4678bae3ab753#file-dockerfile-L21
 RUN ln -s /root/.idris2/bin/idris2 /bin/idris

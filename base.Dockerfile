@@ -22,7 +22,6 @@ FROM debian:bullseye as idris-builder
 RUN apt-get update && \
     apt-get install -y git make gcc libgmp-dev
 
-ENV IDRIS2_CG racket
 ENV DEBIAN_FRONTEND noninteractive
 ARG IDRIS_VERSION
 
