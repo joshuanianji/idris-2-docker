@@ -28,7 +28,7 @@ jobs:
     with:
       version: ${{ inputs.version }}
       dockerfile: base.Dockerfile
-      image-name: ${{ github.repository }}/base
+      image-name: ${{ github.repository }}
     secrets: inherit
 
   base-matrix:
@@ -40,5 +40,5 @@ jobs:
     with:
       version: ${{ matrix.idris-version }}
       dockerfile: base.Dockerfile
-      image-name: ${{ github.repository }}/base
+      image-name: ${{ github.repository }}
     secrets: inherit
