@@ -15,7 +15,7 @@ RUN which scheme
 
 # copy csv9.5* to /root/move
 # this makes it a bit easier for us to move the csv folder to other build steps, since it is necessary for scheme to run
-RUN mkdir move && cp -r /usr/lib/csv9.5* /root/scheme-lib
+RUN mkdir scheme-lib && cp -r /usr/lib/csv9.5* /root/scheme-lib
 
 FROM debian:bullseye as idris-builder
 
