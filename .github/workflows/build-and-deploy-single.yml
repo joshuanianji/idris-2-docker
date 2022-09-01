@@ -12,6 +12,11 @@ on:
       image-name:
         required: true
         type: string
+      scope:
+        description: "The scope of the image if doing Matrix builds"
+        required: false
+        type: string
+        default: "public"
 
 jobs:
   build-and-deploy:
@@ -51,5 +56,7 @@ jobs:
             IDRIS_VERSION=${{ inputs.version }}
           tags: ghcr.io/${{ inputs.image-name }}:${{ inputs.version }}
           labels: ${{ steps.create-meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          # When doing matrix builds, we need to scope the image
+          # https://github.com/moby/buildkit/issues/2885
+          cache-from: type=gha,scope=build-${{ inputs.scope }}
+          cache-to: type=gha,mode=max,scope=build-${{ inputs.scope }}

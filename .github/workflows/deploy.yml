@@ -43,6 +43,7 @@ jobs:
       version: ${{ inputs.version }}
       dockerfile: ${{ matrix.consumer }}.Dockerfile
       image-name: ${{ github.repository }}/${{ matrix.consumer }}
+      scope: ${{ matrix.consumer }}
     secrets: inherit
 
   base-matrix:
@@ -55,6 +56,7 @@ jobs:
       version: ${{ matrix.idris-version }}
       dockerfile: base.Dockerfile
       image-name: ${{ github.repository }}/base
+      scope: ${{ matrix.idris-version }}
     secrets: inherit
 
   consumer-matrix:
@@ -69,4 +71,5 @@ jobs:
       version: ${{ matrix.idris-version }}
       dockerfile: ${{ matrix.consumer }}.Dockerfile
       image-name: ${{ github.repository }}/${{ matrix.consumer }}
+      scope: ${{ matrix.consumer }}-${{ matrix.idris-version }}
     secrets: inherit
