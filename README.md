@@ -3,7 +3,8 @@
 Multi-arch, multi-distro Docker images for Idris 2, primarily aimed for devcontainers.
 
 Architectures: `amd64`, `arm64`
-Idris Versions: `v0.5.0`, `v0.5.1`, `latest` (Up to date with [Idris2/main](https://github.com/idris-lang/Idris2/tree/main))
+
+Idris Versions: `v0.5.0`, `v0.5.1`, `latest` (Up to date with [Idris2/main](https://github.com/idris-lang/Idris2/tree/main) - recompiled daily)
 
 ## Images
 
@@ -33,10 +34,10 @@ FROM ghcr.io/joshuanianji/idris-2-docker/debian:v0.5.1
 
 ### Devcontainer
 
-Make a file called `Dockerfile` with the following contents:
+Make a `Dockerfile` with the following contents:
 
 ```dockerfile
 FROM ghcr.io/joshuanianji/idris-2-docker/devcontainer:v0.5.1
 ```
 
-Then, using Microsoft's Remote SSH tools, click "reopen in container" and choose the dockerfile.
+Then, using Microsoft's Remote SSH tools, click "Reopen in container" and choose that Dockerfile.
