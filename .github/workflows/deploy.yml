@@ -17,10 +17,6 @@ on:
       - ".github/actions/setup-buildx/action.yml"
       - ".github/workflows/build-and-deploy-single.yml"
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-
 permissions:
   packages: write
   contents: read
@@ -32,7 +28,7 @@ jobs:
     with:
       version: ${{ inputs.version }}
       dockerfile: base.Dockerfile
-      image-name: "${{ env.REGISTRY }}/idris-2-docker/base"
+      image-name: "ghcr.io/${{ github.repository }}/base"
     secrets: inherit
 
   base-matrix:
@@ -44,5 +40,5 @@ jobs:
     with:
       version: ${{ matrix.idris-version }}
       dockerfile: base.Dockerfile
-      image-name: "${{ env.REGISTRY }}/idris-2-docker/base"
+      image-name: ghcr.io/${{ github.repository }}/base"
     secrets: inherit
