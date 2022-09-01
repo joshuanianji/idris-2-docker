@@ -15,7 +15,7 @@ RUN which scheme
 
 # copy csv9.5* to /root/move
 # this makes it a bit easier for us to move the csv folder to other build steps, since it is necessary for scheme to run
-RUN mkdir move && cp -r /usr/lib/csv9.5* /root/scheme-lib 
+RUN mkdir move && cp -r /usr/lib/csv9.5* /root/scheme-lib
 
 FROM debian:bullseye as idris-builder
 
@@ -29,7 +29,7 @@ ARG IDRIS_VERSION
 COPY --from=scheme-builder /usr/bin/scheme /usr/bin/scheme
 # copy csv9.5* to /usr/lib, and also to /root/move for easier access for other build steps
 COPY --from=scheme-builder /root/scheme-lib/ /usr/lib/
-COPY --from=scheme-builder /root/scheme-lib /root/scheme-lib 
+COPY --from=scheme-builder /root/scheme-lib/ /root/scheme-lib 
 
 WORKDIR /root
 # if IDRIS_VERSION is 'latest', do not switch to a branch
