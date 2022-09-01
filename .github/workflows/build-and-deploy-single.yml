@@ -49,7 +49,7 @@ jobs:
           file: ${{ inputs.dockerfile }}
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
-          tags: ${{ inputs.version }}
+          tags: ghcr.io/${{ inputs.image-name }}:${{ inputs.version }}
           labels: ${{ steps.create-meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
