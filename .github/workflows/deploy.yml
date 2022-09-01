@@ -32,7 +32,7 @@ jobs:
     with:
       version: ${{ inputs.version }}
       dockerfile: base.Dockerfile
-      image-name: idris-2-docker/base
+      image-name: idris-2-docker
     secrets: inherit
 
   base-matrix:
