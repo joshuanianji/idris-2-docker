@@ -1,9 +1,42 @@
 # Idris 2 Docker
 
-Docker images for Idris2 development. Aimed for both 
+Multi-arch, multi-distro Docker images for Idris 2, primarily aimed for devcontainers.
 
+## Images
+
+- [idris-2-docker/devcontainer](https://github.com/joshuanianji/idris-2-docker/pkgs/container/idris-2-docker) - Debian bullseye built off of [Microsoft's Devcontainer Base image](https://github.com/microsoft/vscode-dev-containers/tree/main/containers/debian)
+- [idris-2-docker/ubuntu] - Ubuntu 20.04
+- [idris-2-docker/alpine] - Alpine 3.13
+- [idris-2-docker/debian] - Debian bullseye
+
+## Usage
+
+### Docker Image
+
+```bash
+docker run -it --rm joshuanianji/idris-2-docker/ubuntu:v0.5.1 idris2 --version
+v0.5.1
+
+docker run -it --rm joshuanianji/idris-2-docker/alpine:v0.5.1 /bin/bash
+$ idris2 --version
 ```
-docker buildx build --push -f devcontainer.Dockerfile \
-    --platform linux/amd64,linux/arm64 \
-    --tag joshuanianji/idris-docker-test:latest .
+
+### Base Image
+
+```dockerfile
+FROM joshuanianji/idris-2-docker/ubuntu:v0.5.1
+
+# ...
 ```
+
+### Devcontainer
+
+```dockerfile
+FROM joshuanianji/idris-2-docker/devcontainer:v0.5.1
+```
+
+Then, using Microsoft's Remote SSH tools, click "reopen in container" and choose the dockerfile.
+
+
+### In a Devcontainer
+
