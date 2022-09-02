@@ -17,11 +17,6 @@ on:
         required: false
         type: string
         default: "public"
-      test:
-        description: "Whether to test the image"
-        required: false
-        type: boolean
-        default: false
 
 jobs:
   build-and-deploy:
@@ -51,24 +46,6 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ghcr.io/${{ inputs.image-name }}
-
-      - name: Build test image
-        if: ${{ inputs.test }}
-        uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94
-        with:
-          context: .
-          load: true
-          file: ${{ inputs.dockerfile }}
-          build-args: |
-            IDRIS_VERSION=${{ inputs.version }}
-          tags: ${{ env.TAG }}
-          cache-from: type=gha,scope=build-${{ inputs.scope }}
-          cache-to: type=gha,mode=max,scope=build-${{ inputs.scope }}
-
-      - name: Run Test 1
-        if: ${{ inputs.test }}
-        run: |
-          docker run ${{ env.TAG }} idris2 --version
 
       - name: Build and push
         uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94
