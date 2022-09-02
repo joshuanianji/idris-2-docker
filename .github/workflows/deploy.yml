@@ -9,7 +9,9 @@ on:
         description: Idris Version
         required: true
         default: "latest"
-  push:
+  push, pull_request:
+    branches:
+      - main
     paths:
       - ".github/workflows/deploy.yml" # this file
       - "*.Dockerfile"
