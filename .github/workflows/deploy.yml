@@ -82,7 +82,7 @@ jobs:
 
   consumer-matrix:
     name: Consumer Image - ${{ matrix.consumer }} ${{ matrix.idris-version }}
-    needs: consumer-matrix
+    needs: base-matrix
     if: ${{ github.event_name != 'workflow_dispatch' }}
     strategy:
       matrix:
