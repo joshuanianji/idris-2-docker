@@ -14,6 +14,10 @@ Idris Versions: `v0.5.0`, `v0.5.1`, `latest` (Up to date with [Idris2/main](http
 
 ## Usage
 
+### Try it out
+
+If you want to try out a quick ready-to-use project, take a look at [Caleb's Wordle in Idris](https://github.com/calebji123/WordleInIdris). The devcontainer files are set up there and it's super fun to play around with!
+
 ### Command Line
 
 ```bash
