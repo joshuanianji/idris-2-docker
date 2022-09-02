@@ -46,7 +46,7 @@ jobs:
 
   # consumers of the base image are devcontainer, ubuntu and debian images
   build-consumer:
-    needs: base-single
+    needs: build-base
     if: ${{ github.event_name == 'workflow_dispatch' }}
     strategy:
       matrix:
@@ -74,7 +74,7 @@ jobs:
     secrets: inherit
 
   build-consumers:
-    needs: base-matrix
+    needs: build-bases
     if: ${{ github.event_name != 'workflow_dispatch' }}
     strategy:
       matrix:
