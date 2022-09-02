@@ -39,5 +39,12 @@ RUN if [ $IDRIS_VERSION = "latest" ] ; \
     fi
 
 WORKDIR /root/Idris2 
-RUN make bootstrap SCHEME=scheme
-RUN make install
+RUN make bootstrap SCHEME=scheme && make install
+
+# these things aren't strictly necessary for a functioning base image, 
+# but they make it possible for us to test the image 
+
+# add idris2 to path
+ENV PATH="/root/.idris2/bin:${PATH}"
+# add idris lib to LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH="/root/.idris2/lib:${LD_LIBRARY_PATH}"
