@@ -9,7 +9,17 @@ on:
         description: Idris Version
         required: true
         default: "latest"
-  push, pull_request:
+  # can we be more DRY here?
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/deploy.yml" # this file
+      - "*.Dockerfile"
+      # single
+      - ".github/actions/setup-buildx/action.yml"
+      - ".github/workflows/build-and-deploy-single.yml"
+  pull_request:
     branches:
       - main
     paths:
@@ -34,7 +44,7 @@ jobs:
       test: true # Test the base image - only AMD though
     secrets: inherit
 
-  # consumers of the base image are devcontainer, ubuntu and debian
+  # consumers of the base image are devcontainer, ubuntu and debian images
   consumer-single:
     needs: base-single
     if: ${{ github.event_name == 'workflow_dispatch' }}
