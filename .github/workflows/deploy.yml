@@ -34,7 +34,7 @@ permissions:
   contents: read
 
 jobs:
-  base-single:
+  build-base:
     if: ${{ github.event_name == 'workflow_dispatch' }}
     uses: ./.github/workflows/build-and-deploy-single.yml
     with:
@@ -45,7 +45,7 @@ jobs:
     secrets: inherit
 
   # consumers of the base image are devcontainer, ubuntu and debian images
-  consumer-single:
+  build-consumer:
     needs: base-single
     if: ${{ github.event_name == 'workflow_dispatch' }}
     strategy:
@@ -59,7 +59,7 @@ jobs:
       scope: ${{ matrix.consumer }}
     secrets: inherit
 
-  base-matrix:
+  build-bases:
     if: ${{ github.event_name != 'workflow_dispatch' }}
     strategy:
       matrix:
@@ -73,7 +73,7 @@ jobs:
       test: true # this will only test the AMD image
     secrets: inherit
 
-  consumer-matrix:
+  build-consumers:
     needs: base-matrix
     if: ${{ github.event_name != 'workflow_dispatch' }}
     strategy:
