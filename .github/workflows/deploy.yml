@@ -38,7 +38,6 @@ jobs:
   # I could also upload the image as an artifact, but that's a lot of work. I'll see how this goes...
   base-single:
     name: Base Image Single
-    id: base-single
     if: ${{ github.event_name == 'workflow_dispatch' }}
     uses: ./.github/workflows/build-test-deploy-single.yml
     with:
@@ -68,7 +67,6 @@ jobs:
 
   base-matrix:
     name: Base Image - ${{ matrix.idris-version }}
-    id: base-matrix
     if: ${{ github.event_name != 'workflow_dispatch' }}
     strategy:
       matrix:
