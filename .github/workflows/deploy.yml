@@ -37,7 +37,6 @@ jobs:
   # build the image for just AMD64, and use GHA cache to speed up test build later on
   # I could also upload the image as an artifact, but that's a lot of work. I'll see how this goes...
   build-base:
-    name: Build Base Image (${{ inputs.version }})
     if: ${{ github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
@@ -58,9 +57,9 @@ jobs:
           cache-to: type=gha,mode=max,scope=build-test-${{ inputs.version }}
 
   test-base:
-    name: Test Base Image (${{ inputs.version }})
     if: ${{ github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
+    needs: build-base
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -95,6 +94,7 @@ jobs:
   deploy-base:
     if: ${{ github.event_name == 'workflow_dispatch' }}
     uses: ./.github/workflows/build-and-deploy-single.yml
+    needs: test-base
     with:
       version: ${{ inputs.version }}
       dockerfile: base.Dockerfile
@@ -103,7 +103,6 @@ jobs:
 
   # consumers of the base image are devcontainer, ubuntu and debian images
   build-consumer:
-    name: Build Consumer Images (${{ inputs.version }} - ${{ matrix.consumer }})
     needs: deploy-base
     if: ${{ github.event_name == 'workflow_dispatch' }}
     strategy:
@@ -118,7 +117,6 @@ jobs:
     secrets: inherit
 
   build-bases:
-    name: Build Base Image (${{ matrix.idris_version }})
     if: ${{ github.event_name != 'workflow_dispatch' }}
     strategy:
       matrix:
@@ -132,7 +130,6 @@ jobs:
     secrets: inherit
 
   build-consumers:
-    name: Build Consumer Images (${{ matrix.idris_version }} - ${{ matrix.consumer }})
     needs: build-bases
     if: ${{ github.event_name != 'workflow_dispatch' }}
     strategy:
