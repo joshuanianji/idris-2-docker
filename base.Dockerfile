@@ -20,7 +20,7 @@ RUN mkdir scheme-lib && cp -r /usr/lib/csv9.5* /root/scheme-lib
 FROM debian:bullseye as idris-builder
 
 RUN apt-get update && \
-    apt-get install -y git make gcc libgmp-dev
+    apt-get install -y git make gcc libgmp-dev jq
 
 ENV DEBIAN_FRONTEND noninteractive
 ARG IDRIS_VERSION
@@ -31,9 +31,10 @@ COPY --from=scheme-builder /root/scheme-lib/ /usr/lib/
 COPY --from=scheme-builder /root/scheme-lib/ /root/scheme-lib 
 
 WORKDIR /root
-# if IDRIS_VERSION is 'latest', do not switch to a branch
+# if IDRIS_VERSION is 'latest', do not switch to a branch. Checkout the latest commit - ensures docker cache won't use stale versions
+# https://stackoverflow.com/a/41361804
 RUN if [ $IDRIS_VERSION = "latest" ] ; \ 
-    then git clone --depth 1 https://github.com/idris-lang/Idris2.git ; \
+    then git clone https://github.com/idris-lang/Idris2.git && cd Idris2 && git checkout $(curl -s 'https://api.github.com/repos/idris-lang/Idris2/commits' | jq -r '.[0].sha'); \
     else git clone --depth 1 --branch $IDRIS_VERSION https://github.com/idris-lang/Idris2.git ; \
     fi
 
