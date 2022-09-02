@@ -25,6 +25,10 @@ on:
         type: boolean
         default: false
 
+
+env:
+  TAG: ghcr.io/${{ inputs.image-name }}:${{ inputs.version }}
+
 jobs:
   build:
     name: Build
@@ -50,7 +54,7 @@ jobs:
     name: Test
     if: ${{ inputs.test }}
     runs-on: ubuntu-latest
-    needs: build-base
+    needs: build
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -78,9 +82,8 @@ jobs:
 
   deploy:
     name: Deploy
-    needs: test-base
-    env:
-      TAG: ghcr.io/${{ inputs.image-name }}:${{ inputs.version }}
+    needs: test
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
