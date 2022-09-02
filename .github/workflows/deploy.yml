@@ -36,107 +36,61 @@ permissions:
 jobs:
   # build the image for just AMD64, and use GHA cache to speed up test build later on
   # I could also upload the image as an artifact, but that's a lot of work. I'll see how this goes...
-  build-base:
+  base-single:
+    name: Base Image Single
+    id: base-single
     if: ${{ github.event_name == 'workflow_dispatch' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Build Image
-        uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94
-        with:
-          context: .
-          file: base.Dockerfile
-          build-args: |
-            IDRIS_VERSION=${{ inputs.version }}
-          cache-from: type=gha,scope=build-test-${{ inputs.version }}
-          cache-to: type=gha,mode=max,scope=build-test-${{ inputs.version }}
-
-  test-base:
-    if: ${{ github.event_name == 'workflow_dispatch' }}
-    runs-on: ubuntu-latest
-    needs: build-base
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Docker meta
-        id: create-meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ghcr.io/${{ inputs.image-name }}
-
-      - name: Build Image
-        if: ${{ inputs.test }}
-        uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94
-        with:
-          context: .
-          load: true
-          file: ${{ inputs.dockerfile }}
-          build-args: |
-            IDRIS_VERSION=${{ inputs.version }}
-          tags: ${{ env.TAG }}
-          cache-from: type=gha,scope=build-test-${{ inputs.version }}
-          cache-to: type=gha,mode=max,scope=build-test-${{ inputs.version }}
-
-      - name: Run Test 1
-        if: ${{ inputs.test }}
-        run: |
-          docker run ${{ env.TAG }} idris2 --version
-
-  deploy-base:
-    if: ${{ github.event_name == 'workflow_dispatch' }}
-    uses: ./.github/workflows/build-and-deploy-single.yml
-    needs: test-base
+    uses: ./.github/workflows/build-test-deploy-single.yml
     with:
       version: ${{ inputs.version }}
       dockerfile: base.Dockerfile
       image-name: ${{ github.repository }}/base
+      scope: base-${{ inputs.version }}
+      test: true
     secrets: inherit
 
   # consumers of the base image are devcontainer, ubuntu and debian images
-  build-consumer:
-    needs: deploy-base
+  consumer-single:
+    name: Consumer Image - ${{ matrix.consumer }}
+    needs: base-single
     if: ${{ github.event_name == 'workflow_dispatch' }}
     strategy:
       matrix:
         consumer: [devcontainer, ubuntu, debian]
-    uses: ./.github/workflows/build-and-deploy-single.yml
+    uses: ./.github/workflows/build-test-deploy-single.yml
     with:
       version: ${{ inputs.version }}
       dockerfile: ${{ matrix.consumer }}.Dockerfile
       image-name: ${{ github.repository }}/${{ matrix.consumer }}
       scope: ${{ matrix.consumer }}
+      test: false
     secrets: inherit
 
-  build-bases:
+  base-matrix:
+    name: Base Image - ${{ matrix.idris-version }}
+    id: base-matrix
     if: ${{ github.event_name != 'workflow_dispatch' }}
     strategy:
       matrix:
         idris-version: ["v0.5.0", "v0.5.1", "latest"]
-    uses: ./.github/workflows/build-and-deploy-single.yml
+    uses: ./.github/workflows/build-test-deploy-single.yml
     with:
       version: ${{ matrix.idris-version }}
       dockerfile: base.Dockerfile
       image-name: ${{ github.repository }}/base
       scope: ${{ matrix.idris-version }}
+      test: true
     secrets: inherit
 
-  build-consumers:
-    needs: build-bases
+  consumer-matrix:
+    name: Consumer Image - ${{ matrix.consumer }} ${{ matrix.idris-version }}
+    needs: consumer-matrix
     if: ${{ github.event_name != 'workflow_dispatch' }}
     strategy:
       matrix:
         idris-version: ["v0.5.0", "v0.5.1", "latest"]
         consumer: [devcontainer, ubuntu, debian]
-    uses: ./.github/workflows/build-and-deploy-single.yml
+    uses: ./.github/workflows/build-test-deploy-single.yml
     with:
       version: ${{ matrix.idris-version }}
       dockerfile: ${{ matrix.consumer }}.Dockerfile
