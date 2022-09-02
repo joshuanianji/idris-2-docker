@@ -48,5 +48,5 @@ Then, using Microsoft's Remote SSH tools, click "Reopen in container" and choose
 
 ## Credit
 
-- [Dgellow's Images](https://github.com/dgellow/idris-docker-image) for giving me a starting point
+- [dgellow/idris-docker-image](https://github.com/dgellow/idris-docker-image) for giving me a starting point
 - [YBogomolov's Gist](https://gist.github.com/YBogomolov/dc49c610cf7d92c60fb4678bae3ab753) for Devcontainer pointers
