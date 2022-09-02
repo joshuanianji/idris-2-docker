@@ -62,7 +62,8 @@ jobs:
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
           tags: ${{ env.TAG }}
-          # Removed cache section because internal cache should be fine for this step
+          cache-from: type=gha,scope=build-${{ inputs.scope }}
+          cache-to: type=gha,mode=max,scope=build-${{ inputs.scope }}
 
       - name: Run Test 1
         if: ${{ inputs.test }}
