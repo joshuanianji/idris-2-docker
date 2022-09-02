@@ -45,3 +45,8 @@ FROM ghcr.io/joshuanianji/idris-2-docker/devcontainer:v0.5.1
 ```
 
 Then, using Microsoft's Remote SSH tools, click "Reopen in container" and choose that Dockerfile.
+
+## Credit
+
+- [Dgellow's Images](https://github.com/dgellow/idris-docker-image) for giving me a starting point
+- [YBogomolov's Gist](https://gist.github.com/YBogomolov/dc49c610cf7d92c60fb4678bae3ab753) for Devcontainer pointers
