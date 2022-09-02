@@ -1,4 +1,4 @@
-name: Build and Deploy a Single Docker Image
+name: Build and Deploy a Multi-Arch Docker Image
 
 on:
   workflow_call:
