@@ -67,7 +67,7 @@ jobs:
       - name: Run Test 1
         if: ${{ inputs.test }}
         run: |
-          docker run --rm -it ${{ env.TAG }} idris2 --version
+          docker run ${{ env.TAG }} idris2 --version
 
       - name: Build and push
         uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94
