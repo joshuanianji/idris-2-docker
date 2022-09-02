@@ -39,6 +39,7 @@ jobs:
   build-base:
     name: Build Base Image (${{ inputs.version }})
     if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -59,6 +60,7 @@ jobs:
   test-base:
     name: Test Base Image (${{ inputs.version }})
     if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
