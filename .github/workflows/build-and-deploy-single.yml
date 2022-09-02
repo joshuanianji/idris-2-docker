@@ -17,10 +17,17 @@ on:
         required: false
         type: string
         default: "public"
+      test:
+        description: "Whether to test the image"
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      TAG: ghcr.io/${{ inputs.image-name }}:${{ inputs.version }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -45,6 +52,23 @@ jobs:
         with:
           images: ghcr.io/${{ inputs.image-name }}
 
+      - name: Build test image
+        if: ${{ inputs.test }}
+        uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94
+        with:
+          context: .
+          load: true
+          file: ${{ inputs.dockerfile }}
+          build-args: |
+            IDRIS_VERSION=${{ inputs.version }}
+          tags: ${{ env.TAG }}
+          # Removed cache section because internal cache should be fine for this step
+
+      - name: Run Test 1
+        if: ${{ inputs.test }}
+        run: |
+          docker run --rm -it ${{ env.TAG }} idris2 --version
+
       - name: Build and push
         uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94
         with:
@@ -54,7 +78,7 @@ jobs:
           file: ${{ inputs.dockerfile }}
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
-          tags: ghcr.io/${{ inputs.image-name }}:${{ inputs.version }}
+          tags: ${{ env.TAG }}
           labels: ${{ steps.create-meta.outputs.labels }}
           # When doing matrix builds, we need to scope the image
           # https://github.com/moby/buildkit/issues/2885

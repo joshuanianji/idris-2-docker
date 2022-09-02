@@ -29,6 +29,7 @@ jobs:
       version: ${{ inputs.version }}
       dockerfile: base.Dockerfile
       image-name: ${{ github.repository }}/base
+      test: true # Test the base image - only AMD though
     secrets: inherit
 
   # consumers of the base image are devcontainer, ubuntu and debian
@@ -57,6 +58,7 @@ jobs:
       dockerfile: base.Dockerfile
       image-name: ${{ github.repository }}/base
       scope: ${{ matrix.idris-version }}
+      test: true # this will only test the AMD image
     secrets: inherit
 
   consumer-matrix:
