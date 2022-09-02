@@ -20,7 +20,7 @@ RUN mkdir scheme-lib && cp -r /usr/lib/csv9.5* /root/scheme-lib
 FROM debian:bullseye as idris-builder
 
 RUN apt-get update && \
-    apt-get install -y git make gcc libgmp-dev jq
+    apt-get install -y git make gcc libgmp-dev jq curl
 
 ENV DEBIAN_FRONTEND noninteractive
 ARG IDRIS_VERSION
