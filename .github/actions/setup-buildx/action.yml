@@ -6,10 +6,13 @@ description: "Sets up buildx using my oracle VPS as a builder for arm images"
 
 inputs:
   ssh_private_key:
+    description: "The private key to use to connect to the builder"
     required: true
   ssh_user:
+    description: "The user to use to connect to the builder"
     required: true
   ssh_ip:
+    description: "The IP to use to connect to the builder"
     required: true
 
 runs:

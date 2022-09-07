@@ -9,7 +9,19 @@ on:
         description: Idris Version
         required: true
         default: "latest"
+  # can we be more DRY here?
   push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/deploy.yml" # this file
+      - "*.Dockerfile"
+      # single
+      - ".github/actions/setup-buildx/action.yml"
+      - ".github/workflows/build-and-deploy-single.yml"
+  pull_request:
+    branches:
+      - main
     paths:
       - ".github/workflows/deploy.yml" # this file
       - "*.Dockerfile"
@@ -22,23 +34,28 @@ permissions:
   contents: read
 
 jobs:
+  # build the image for just AMD64, and use GHA cache to speed up test build later on
+  # I could also upload the image as an artifact, but that's a lot of work. I'll see how this goes...
   base-single:
+    name: Base Single
     if: ${{ github.event_name == 'workflow_dispatch' }}
-    uses: ./.github/workflows/build-and-deploy-single.yml
+    uses: ./.github/workflows/build-test-deploy-base.yml
     with:
       version: ${{ inputs.version }}
       dockerfile: base.Dockerfile
       image-name: ${{ github.repository }}/base
+      scope: base-${{ inputs.version }}
     secrets: inherit
 
-  # consumers of the base image are devcontainer, ubuntu and debian
+  # consumers of the base image are devcontainer, ubuntu and debian images
   consumer-single:
+    name: Consumer - ${{ matrix.consumer }}
     needs: base-single
     if: ${{ github.event_name == 'workflow_dispatch' }}
     strategy:
       matrix:
         consumer: [devcontainer, ubuntu, debian]
-    uses: ./.github/workflows/build-and-deploy-single.yml
+    uses: ./.github/workflows/build-deploy-consumer.yml
     with:
       version: ${{ inputs.version }}
       dockerfile: ${{ matrix.consumer }}.Dockerfile
@@ -47,11 +64,12 @@ jobs:
     secrets: inherit
 
   base-matrix:
-    if: ${{ github.event_name == 'push' }}
+    name: Base - ${{ matrix.idris-version }}
+    if: ${{ github.event_name != 'workflow_dispatch' }}
     strategy:
       matrix:
         idris-version: ["v0.5.0", "v0.5.1", "latest"]
-    uses: ./.github/workflows/build-and-deploy-single.yml
+    uses: ./.github/workflows/build-test-deploy-base.yml
     with:
       version: ${{ matrix.idris-version }}
       dockerfile: base.Dockerfile
@@ -60,13 +78,14 @@ jobs:
     secrets: inherit
 
   consumer-matrix:
+    name: Consumer - ${{ matrix.consumer }} ${{ matrix.idris-version }}
     needs: base-matrix
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ github.event_name != 'workflow_dispatch' }}
     strategy:
       matrix:
         idris-version: ["v0.5.0", "v0.5.1", "latest"]
         consumer: [devcontainer, ubuntu, debian]
-    uses: ./.github/workflows/build-and-deploy-single.yml
+    uses: ./.github/workflows/build-deploy-consumer.yml
     with:
       version: ${{ matrix.idris-version }}
       dockerfile: ${{ matrix.consumer }}.Dockerfile
