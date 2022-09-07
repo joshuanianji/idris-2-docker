@@ -1,5 +1,4 @@
-name: Build, (Optionally) Test, and Deploy a Multi-Arch Docker Image
-
+name: Base - Build/Test/Deploy 
 # Reusable workflow to build, test and deploy the base image
 # The reason I split the base and consumer CI files is that the logic for conditionally skipping tests would be too difficult to manage
 # violating kiss just once never hurt...

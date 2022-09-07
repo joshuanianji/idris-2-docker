@@ -1,0 +1,34 @@
+name: Cron - Deploy Latest 
+
+on:
+  workflow_dispatch:
+
+permissions:
+  packages: write
+  contents: read
+
+jobs:
+  base-single:
+    name: Base Single
+    uses: ./.github/workflows/build-test-deploy-base.yml
+    with:
+      version: ${{ inputs.version }}
+      dockerfile: base.Dockerfile
+      image-name: ${{ github.repository }}/base
+      scope: base-${{ inputs.version }}
+    secrets: inherit
+
+  # consumers of the base image are devcontainer, ubuntu and debian images
+  consumer-single:
+    name: Consumer - ${{ matrix.consumer }}
+    needs: base-single
+    strategy:
+      matrix:
+        consumer: [devcontainer, ubuntu, debian]
+    uses: ./.github/workflows/build-deploy-consumer.yml
+    with:
+      version: ${{ inputs.version }}
+      dockerfile: ${{ matrix.consumer }}.Dockerfile
+      image-name: ${{ github.repository }}/${{ matrix.consumer }}
+      scope: ${{ matrix.consumer }}
+    secrets: inherit

@@ -1,4 +1,4 @@
-name: Build, (Optionally) Test, and Deploy a Multi-Arch Docker Image
+name: Consumer - Build/Deploy
 
 # Reusable workflow to build, test and deploy the consumer images
 # these images are not tested
