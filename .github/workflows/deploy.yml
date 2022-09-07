@@ -18,7 +18,8 @@ on:
       - "*.Dockerfile"
       # single
       - ".github/actions/setup-buildx/action.yml"
-      - ".github/workflows/build-and-deploy-single.yml"
+      - ".github/workflows/build-test-deploy-base.yml"
+      - ".github/workflows/build-deploy-consumer.yml"
   pull_request:
     branches:
       - main
@@ -27,7 +28,8 @@ on:
       - "*.Dockerfile"
       # single
       - ".github/actions/setup-buildx/action.yml"
-      - ".github/workflows/build-and-deploy-single.yml"
+      - ".github/workflows/build-test-deploy-base.yml"
+      - ".github/workflows/build-deploy-consumer.yml"
 
 permissions:
   packages: write
