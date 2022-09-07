@@ -36,7 +36,7 @@ WORKDIR /root
 # if IDRIS_VERSION is 'latest', do not switch to a branch. Checkout the latest commit - ensures docker cache won't use stale versions
 # https://stackoverflow.com/a/41361804
 RUN if [ $IDRIS_VERSION = "latest" ] ; \ 
-    then git clone https://github.com/idris-lang/Idris2.git && cd Idris2 && git checkout ${IDRIS_SHA} \
+    then git clone https://github.com/idris-lang/Idris2.git && cd Idris2 && git checkout ${IDRIS_SHA} ; \
     else git clone --depth 1 --branch $IDRIS_VERSION https://github.com/idris-lang/Idris2.git ; \
     fi
 
