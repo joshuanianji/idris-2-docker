@@ -157,6 +157,8 @@ jobs:
     if: ${{ github.event_name == 'push' }}
     needs: [test-1, test-2, test-3]
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
