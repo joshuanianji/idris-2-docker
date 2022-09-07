@@ -129,6 +129,12 @@ jobs:
       - name: Get Latest Idris Commit SHA
         id: get-sha
         uses: ./.github/actions/get-idris-sha
+      
+      # Looks like a node backend helps for tests
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
 
       - name: Build Image
         uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94
