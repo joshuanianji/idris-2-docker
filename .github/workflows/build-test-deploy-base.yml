@@ -44,6 +44,7 @@ jobs:
           file: base.Dockerfile
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
+            IDRIS_SHA=$(curl -s 'https://api.github.com/repos/idris-lang/Idris2/commits' | jq -r '.[0].sha')
           cache-from: type=gha,scope=build-test-${{ inputs.scope }}
           cache-to: type=gha,mode=max,scope=build-test-${{ inputs.scope }}
 
@@ -66,6 +67,7 @@ jobs:
           file: ${{ inputs.dockerfile }}
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
+            IDRIS_SHA=$(curl -s 'https://api.github.com/repos/idris-lang/Idris2/commits' | jq -r '.[0].sha')
           tags: ${{ env.TAG }}-test
           # don't use cache-to, because we don't need to cache the image
           cache-from: type=gha,scope=build-test-${{ inputs.scope }}
@@ -93,6 +95,7 @@ jobs:
           file: ${{ inputs.dockerfile }}
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
+            IDRIS_SHA=$(curl -s 'https://api.github.com/repos/idris-lang/Idris2/commits' | jq -r '.[0].sha')
           tags: ${{ env.TAG }}-test
           cache-from: type=gha,scope=build-test-${{ inputs.scope }}
 
@@ -119,6 +122,7 @@ jobs:
           file: ${{ inputs.dockerfile }}
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
+            IDRIS_SHA=$(curl -s 'https://api.github.com/repos/idris-lang/Idris2/commits' | jq -r '.[0].sha')
           tags: ${{ env.TAG }}-test
           cache-from: type=gha,scope=build-test-${{ inputs.scope }}
 
@@ -164,6 +168,7 @@ jobs:
           file: ${{ inputs.dockerfile }}
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
+            IDRIS_SHA=$(curl -s 'https://api.github.com/repos/idris-lang/Idris2/commits' | jq -r '.[0].sha')
           tags: ${{ env.TAG }}
           labels: ${{ steps.create-meta.outputs.labels }}
           # When doing matrix builds, we need to scope the image
