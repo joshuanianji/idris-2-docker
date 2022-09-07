@@ -1,0 +1,19 @@
+name: "Get Idris SHA"
+description: "Retrieves latest Idris Commit SHA from Github API"
+
+# This might be overkill to use a composite action, but it seems like the cleanest way
+# Plus, I want to learn about composite actions
+# I feel like echoing the value to $GITHUB_ENV is weird https://stackoverflow.com/a/57969570
+
+outputs:
+  sha:
+    description: "The latest Idris Commit SHA"
+    value: ${{ steps.get-sha.outputs.sha }}
+
+runs:
+  using: composite
+  steps:
+    - name: Get SHA
+      id: get-sha
+      run: |
+        echo "::set-output name=sha::$(curl -s 'https://api.github.com/repos/idris-lang/Idris2/commits' | jq -r '.[0].sha')"

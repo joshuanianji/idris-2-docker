@@ -36,6 +36,10 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+      
+      - name: Get Latest Idris Commit SHA
+        id: get-sha
+        uses: ./.github/actions/get-idris-sha
 
       - name: Build Image
         uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94
@@ -44,7 +48,7 @@ jobs:
           file: base.Dockerfile
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
-            IDRIS_SHA=$(curl -s 'https://api.github.com/repos/idris-lang/Idris2/commits' | jq -r '.[0].sha')
+            IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
           cache-from: type=gha,scope=build-test-${{ inputs.scope }}
           cache-to: type=gha,mode=max,scope=build-test-${{ inputs.scope }}
 
@@ -58,6 +62,10 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+      
+      - name: Get Latest Idris Commit SHA
+        id: get-sha
+        uses: ./.github/actions/get-idris-sha
 
       - name: Build Image
         uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94
@@ -67,7 +75,7 @@ jobs:
           file: ${{ inputs.dockerfile }}
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
-            IDRIS_SHA=$(curl -s 'https://api.github.com/repos/idris-lang/Idris2/commits' | jq -r '.[0].sha')
+            IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
           tags: ${{ env.TAG }}-test
           # don't use cache-to, because we don't need to cache the image
           cache-from: type=gha,scope=build-test-${{ inputs.scope }}
@@ -86,6 +94,10 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+      
+      - name: Get Latest Idris Commit SHA
+        id: get-sha
+        uses: ./.github/actions/get-idris-sha
 
       - name: Build Image
         uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94
@@ -95,7 +107,7 @@ jobs:
           file: ${{ inputs.dockerfile }}
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
-            IDRIS_SHA=$(curl -s 'https://api.github.com/repos/idris-lang/Idris2/commits' | jq -r '.[0].sha')
+            IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
           tags: ${{ env.TAG }}-test
           cache-from: type=gha,scope=build-test-${{ inputs.scope }}
 
@@ -113,6 +125,10 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+      
+      - name: Get Latest Idris Commit SHA
+        id: get-sha
+        uses: ./.github/actions/get-idris-sha
 
       - name: Build Image
         uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94
@@ -122,7 +138,7 @@ jobs:
           file: ${{ inputs.dockerfile }}
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
-            IDRIS_SHA=$(curl -s 'https://api.github.com/repos/idris-lang/Idris2/commits' | jq -r '.[0].sha')
+            IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
           tags: ${{ env.TAG }}-test
           cache-from: type=gha,scope=build-test-${{ inputs.scope }}
 
@@ -145,6 +161,10 @@ jobs:
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh_user: ${{ secrets.SSH_USER }}
           ssh_ip: ${{ secrets.SSH_IP }}
+      
+      - name: Get Latest Idris Commit SHA
+        id: get-sha
+        uses: ./.github/actions/get-idris-sha
 
       - name: Login to GHCR
         uses: docker/login-action@be010b42938448d8a286c21d5c4ccf2aae1524a1
@@ -168,7 +188,7 @@ jobs:
           file: ${{ inputs.dockerfile }}
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
-            IDRIS_SHA=$(curl -s 'https://api.github.com/repos/idris-lang/Idris2/commits' | jq -r '.[0].sha')
+            IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
           tags: ${{ env.TAG }}
           labels: ${{ steps.create-meta.outputs.labels }}
           # When doing matrix builds, we need to scope the image
