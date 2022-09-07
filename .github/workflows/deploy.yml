@@ -1,14 +1,9 @@
 name: Deploy Docker Images
 
 on:
-  # manually deploy a specific
-  # if version isn't specified, it will deploy nightly
-  workflow_dispatch:
-    inputs:
-      version:
-        description: Idris Version
-        required: true
-        default: "latest"
+  # Deploy every day at 1am
+  schedule:
+    - cron: "0 1 * * *"
   # can we be more DRY here?
   push:
     branches:
@@ -38,34 +33,34 @@ jobs:
   # I could also upload the image as an artifact, but that's a lot of work. I'll see how this goes...
   base-single:
     name: Base Single
-    if: ${{ github.event_name == 'workflow_dispatch' }}
+    if: ${{ github.event_name == 'schedule' }}
     uses: ./.github/workflows/build-test-deploy-base.yml
     with:
-      version: ${{ inputs.version }}
+      version: latest
       dockerfile: base.Dockerfile
       image-name: ${{ github.repository }}/base
-      scope: base-${{ inputs.version }}
+      scope: base-latest
     secrets: inherit
 
   # consumers of the base image are devcontainer, ubuntu and debian images
   consumer-single:
     name: Consumer - ${{ matrix.consumer }}
     needs: base-single
-    if: ${{ github.event_name == 'workflow_dispatch' }}
+    if: ${{ github.event_name == 'schedule' }}
     strategy:
       matrix:
         consumer: [devcontainer, ubuntu, debian]
     uses: ./.github/workflows/build-deploy-consumer.yml
     with:
-      version: ${{ inputs.version }}
+      version: latest
       dockerfile: ${{ matrix.consumer }}.Dockerfile
       image-name: ${{ github.repository }}/${{ matrix.consumer }}
-      scope: ${{ matrix.consumer }}
+      scope: ${{ matrix.consumer }}-latest
     secrets: inherit
 
   base-matrix:
     name: Base - ${{ matrix.idris-version }}
-    if: ${{ github.event_name != 'workflow_dispatch' }}
+    if: ${{ github.event_name == 'push' }}
     strategy:
       matrix:
         idris-version: ["v0.5.0", "v0.5.1", "latest"]
@@ -80,7 +75,7 @@ jobs:
   consumer-matrix:
     name: Consumer - ${{ matrix.consumer }} ${{ matrix.idris-version }}
     needs: base-matrix
-    if: ${{ github.event_name != 'workflow_dispatch' }}
+    if: ${{ github.event_name == 'push' }}
     strategy:
       matrix:
         idris-version: ["v0.5.0", "v0.5.1", "latest"]
