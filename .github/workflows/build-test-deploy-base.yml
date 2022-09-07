@@ -103,6 +103,7 @@ jobs:
 
   deploy:
     name: Deploy
+    if: ${{ github.event_name == 'push' }}
     needs: [test-1, test-2]
     runs-on: ubuntu-latest
     steps:
@@ -134,7 +135,7 @@ jobs:
         with:
           context: .
           platforms: linux/arm64,linux/amd64
-          push: ${{ github.event_name == 'push' }}
+          push: true
           file: ${{ inputs.dockerfile }}
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
