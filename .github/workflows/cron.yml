@@ -1,7 +1,9 @@
 name: Cron - Deploy Latest 
 
 on:
-  workflow_dispatch:
+   # Deploy every day at 1am
+  schedule:
+    - cron: "0 1 * * *"
 
 permissions:
   packages: write
