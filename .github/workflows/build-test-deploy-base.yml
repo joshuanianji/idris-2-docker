@@ -66,13 +66,13 @@ jobs:
           file: ${{ inputs.dockerfile }}
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
-          tags: ${{ env.TAG }}
+          tags: ${{ env.TAG }}-test
           # don't use cache-to, because we don't need to cache the image
           cache-from: type=gha,scope=build-test-${{ inputs.scope }}
 
       - name: Run Test 1
         run: |
-          docker run ${{ env.TAG }} idris2 --version
+          docker run ${{ env.TAG }}-test idris2 --version
   
   test-2:
     name: Test 2
@@ -93,12 +93,12 @@ jobs:
           file: ${{ inputs.dockerfile }}
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
-          tags: ${{ env.TAG }}
+          tags: ${{ env.TAG }}-test
           cache-from: type=gha,scope=build-test-${{ inputs.scope }}
 
       - name: Run Test 2
         run: |
-          docker run ${{ env.TAG }} /bin/bash -c "make clean; make all && make install"
+          docker run ${{ env.TAG }}-test /bin/bash -c "make clean; make all && make install"
   
   test-3:
     name: Test 3
@@ -119,12 +119,12 @@ jobs:
           file: ${{ inputs.dockerfile }}
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
-          tags: ${{ env.TAG }}
+          tags: ${{ env.TAG }}-test
           cache-from: type=gha,scope=build-test-${{ inputs.scope }}
 
       - name: Run Test 3
         run: |
-          docker run ${{ env.TAG }} /bin/bash -c "make clean; make all; make test"
+          docker run ${{ env.TAG }}-test /bin/bash -c "make clean; make all; make test"
 
   deploy:
     name: Deploy
