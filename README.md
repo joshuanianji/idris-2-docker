@@ -18,6 +18,30 @@ Idris Versions: `v0.5.0`, `v0.5.1`, `latest` (Up to date with [Idris2/main](http
 
 If you want to try out a quick ready-to-use project, take a look at [Caleb's Wordle in Idris](https://github.com/calebji123/WordleInIdris). The devcontainer files are set up there and it's super fun to play around with!
 
+#### Requirements
+
+- A working instance of [Docker](https://docs.docker.com/get-docker/)
+- [VSCode](https://code.visualstudio.com/download)
+- [Remote Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension for VSCode
+
+Clone the repo and open it in VSCode.
+
+```bash
+git clone https://github.com/calebji123/WordleInIdris.git
+```
+
+When prompted, click "Reopen in Container" and you're good to go!
+
+### Devcontainer
+
+Add devcontainers to your own project by copying the following contents to `Dockerfile` in the root of your project:
+
+```dockerfile
+FROM ghcr.io/joshuanianji/idris-2-docker/devcontainer:v0.5.1
+```
+
+Then, using Microsoft's Remote SSH tools, click "Reopen in container" and choose that Dockerfile.
+
 ### Command Line
 
 ```bash
@@ -30,21 +54,13 @@ $ idris2 --version
 
 ### Base Image
 
+To use one of my images as a base image, you can do the following:
+
 ```dockerfile
 FROM ghcr.io/joshuanianji/idris-2-docker/debian:v0.5.1
 
 # ...
 ```
-
-### Devcontainer
-
-Make a `Dockerfile` with the following contents:
-
-```dockerfile
-FROM ghcr.io/joshuanianji/idris-2-docker/devcontainer:v0.5.1
-```
-
-Then, using Microsoft's Remote SSH tools, click "Reopen in container" and choose that Dockerfile.
 
 ## Credit
 
