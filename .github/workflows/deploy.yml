@@ -37,7 +37,7 @@ jobs:
   # build the image for just AMD64, and use GHA cache to speed up test build later on
   # I could also upload the image as an artifact, but that's a lot of work. I'll see how this goes...
   base-single:
-    name: Base Image Single
+    name: Base Single
     if: ${{ github.event_name == 'workflow_dispatch' }}
     uses: ./.github/workflows/build-test-deploy-base.yml
     with:
@@ -49,7 +49,7 @@ jobs:
 
   # consumers of the base image are devcontainer, ubuntu and debian images
   consumer-single:
-    name: Consumer Image - ${{ matrix.consumer }}
+    name: Consumer - ${{ matrix.consumer }}
     needs: base-single
     if: ${{ github.event_name == 'workflow_dispatch' }}
     strategy:
@@ -64,7 +64,7 @@ jobs:
     secrets: inherit
 
   base-matrix:
-    name: Base Image - ${{ matrix.idris-version }}
+    name: Base - ${{ matrix.idris-version }}
     if: ${{ github.event_name != 'workflow_dispatch' }}
     strategy:
       matrix:
@@ -78,7 +78,7 @@ jobs:
     secrets: inherit
 
   consumer-matrix:
-    name: Consumer Image - ${{ matrix.consumer }} ${{ matrix.idris-version }}
+    name: Consumer - ${{ matrix.consumer }} ${{ matrix.idris-version }}
     needs: base-matrix
     if: ${{ github.event_name != 'workflow_dispatch' }}
     strategy:
