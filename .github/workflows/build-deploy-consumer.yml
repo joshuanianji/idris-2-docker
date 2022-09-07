@@ -1,4 +1,7 @@
-name: Build and Deploy a Multi-Arch Docker Image
+name: Build, (Optionally) Test, and Deploy a Multi-Arch Docker Image
+
+# Reusable workflow to build, test and deploy the consumer images
+# these images are not tested
 
 on:
   workflow_call:
@@ -18,11 +21,35 @@ on:
         type: string
         default: "public"
 
+
+env:
+  TAG: ghcr.io/${{ inputs.image-name }}:${{ inputs.version }}
+
 jobs:
-  build-and-deploy:
+  build:
+    name: Build
     runs-on: ubuntu-latest
-    env:
-      TAG: ghcr.io/${{ inputs.image-name }}:${{ inputs.version }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Image
+        uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94
+        with:
+          context: .
+          file: base.Dockerfile
+          build-args: |
+            IDRIS_VERSION=${{ inputs.version }}
+          cache-from: type=gha,scope=build-test-${{ inputs.scope }}
+          cache-to: type=gha,mode=max,scope=build-test-${{ inputs.scope }}
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
