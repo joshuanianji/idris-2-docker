@@ -48,7 +48,7 @@ jobs:
           cache-to: type=gha,mode=max,scope=build-test-${{ inputs.scope }}
 
   test-1:
-    name: Test 2
+    name: Test 1
     runs-on: ubuntu-latest
     needs: build
     steps:
