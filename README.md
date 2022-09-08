@@ -6,11 +6,21 @@ Architectures: `amd64`, `arm64`
 
 Idris Versions: `v0.5.0`, `v0.5.1`, `latest` (Up to date with [Idris2/main](https://github.com/idris-lang/Idris2/tree/main) - recompiled daily)
 
+## Table of Contents
+
+* [Usage](#usage)
+  * [Try it out](#try-it-out)
+    * [Requirements](#requirements)
+  * [Devcontainer](#devcontainer)
+  * [Command Line](#command-line)
+  * [Base Image](#base-image)
+* [Credit](#credit)
+
 ## Images
 
-- [idris-2-docker/devcontainer](https://github.com/joshuanianji/idris-2-docker/pkgs/container/idris-2-docker%2Fdevcontainer) - Debian bullseye built off of [Microsoft's Devcontainer Base image](https://github.com/microsoft/vscode-dev-containers/tree/main/containers/debian)
-- [idris-2-docker/ubuntu](https://github.com/joshuanianji/idris-2-docker/pkgs/container/idris-2-docker%2Fubuntu) - Ubuntu 20.04
-- [idris-2-docker/debian](https://github.com/joshuanianji/idris-2-docker/pkgs/container/idris-2-docker%2Fdebian) - Debian bullseye
+* [idris-2-docker/devcontainer](https://github.com/joshuanianji/idris-2-docker/pkgs/container/idris-2-docker%2Fdevcontainer) - Debian bullseye built off of [Microsoft's Devcontainer Base image](https://github.com/microsoft/vscode-dev-containers/tree/main/containers/debian)
+* [idris-2-docker/ubuntu](https://github.com/joshuanianji/idris-2-docker/pkgs/container/idris-2-docker%2Fubuntu) - Ubuntu 20.04
+* [idris-2-docker/debian](https://github.com/joshuanianji/idris-2-docker/pkgs/container/idris-2-docker%2Fdebian) - Debian bullseye
 
 ## Usage
 
@@ -20,9 +30,9 @@ If you want to try out a quick ready-to-use project, take a look at [Caleb's Wor
 
 #### Requirements
 
-- A working instance of [Docker](https://docs.docker.com/get-docker/)
-- [VSCode](https://code.visualstudio.com/download)
-- [Remote Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension for VSCode
+* A working instance of [Docker](https://docs.docker.com/get-docker/)
+* [VSCode](https://code.visualstudio.com/download)
+* [Remote Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension for VSCode
 
 Clone the repo and open it in VSCode.
 
@@ -64,5 +74,5 @@ FROM ghcr.io/joshuanianji/idris-2-docker/debian:v0.5.1
 
 ## Credit
 
-- [dgellow/idris-docker-image](https://github.com/dgellow/idris-docker-image) for giving me a starting point
-- [YBogomolov's Gist](https://gist.github.com/YBogomolov/dc49c610cf7d92c60fb4678bae3ab753) for Devcontainer pointers
+* [dgellow/idris-docker-image](https://github.com/dgellow/idris-docker-image) for giving me a starting point
+* [YBogomolov's Gist](https://gist.github.com/YBogomolov/dc49c610cf7d92c60fb4678bae3ab753) for Devcontainer pointers
