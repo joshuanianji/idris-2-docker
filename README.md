@@ -54,6 +54,8 @@ Then, using Microsoft's Remote SSH tools, click "Reopen in container" and choose
 
 ### Command Line
 
+You can also run the image directly from the command line.
+
 ```bash
 docker run -it --rm ghcr.io/joshuanianji/idris-2-docker/ubuntu:v0.5.1 idris2 --version
 Idris 2, version 0.5.1
@@ -64,7 +66,7 @@ $ idris2 --version
 
 ### Base Image
 
-To use one of my images as a base image, you can do the following:
+To build on top of my images, you can use it as a base image:
 
 ```dockerfile
 FROM ghcr.io/joshuanianji/idris-2-docker/debian:v0.5.1
