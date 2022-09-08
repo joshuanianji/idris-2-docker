@@ -8,6 +8,7 @@ Idris Versions: `v0.5.0`, `v0.5.1`, `latest` (Up to date with [Idris2/main](http
 
 ## Table of Contents
 
+* [Images](#images)
 * [Usage](#usage)
   * [Try it out](#try-it-out)
     * [Requirements](#requirements)
