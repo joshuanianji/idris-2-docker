@@ -1,7 +1,9 @@
 name: Cron - Deploy Latest 
 
 on:
-  workflow_dispatch:
+   # Deploy every day at 1am
+  schedule:
+    - cron: "0 1 * * *"
 
 permissions:
   packages: write
@@ -12,10 +14,10 @@ jobs:
     name: Base Single
     uses: ./.github/workflows/build-test-deploy-base.yml
     with:
-      version: ${{ inputs.version }}
+      version: latest
       dockerfile: base.Dockerfile
       image-name: ${{ github.repository }}/base
-      scope: base-${{ inputs.version }}
+      scope: base-latest
     secrets: inherit
 
   # consumers of the base image are devcontainer, ubuntu and debian images
@@ -27,7 +29,7 @@ jobs:
         consumer: [devcontainer, ubuntu, debian]
     uses: ./.github/workflows/build-deploy-consumer.yml
     with:
-      version: ${{ inputs.version }}
+      version: latest
       dockerfile: ${{ matrix.consumer }}.Dockerfile
       image-name: ${{ github.repository }}/${{ matrix.consumer }}
       scope: ${{ matrix.consumer }}
