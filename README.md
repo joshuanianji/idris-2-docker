@@ -8,14 +8,20 @@ Idris Versions: `v0.5.0`, `v0.5.1`, `latest` (Up to date with [Idris2/main](http
 
 ## Table of Contents
 
+* [Motivation](#motivation)
 * [Images](#images)
 * [Usage](#usage)
-  * [Try it out](#try-it-out)
+  * [Try it out with Devcontainers](#try-it-out-with-devcontainers)
     * [Requirements](#requirements)
+    * [Opening in a Devcontainer](#opening-in-a-devcontainer)
   * [Devcontainer](#devcontainer)
   * [Command Line](#command-line)
   * [Base Image](#base-image)
 * [Credit](#credit)
+
+## Motivation
+
+Installing Idris2 is [quite time consuming](https://www.reddit.com/r/Idris/comments/wyox7i/building_idris2_for_apple_silicon_as_of_august/), and [not very intuitive](https://github.com/idris-lang/Idris2/issues/2404) especially for Apple Silicon, which presents quite a bottleneck for new users. This project aims to provide a quick and easy way to get started with Idris2 without having to install it on your machine.
 
 ## Images
 
@@ -25,23 +31,27 @@ Idris Versions: `v0.5.0`, `v0.5.1`, `latest` (Up to date with [Idris2/main](http
 
 ## Usage
 
-### Try it out
+### Try it out with Devcontainers
 
-If you want to try out a quick ready-to-use project, take a look at [Caleb's Wordle in Idris](https://github.com/calebji123/WordleInIdris). The devcontainer files are set up there and it's super fun to play around with!
+Devcontainers use a Docker container as a development environment, making it super simple to get started with Idris2. For more information, check out [Microsoft's documentation](https://code.visualstudio.com/docs/remote/containers).
+
+If you want to try out a quick ready-to-use project, take a look at [calebji123/WordleInIdris](https://github.com/calebji123/WordleInIdris). The devcontainer files are set up there and it's super fun to play around with!
 
 #### Requirements
 
 * A working instance of [Docker](https://docs.docker.com/get-docker/)
 * [VSCode](https://code.visualstudio.com/download)
-* [Remote Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension for VSCode
+* [Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack) for VSCode
 
-Clone the repo and open it in VSCode.
+#### Opening in a Devcontainer
 
 ```bash
 git clone https://github.com/calebji123/WordleInIdris.git
 ```
 
-When prompted, click "Reopen in Container" and you're good to go!
+Once you clone the repo, open it in VSCode. Click the prompt on the bottom right to "Reopen in Container" and you're good to go!
+
+If the prompt does not show up or you accidentally closed it, [follow these steps](https://code.visualstudio.com/docs/remote/containers#_quick-start-open-an-existing-folder-in-a-container).
 
 ### Devcontainer
 
