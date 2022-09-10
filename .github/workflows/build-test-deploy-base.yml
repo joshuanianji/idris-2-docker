@@ -24,7 +24,6 @@ on:
         description: "Whether to push the image to the registry"
         required: true
         type: boolean
-        default: false
 
 env:
   TAG: ghcr.io/${{ inputs.image-name }}:${{ inputs.version }}
