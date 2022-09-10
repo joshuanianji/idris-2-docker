@@ -20,6 +20,10 @@ on:
         required: false
         type: string
         default: "public"
+      push: 
+        description: "Whether to push the image to the registry"
+        required: true
+        type: boolean
 
 env:
   TAG: ghcr.io/${{ inputs.image-name }}:${{ inputs.version }}
@@ -152,7 +156,7 @@ jobs:
 
   deploy:
     name: Deploy
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ inputs.push }}
     needs: [test-1, test-2, test-3]
     runs-on: ubuntu-latest
     permissions:
