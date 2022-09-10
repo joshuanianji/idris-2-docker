@@ -47,9 +47,11 @@ If you want to try out a quick ready-to-use project, take a look at [calebji123/
 git clone https://github.com/calebji123/WordleInIdris.git
 ```
 
-Once you clone the repo, open it in VSCode. Click the prompt on the bottom right to "Reopen in Container" and you're good to go!
+Once you clone the repo, open the folder in VSCode. There will be a prompt on the bottom right.
 
-If the prompt does not show up or you accidentally closed it, [follow these steps](https://code.visualstudio.com/docs/remote/containers#_quick-start-open-an-existing-folder-in-a-container).
+![Reopen in Container](./docs/reopen-in-container.png)
+
+Click "Reopen in Container" and it will download the image and open the project in a devcontainer. You'll be able to [run the project right away](https://github.com/calebji123/WordleInIdris#how-to-run-it)!
 
 ## Usage
 
