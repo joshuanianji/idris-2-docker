@@ -39,6 +39,7 @@ jobs:
       dockerfile: base.Dockerfile
       image-name: ${{ github.repository }}/base
       scope: ${{ matrix.idris-version }}
+      push: ${{ github.event_name == 'push' }}
     secrets: inherit
 
   consumer-matrix:
@@ -54,4 +55,5 @@ jobs:
       dockerfile: ${{ matrix.consumer }}.Dockerfile
       image-name: ${{ github.repository }}/${{ matrix.consumer }}
       scope: ${{ matrix.consumer }}-${{ matrix.idris-version }}
+      push: ${{ github.event_name == 'push' }}
     secrets: inherit

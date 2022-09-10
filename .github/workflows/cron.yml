@@ -18,6 +18,7 @@ jobs:
       dockerfile: base.Dockerfile
       image-name: ${{ github.repository }}/base
       scope: base-latest
+      push: true
     secrets: inherit
 
   # consumers of the base image are devcontainer, ubuntu and debian images
@@ -33,4 +34,5 @@ jobs:
       dockerfile: ${{ matrix.consumer }}.Dockerfile
       image-name: ${{ github.repository }}/${{ matrix.consumer }}
       scope: ${{ matrix.consumer }}
+      push: true
     secrets: inherit
