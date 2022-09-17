@@ -4,7 +4,7 @@ FROM ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION} as base
 
 FROM mcr.microsoft.com/vscode/devcontainers/base:bullseye
 
-# add idris2 and scheme from builder
+# add idris2, idris2-lsp and scheme from builder
 COPY --from=base /root/.idris2 /root/.idris2
 COPY --from=base /usr/bin/scheme /usr/bin/scheme
 # copy csv9.5* to /usr/lib

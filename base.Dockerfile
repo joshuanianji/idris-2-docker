@@ -34,20 +34,19 @@ COPY --from=scheme-builder /root/scheme-lib/ /root/scheme-lib
 
 WORKDIR /root
 
-RUN git clone https://github.com/idris-community/idris2-lsp.git # Clone this repository
+RUN git clone https://github.com/idris-community/idris2-lsp.git
 WORKDIR /root/idris2-lsp
-RUN git submodule update --init Idris2 # Get the associated Idris commit
-WORKDIR /root/idris2-lsp/Idris2 # Change into the Idris2 directory
-RUN make bootstrap SCHEME=scheme # Boostrap Idris
-RUN make install # Install Idris
-# If needed, modify your shell files to ensure ~/.idris2/bin is in your PATH
-RUN make clean # Clean Idris
-RUN make all # Build Idris
-RUN make install # Install Idris
-RUN make install-with-src-libs # Install sources for libraries
-RUN make install-with-src-api # Install the API with sources
-WORKDIR /root/idris2-lsp # Go back to the idris2-lsp directory
-RUN make install # Install idris2-lsp
+RUN git submodule update --init Idris2
+WORKDIR /root/idris2-lsp/Idris2
+RUN make bootstrap SCHEME=scheme
+RUN make install
+RUN make clean
+RUN make all
+RUN make install
+RUN make install-with-src-libs
+RUN make install-with-src-api
+WORKDIR /root/idris2-lsp
+RUN make install
 
 # these things aren't strictly necessary for a functioning base image, 
 # but they make it possible for us to test the image 
