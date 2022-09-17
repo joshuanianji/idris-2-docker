@@ -38,7 +38,7 @@ RUN git clone https://github.com/idris-community/idris2-lsp.git # Clone this rep
 WORKDIR /root/idris2-lsp
 RUN git submodule update --init Idris2 # Get the associated Idris commit
 WORKDIR /root/idris2-lsp/Idris2 # Change into the Idris2 directory
-RUN make bootstrap SCHEME=chez # Boostrap Idris
+RUN make bootstrap SCHEME=scheme # Boostrap Idris
 RUN make install # Install Idris
 # If needed, modify your shell files to ensure ~/.idris2/bin is in your PATH
 RUN make clean # Clean Idris
