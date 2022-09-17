@@ -2,6 +2,21 @@ ARG IDRIS_VERSION=latest
 
 FROM ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION} as base
 
+# install idris2-lsp
+WORKDIR /root
+RUN git clone https://github.com/idris-community/idris2-lsp.git
+WORKDIR /root/idris2-lsp
+RUN git submodule update --init Idris2
+WORKDIR /root/idris2-lsp/Idris2
+RUN make clean
+RUN make all
+RUN make install
+RUN make install-with-src-libs
+RUN make install-with-src-api
+WORKDIR /root/idris2-lsp
+RUN make install
+
+
 FROM mcr.microsoft.com/vscode/devcontainers/base:bullseye
 
 # add idris2 and scheme from builder

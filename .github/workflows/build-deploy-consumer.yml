@@ -51,6 +51,7 @@ jobs:
 
   deploy:
     name: Deploy
+    if: ${{ inputs.push }}
     needs: build
     runs-on: ubuntu-latest
     steps:
