@@ -33,15 +33,21 @@ COPY --from=scheme-builder /root/scheme-lib/ /usr/lib/
 COPY --from=scheme-builder /root/scheme-lib/ /root/scheme-lib 
 
 WORKDIR /root
-# if IDRIS_VERSION is 'latest', do not switch to a branch. Checkout the latest commit - ensures docker cache won't use stale versions
-# https://stackoverflow.com/a/41361804
-RUN if [ $IDRIS_VERSION = "latest" ] ; \ 
-    then git clone https://github.com/idris-lang/Idris2.git && cd Idris2 && git checkout ${IDRIS_SHA} ; \
-    else git clone --depth 1 --branch $IDRIS_VERSION https://github.com/idris-lang/Idris2.git ; \
-    fi
 
-WORKDIR /root/Idris2 
-RUN make bootstrap SCHEME=scheme && make install
+RUN git clone https://github.com/idris-community/idris2-lsp.git # Clone this repository
+WORKDIR /root/idris2-lsp
+RUN git submodule update --init Idris2 # Get the associated Idris commit
+WORKDIR /root/idris2-lsp/Idris2 # Change into the Idris2 directory
+RUN make bootstrap SCHEME=chez # Boostrap Idris
+RUN make install # Install Idris
+# If needed, modify your shell files to ensure ~/.idris2/bin is in your PATH
+RUN make clean # Clean Idris
+RUN make all # Build Idris
+RUN make install # Install Idris
+RUN make install-with-src-libs # Install sources for libraries
+RUN make install-with-src-api # Install the API with sources
+WORKDIR /root/idris2-lsp # Go back to the idris2-lsp directory
+RUN make install # Install idris2-lsp
 
 # these things aren't strictly necessary for a functioning base image, 
 # but they make it possible for us to test the image 

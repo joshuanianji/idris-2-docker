@@ -4,7 +4,7 @@ Multi-arch, multi-distro Docker images for Idris 2, primarily aimed for devconta
 
 Architectures: `amd64`, `arm64`
 
-Idris Versions: `v0.5.0`, `v0.5.1`, `latest` (Up to date with [Idris2/main](https://github.com/idris-lang/Idris2/tree/main) - recompiled daily)
+Idris2-lsp `latest` (Up to date with [idris2-lsp/main](https://github.com/idris-community/idris2-lsp/tree/main) - recompiled daily). And Idris2 version tested as submodule inside idris2-lsp.
 
 ## Table of Contents
 
@@ -21,7 +21,7 @@ Idris Versions: `v0.5.0`, `v0.5.1`, `latest` (Up to date with [Idris2/main](http
 
 ## Motivation
 
-Installing Idris2 is [quite time consuming](https://idris2.readthedocs.io/en/latest/tutorial/starting.html) and [not very intuitive](https://github.com/idris-lang/Idris2/issues/2404), [especially for Apple Silicon](https://www.reddit.com/r/Idris/comments/wyox7i/building_idris2_for_apple_silicon_as_of_august/). That presents quite a bottleneck for new users. This project aims to provide a quick and easy way to get started with Idris2 without having to go through the entire process on your own machine.
+Installing Idris2 is [quite time consuming](https://idris2.readthedocs.io/en/latest/tutorial/starting.html) and [not very intuitive](https://github.com/idris-lang/Idris2/issues/2404), [especially for Apple Silicon](https://www.reddit.com/r/Idris/comments/wyox7i/building_idris2_for_apple_silicon_as_of_august/). That presents quite a bottleneck for new users. This project aims to provide a quick and easy way to get started with Idris2 and idris2-lsp without having to go through the entire process on your own machine.
 
 ## Images
 
@@ -60,7 +60,7 @@ Click "Reopen in Container" and it will download the image and open the project 
 Add devcontainers to your own project by copying the following contents to `Dockerfile` in the root of your project:
 
 ```dockerfile
-FROM ghcr.io/joshuanianji/idris-2-docker/devcontainer:v0.5.1
+FROM ghcr.io/joshuanianji/idris-2-docker/devcontainer:latest
 ```
 
 Then, using Microsoft's Remote SSH tools, click "Reopen in container" and choose that Dockerfile.
@@ -70,10 +70,10 @@ Then, using Microsoft's Remote SSH tools, click "Reopen in container" and choose
 You can also run the image directly from the command line.
 
 ```bash
-docker run -it --rm ghcr.io/joshuanianji/idris-2-docker/ubuntu:v0.5.1 idris2 --version
-Idris 2, version 0.5.1
+docker run -it --rm ghcr.io/joshuanianji/idris-2-docker/ubuntu:latest
+$ idris2 --version
 
-docker run -it --rm --entrypoint /bin/bash ghcr.io/joshuanianji/idris-2-docker/debian:v0.5.1
+docker run -it --rm --entrypoint /bin/bash ghcr.io/joshuanianji/idris-2-docker/debian:latest
 $ idris2 --version
 ```
 
@@ -82,7 +82,7 @@ $ idris2 --version
 You can also use one of the images as a base image for your own Dockerfile.
 
 ```dockerfile
-FROM ghcr.io/joshuanianji/idris-2-docker/debian:v0.5.1
+FROM ghcr.io/joshuanianji/idris-2-docker/debian:latest
 
 # ...
 ```
