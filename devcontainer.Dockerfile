@@ -11,6 +11,9 @@ WORKDIR /root/idris2-lsp/Idris2
 RUN make clean
 RUN make all
 RUN make install
+RUN make clean
+RUN make all
+RUN make install
 RUN make install-with-src-libs
 RUN make install-with-src-api
 WORKDIR /root/idris2-lsp
