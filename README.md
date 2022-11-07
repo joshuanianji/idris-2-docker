@@ -87,6 +87,36 @@ FROM ghcr.io/joshuanianji/idris-2-docker/debian:v0.5.1
 # ...
 ```
 
+## Running Locally
+
+We require some environment variables to be able to build the images locally.
+
+### Build Latest (or a specific commit)
+
+```bash
+export IDRIS_VERSION=latest
+# get latest commit - here we're using the github api and jq
+export IDRIS_COMMIT=$(curl -s 'https://api.github.com/repos/idris-lang/Idris2/commits' | jq -r '.[0].sha')
+
+# tagging the base image so other Dockerfiles can reference it
+docker build -f base.Dockerfile -t "ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION}" .
+
+# Build other images 
+docker build -f devcontainer.Dockerfile .
+```
+
+### Build from a Tagged Release
+
+```bash
+export IDRIS_VERSION=v0.6.0
+
+# tagging the base image so other Dockerfiles can reference it
+docker build -f base.Dockerfile -t "ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION}" .
+
+# Build other images 
+docker build -f devcontainer.Dockerfile .
+```
+
 ## Credit
 
 * [dgellow/idris-docker-image](https://github.com/dgellow/idris-docker-image) for giving me a starting point
