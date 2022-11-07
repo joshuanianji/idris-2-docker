@@ -32,7 +32,7 @@ jobs:
     name: Base - ${{ matrix.idris-version }}
     strategy:
       matrix:
-        idris-version: ["v0.5.0", "v0.5.1", "latest"]
+        idris-version: ["v0.5.0", "v0.5.1", "v0.6.0", "latest"]
     uses: ./.github/workflows/build-test-deploy-base.yml
     with:
       version: ${{ matrix.idris-version }}
@@ -47,7 +47,7 @@ jobs:
     needs: base-matrix
     strategy:
       matrix:
-        idris-version: ["v0.5.0", "v0.5.1", "latest"]
+        idris-version: ["v0.5.0", "v0.5.1", "v0.6.0", "latest"]
         consumer: [devcontainer, ubuntu, debian]
     uses: ./.github/workflows/build-deploy-consumer.yml
     with:
