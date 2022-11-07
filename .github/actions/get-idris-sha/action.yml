@@ -16,5 +16,5 @@ runs:
     - name: Get SHA
       id: get-sha
       run: |
-        echo "::set-output name=sha::$(curl -s 'https://api.github.com/repos/idris-lang/Idris2/commits' | jq -r '.[0].sha')"
+        echo "name=sha::$(curl -s 'https://api.github.com/repos/idris-lang/Idris2/commits' | jq -r '.[0].sha')" >> $GITHUB_OUTPUT
       shell: bash
