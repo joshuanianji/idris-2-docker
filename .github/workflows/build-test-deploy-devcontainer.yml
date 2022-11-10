@@ -44,7 +44,7 @@ jobs:
         uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94
         with:
           context: .
-          file: base.Dockerfile
+          file: devcontainer.Dockerfile
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
             IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
@@ -71,7 +71,7 @@ jobs:
         with:
           context: .
           load: true
-          file: base.Dockerfile
+          file: devcontainer.Dockerfile
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
             IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
@@ -103,7 +103,7 @@ jobs:
         with:
           context: .
           load: true
-          file: base.Dockerfile
+          file: devcontainer.Dockerfile
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
             IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
@@ -140,7 +140,7 @@ jobs:
         with:
           context: .
           load: true
-          file: base.Dockerfile
+          file: devcontainer.Dockerfile
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
             IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
@@ -192,7 +192,7 @@ jobs:
           context: .
           platforms: linux/arm64,linux/amd64
           push: true
-          file: base.Dockerfile
+          file: devcontainer.Dockerfile
           build-args: |
             IDRIS_VERSION=${{ inputs.version }}
             IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
