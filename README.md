@@ -96,7 +96,7 @@ We require some environment variables to be able to build the images locally.
 ```bash
 export IDRIS_VERSION=latest
 # get latest commit - here we're using the github api and jq
-export IDRIS_COMMIT=$(curl -s 'https://api.github.com/repos/idris-lang/Idris2/commits' | jq -r '.[0].sha')
+export IDRIS_SHA=$(curl -s 'https://api.github.com/repos/idris-lang/Idris2/commits' | jq -r '.[0].sha')
 
 # tagging the base image so other Dockerfiles can reference it
 docker build -f base.Dockerfile -t "ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION}" .
