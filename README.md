@@ -17,6 +17,9 @@ Idris Versions: `v0.5.0`, `v0.5.1`, `v0.6.0`, `latest` (Up to date with [Idris2/
   * [Devcontainer](#devcontainer)
   * [Command Line](#command-line)
   * [Base Image](#base-image)
+* [Running Locally](#running-locally)
+  * [Build Latest (or a Specific Commit)](#build-latest-or-a-specific-commit)
+  * [Build From a Tagged Release](#build-from-a-tagged-release)
 * [Credit](#credit)
 
 ## Motivation
@@ -91,7 +94,7 @@ FROM ghcr.io/joshuanianji/idris-2-docker/debian:v0.5.1
 
 We require some environment variables to be able to build the images locally.
 
-### Build Latest (or a specific commit)
+### Build Latest (or a Specific Commit)
 
 ```bash
 export IDRIS_VERSION=latest
@@ -105,7 +108,7 @@ docker build -f base.Dockerfile -t "ghcr.io/joshuanianji/idris-2-docker/base:${I
 docker build -f devcontainer.Dockerfile .
 ```
 
-### Build from a Tagged Release
+### Build From a Tagged Release
 
 ```bash
 export IDRIS_VERSION=v0.6.0
