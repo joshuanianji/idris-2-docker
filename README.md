@@ -102,10 +102,18 @@ export IDRIS_VERSION=latest
 export IDRIS_SHA=$(curl -s 'https://api.github.com/repos/idris-lang/Idris2/commits' | jq -r '.[0].sha')
 
 # tagging the base image so other Dockerfiles can reference it
-docker build -f base.Dockerfile -t "ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION}" .
+docker build \
+  --build-arg IDRIS_SHA=$IDRIS_SHA \
+  --build-arg IDRIS_VERSION=$IDRIS_VERSION \
+  -f base.Dockerfile \
+  -t "ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION}" .
 
-# Build other images 
-docker build -f devcontainer.Dockerfile .
+# Build other images
+# the devcontainer image needs $IDRIS_SHA but debian and ubuntu do not
+docker build \
+  --build-arg IDRIS_SHA=$IDRIS_SHA \
+  --build-arg IDRIS_VERSION=$IDRIS_VERSION \
+  -f devcontainer.Dockerfile .
 ```
 
 ### Build From a Tagged Release
