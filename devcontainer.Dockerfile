@@ -27,13 +27,21 @@ RUN if [ $IDRIS_VERSION = "latest" ] ; \
 WORKDIR /build/idris2-lsp
 RUN git submodule update --init --recursive
 WORKDIR /build/idris2-lsp/Idris2
-RUN make bootstrap SCHEME=scheme && make install PREFIX=/usr/local/lib/idris2
+RUN make bootstrap SCHEME=scheme PREFIX=/usr/local/lib/idris2 && make install PREFIX=/usr/local/lib/idris2
+
+# ensure idris2 is in path
+ENV PATH="/usr/local/lib/idris2/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/usr/local/lib/idris2/lib:${LD_LIBRARY_PATH}"
+
 # Manual install of idris2-lsp 
 # https://github.com/idris-community/idris2-lsp#manual-installation
 RUN make install-with-src-libs PREFIX=/usr/local/lib/idris2
 RUN make install-with-src-api PREFIX=/usr/local/lib/idris2
 WORKDIR /build/idris2-lsp
-RUN make install PREFIX=/usr/local/lib/idris2
+# we need an IDRIS2_PREFIX env var instead of PREFIX
+# https://github.com/idris-community/idris2-lsp/pull/56
+# WAIT, DO WE? It seems that they can rely on `idris2 --prefix`
+RUN make install
 
 FROM mcr.microsoft.com/vscode/devcontainers/base:bullseye
 
