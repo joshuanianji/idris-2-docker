@@ -63,7 +63,7 @@ jobs:
     needs: base
     strategy:
       matrix:
-        idris-version: ["v0.5.1", "v0.6.0", "latest"]
+        idris-version: ["0.5.1", "0.6.0", "latest"]
         consumer: [ubuntu, debian]
     uses: ./.github/workflows/build-deploy-consumer.yml
     with:
