@@ -23,7 +23,7 @@ on:
         type: boolean
 
 env:
-  TAG: ghcr.io/${{ inputs.image-name }}:${{ inputs.version }}
+  TAG: ghcr.io/${{ inputs.image-name }}:v${{ inputs.version }}
 
 jobs:
   build:

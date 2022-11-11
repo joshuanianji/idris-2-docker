@@ -32,7 +32,7 @@ jobs:
     name: Base - ${{ matrix.idris-version }}
     strategy:
       matrix:
-        idris-version: ["v0.5.1", "v0.6.0", "latest"]
+        idris-version: ["0.5.1", "0.6.0", "latest"]
     uses: ./.github/workflows/build-test-deploy-base.yml
     with:
       version: ${{ matrix.idris-version }}
@@ -46,7 +46,8 @@ jobs:
     needs: base
     strategy:
       matrix:
-        idris-version: ["v0.5.1", "v0.6.0"]
+        # latest does not work right now!
+        idris-version: ["0.5.1", "0.6.0"]
     uses: ./.github/workflows/build-test-deploy-devcontainer.yml
     with:
       version: ${{ matrix.idris-version }}
