@@ -20,10 +20,12 @@ COPY --from=base /root/scheme-lib/ /usr/lib/
 WORKDIR /build
 # Using --recurse-submodules, we get the underlying idris2 repo in the recorded state (https://stackoverflow.com/a/3797061)
 RUN if [ $IDRIS_VERSION = "latest" ] ; \ 
-    then git clone --recurse-submodules https://github.com/idris-community/idris2-lsp.git && cd idris2-lsp && git checkout $IDRIS_LSP_SHA ; \
+    then git clone https://github.com/idris-community/idris2-lsp.git && cd idris2-lsp && git checkout $IDRIS_LSP_SHA ; \
     else git clone --depth 1 --branch "idris2-$IDRIS_VERSION" https://github.com/idris-community/idris2-lsp.git ; \
     fi
 
+WORKDIR /build/idris2-lsp
+RUN git submodule update --init --recursive
 WORKDIR /build/idris2-lsp/Idris2
 RUN make bootstrap SCHEME=scheme && make install PREFIX=/usr/local/lib/idris2
 # Manual install of idris2-lsp 
