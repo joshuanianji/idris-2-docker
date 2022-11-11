@@ -1,8 +1,7 @@
 # IDRIS_VERSION is in the format "x.y.z" (e.g. "0.5.1") or "latest"
 ARG IDRIS_VERSION=latest
 
-FROM ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION} as base
-
+FROM ghcr.io/joshuanianji/idris-2-docker/base:v${IDRIS_VERSION} as base
 
 FROM debian:bullseye as builder 
 # args are not shared between build stages
