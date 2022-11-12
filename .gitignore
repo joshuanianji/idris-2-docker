@@ -1,1 +1,3 @@
 .vscode/
+# we use tmp/ to install bats-assert and bats-support
+tmp/

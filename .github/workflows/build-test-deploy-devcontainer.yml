@@ -110,10 +110,18 @@ jobs:
           tags: ${{ env.TAG }}-test
           cache-from: type=gha,scope=build-test-${{ inputs.scope }}
 
+      - name: Setup BATS
+        uses: mig4/setup-bats@v1
+        with:
+          bats-version: '1.8.2'
+
+      # seems to setup the libs in /tmp/
+      - name: Setup Bats libs
+        uses: brokenpip3/setup-bats-libs@0.1.0
+
       - name: Run Test 2
         run: |
-          docker run ${{ env.TAG }}-test idris2 --prefix
-          docker run ${{ env.TAG }}-test which idris2
+          DOCKER_IMAGE=${{ env.TAG }}-test bats -r tests
 
   deploy:
     name: Deploy
