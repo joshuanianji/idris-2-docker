@@ -55,4 +55,3 @@ COPY --from=base /root/scheme-lib/ /usr/lib/
 ENV PATH="/usr/local/lib/idris2/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/local/lib/idris2/lib:${LD_LIBRARY_PATH}"
 
-ENTRYPOINT ["idris2"]
