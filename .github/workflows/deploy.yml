@@ -28,48 +28,183 @@ permissions:
   contents: read
 
 jobs:
-  base:
-    name: Base - ${{ matrix.idris-version }}
+  base-build:
+    name: Build Base - ${{ matrix.idris-version }}
     strategy:
       matrix:
-        idris-version: ["0.5.1", "0.6.0", "latest"]
-    uses: ./.github/workflows/build-test-deploy-base.yml
-    with:
-      version: ${{ matrix.idris-version }}
-      image-name: ${{ github.repository }}/base
-      scope: base-${{ matrix.idris-version }}
-      push: ${{ github.event_name == 'push' }}
-    secrets: inherit
+        idris-version: ["v0.5.1", "v0.6.0", "latest"]
+    steps:
+      # mainly just for caching purposes - makes it faster to build later on
+      - name: Build
+        uses: ./.github/actions/build-image
+        with:
+          version: ${{ matrix.idris-version }}
+          dockerfile: base
 
-  devcontainer:
-    name: Devcontainer - ${{ matrix.idris-version }}
-    needs: base
+  base-test-1:
+    name: Test 1 Base - ${{ matrix.idris-version }}
+    needs: base-build
+    strategy:
+      matrix:
+        idris-version: ["v0.5.1", "v0.6.0", "latest"]
+    env:
+      TAG: ghcr.io/${{ github.repository }}/base:${{ inputs.version }}
+    steps:
+      # mainly just for caching purposes - makes it faster to build later on
+      - name: Build
+        uses: ./.github/actions/build-image
+        with:
+          version: ${{ matrix.idris-version }}
+          dockerfile: base
+      
+      - name: Run Test 
+        run: |
+          docker run ${{ env.TAG }}-test /bin/bash -c "make clean; make all && make install"
+
+  base-test-2:
+    name: Test 2 Base - ${{ matrix.idris-version }}
+    needs: base-build
+    strategy:
+      matrix:
+        idris-version: ["v0.5.1", "v0.6.0", "latest"]
+    env:
+      TAG: ghcr.io/${{ github.repository }}/base:${{ inputs.version }}
+    steps:
+      # mainly just for caching purposes - makes it faster to build later on
+      - name: Build
+        uses: ./.github/actions/build-image
+        with:
+          version: ${{ matrix.idris-version }}
+          dockerfile: base
+
+      - name: Run Test
+        run: |
+          docker run ${{ env.TAG }}-test /bin/bash -c "make clean; make all; make test"
+
+  # it would be nice to make the if conditional in the top level of the job,
+  # but since devcontainer-build depends on this, we need this to run on a PR success as well
+  base-deploy:
+    name: Deploy Base - ${{ matrix.idris-version }}
+    needs: [base-test-1, base-test-2]
+    strategy:
+      matrix:
+        idris-version: ["v0.5.1", "v0.6.0", "latest"]
+    steps:
+      # mainly just for caching purposes - makes it faster to build later on
+      - name: Build
+        uses: ./.github/actions/build-image
+        with:
+          version: ${{ matrix.idris-version }}
+          dockerfile: base
+
+      - name: Deploy 
+        if: github.event_name == 'push'
+        uses: ./.github/actions/deploy-image
+        with:
+          version: ${{ matrix.idris-version }}
+          dockerfile: base
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh_user: ${{ secrets.SSH_USER }}
+          ssh_ip: ${{ secrets.SSH_IP }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  devcontainer-build-test:
+    name: Build/Test Devcontainer - ${{ matrix.idris-version }}
+    needs: base-deploy
     strategy:
       matrix:
         # latest does not work right now!
         idris-version: ["0.5.1", "0.6.0"]
-    uses: ./.github/workflows/build-test-deploy-devcontainer.yml
-    with:
-      version: ${{ matrix.idris-version }}
-      image-name: ${{ github.repository }}/devcontainer
-      scope: devcontainer-${{ matrix.idris-version }}
-      push: ${{ github.event_name == 'push' }}
-    secrets: inherit
+    steps:
+      - name: Build
+        uses: ./.github/actions/build-image
+        with:
+          version: ${{ matrix.idris-version }}
+          dockerfile: devcontainer
 
-  # "consumer" images just "consume" the base image and do nothing else
-  # no testing needed for these.
-  consumer:
-    name: Consumer - ${{ matrix.consumer }} ${{ matrix.idris-version }}
-    needs: base
+      - name: Setup BATS
+        uses: mig4/setup-bats@v1
+        with:
+          bats-version: '1.8.2'
+
+      - name: Setup Bats libs
+        uses: brokenpip3/setup-bats-libs@0.1.0
+        with:
+          support-version: 0.3.0
+          assert-version: 2.1.0
+          file-install: false
+          detik-install: false
+
+      # LIB_PATH is a env var I use in the setup() function of my bats tests
+      # it points to the folder containing bats-assert and bats-support
+      - name: Run Test 2
+        run: |
+          export LIB_PATH=/usr/lib/
+          export DOCKER_IMAGE=${{ env.TAG }}-test
+          bats tests
+  
+  devcontainer-deploy:
+    name: Deploy Devcontainer - ${{ matrix.idris-version }}
+    needs: devcontainer-build-test
     strategy:
       matrix:
-        idris-version: ["0.5.1", "0.6.0", "latest"]
-        consumer: [ubuntu, debian]
+        # latest does not work right now!
+        idris-version: ["0.5.1", "0.6.0"]
+    steps:
+      - name: Build
+        uses: ./.github/actions/build-image
+        with:
+          version: ${{ matrix.idris-version }}
+          dockerfile: devcontainer
+
+      - name: Deploy 
+        if: github.event_name == 'push'
+        uses: ./.github/actions/deploy-image
+        with:
+          version: ${{ matrix.idris-version }}
+          dockerfile: devcontainer
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh_user: ${{ secrets.SSH_USER }}
+          ssh_ip: ${{ secrets.SSH_IP }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+
+  # "consumer" images just "consume" the base image and do nothing else
+  # no tests for these
+  consumer-build:
+    name: Build Consumer - ${{ matrix.dockerfile }} ${{ matrix.idris-version }}
+    needs: base-deploy
+    strategy:
+      matrix:
+        idris-version: ["v0.5.1", "v0.6.0", "latest"]
+        dockerfile: [ubuntu, debian]
+    steps:
+      # mainly just for caching purposes - makes it faster to build later on
+      - name: Build
+        uses: ./.github/actions/build-image
+        with:
+          version: ${{ matrix.idris-version }}
+          dockerfile: ${{ matrix.dockerfile }}
+  
+  consumer-deploy:
+    name: Deploy Consumer - ${{ matrix.dockerfile }} ${{ matrix.idris-version }}
     uses: ./.github/workflows/build-deploy-consumer.yml
-    with:
-      version: ${{ matrix.idris-version }}
-      dockerfile: ${{ matrix.consumer }}.Dockerfile
-      image-name: ${{ github.repository }}/${{ matrix.consumer }}
-      scope: ${{ matrix.consumer }}-${{ matrix.idris-version }}
-      push: ${{ github.event_name == 'push' }}
-    secrets: inherit
+    needs: consumer-build
+    if: github.event_name == 'push'
+    steps:
+      - name: Build
+        uses: ./.github/actions/build-image
+        with:
+          version: ${{ matrix.idris-version }}
+          dockerfile: ${{ matrix.dockerfile }}
+
+      - name: Deploy 
+        if: github.event_name == 'push'
+        uses: ./.github/actions/deploy-image
+        with:
+          version: ${{ matrix.idris-version }}
+          dockerfile: base
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh_user: ${{ secrets.SSH_USER }}
+          ssh_ip: ${{ secrets.SSH_IP }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
