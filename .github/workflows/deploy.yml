@@ -35,6 +35,9 @@ jobs:
       matrix:
         idris-version: ["v0.5.1", "v0.6.0", "latest"]
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
       # mainly just for caching purposes - makes it faster to build later on
       - name: Build
         uses: ./.github/actions/build-image
@@ -52,6 +55,9 @@ jobs:
     env:
       TAG: ghcr.io/${{ github.repository }}/base:${{ inputs.version }}
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
       # mainly just for caching purposes - makes it faster to build later on
       - name: Build
         uses: ./.github/actions/build-image
@@ -73,6 +79,9 @@ jobs:
     env:
       TAG: ghcr.io/${{ github.repository }}/base:${{ inputs.version }}
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
       # mainly just for caching purposes - makes it faster to build later on
       - name: Build
         uses: ./.github/actions/build-image
@@ -94,6 +103,9 @@ jobs:
       matrix:
         idris-version: ["v0.5.1", "v0.6.0", "latest"]
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
       # mainly just for caching purposes - makes it faster to build later on
       - name: Build
         uses: ./.github/actions/build-image
@@ -121,6 +133,9 @@ jobs:
         # latest does not work right now!
         idris-version: ["0.5.1", "0.6.0"]
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
       - name: Build
         uses: ./.github/actions/build-image
         with:
@@ -157,6 +172,9 @@ jobs:
         # latest does not work right now!
         idris-version: ["0.5.1", "0.6.0"]
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
       - name: Build
         uses: ./.github/actions/build-image
         with:
@@ -186,6 +204,9 @@ jobs:
         idris-version: ["v0.5.1", "v0.6.0", "latest"]
         dockerfile: [ubuntu, debian]
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
       # mainly just for caching purposes - makes it faster to build later on
       - name: Build
         uses: ./.github/actions/build-image
@@ -203,6 +224,9 @@ jobs:
         idris-version: ["v0.5.1", "v0.6.0", "latest"]
         dockerfile: [ubuntu, debian]
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
       - name: Build
         uses: ./.github/actions/build-image
         with:
