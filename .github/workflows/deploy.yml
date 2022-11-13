@@ -9,9 +9,9 @@ on:
       - ".github/workflows/deploy.yml" # this file
       - "*.Dockerfile"
       # single
-      - ".github/actions/setup-buildx/action.yml"
-      - ".github/workflows/build-test-deploy-base.yml"
-      - ".github/workflows/build-deploy-consumer.yml"
+      - ".github/actions/build-image/action.yml"
+      - ".github/actions/deploy-image/action.yml"
+      - ".github/actions/get-idris-sha/action.yml"
   pull_request:
     branches:
       - main
@@ -19,9 +19,9 @@ on:
       - ".github/workflows/deploy.yml" # this file
       - "*.Dockerfile"
       # single
-      - ".github/actions/setup-buildx/action.yml"
-      - ".github/workflows/build-test-deploy-base.yml"
-      - ".github/workflows/build-deploy-consumer.yml"
+      - ".github/actions/build-image/action.yml"
+      - ".github/actions/deploy-image/action.yml"
+      - ".github/actions/get-idris-sha/action.yml"
 
 permissions:
   packages: write
