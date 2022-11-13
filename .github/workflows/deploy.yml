@@ -44,6 +44,7 @@ jobs:
         with:
           version: ${{ matrix.idris-version }}
           dockerfile: base
+          repo: ${{ github.repository }}
 
   base-test-1:
     name: Test 1 Base - ${{ matrix.idris-version }}
@@ -64,6 +65,7 @@ jobs:
         with:
           version: ${{ matrix.idris-version }}
           dockerfile: base
+          repo: ${{ github.repository }}
       
       - name: Run Test 
         run: |
@@ -88,6 +90,7 @@ jobs:
         with:
           version: ${{ matrix.idris-version }}
           dockerfile: base
+          repo: ${{ github.repository }}
 
       - name: Run Test
         run: |
@@ -112,6 +115,7 @@ jobs:
         with:
           version: ${{ matrix.idris-version }}
           dockerfile: base
+          repo: ${{ github.repository }}
 
       - name: Deploy 
         if: github.event_name == 'push'
@@ -123,6 +127,7 @@ jobs:
           ssh_user: ${{ secrets.SSH_USER }}
           ssh_ip: ${{ secrets.SSH_IP }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          repo: ${{ github.repository }}
 
   devcontainer-build-test:
     name: Build/Test Devcontainer - ${{ matrix.idris-version }}
@@ -143,6 +148,7 @@ jobs:
         with:
           version: ${{ matrix.idris-version }}
           dockerfile: devcontainer
+          repo: ${{ github.repository }}
 
       - name: Setup BATS
         uses: mig4/setup-bats@v1
@@ -182,6 +188,7 @@ jobs:
         with:
           version: ${{ matrix.idris-version }}
           dockerfile: devcontainer
+          repo: ${{ github.repository }}
 
       - name: Deploy 
         if: github.event_name == 'push'
@@ -215,6 +222,7 @@ jobs:
         with:
           version: ${{ matrix.idris-version }}
           dockerfile: ${{ matrix.dockerfile }}
+          repo: ${{ github.repository }}
   
   consumer-deploy:
     name: Deploy Consumer - ${{ matrix.dockerfile }} ${{ matrix.idris-version }}
@@ -234,6 +242,7 @@ jobs:
         with:
           version: ${{ matrix.idris-version }}
           dockerfile: ${{ matrix.dockerfile }}
+          repo: ${{ github.repository }}
 
       - name: Deploy 
         if: github.event_name == 'push'
@@ -245,3 +254,4 @@ jobs:
           ssh_user: ${{ secrets.SSH_USER }}
           ssh_ip: ${{ secrets.SSH_IP }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          repo: ${{ github.repository }}

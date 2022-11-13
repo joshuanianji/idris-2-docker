@@ -22,9 +22,14 @@ inputs:
     description: "Either 'base', 'debian', 'ubuntu' or 'devcontainer"
     required: true
     type: string
+  # somehow, composable actions cannot reference github context
+  repo:
+    description: "value of github.repository env var"
+    required: true 
+    type: string
 
 env:
-  TAG: ghcr.io/${{ github.repository }}/${{ inputs.dockerfile }}:${{ inputs.version }}
+  TAG: ghcr.io/${{ inputs.repo }}/${{ inputs.dockerfile }}:${{ inputs.version }}
 
 runs:
   using: composite
