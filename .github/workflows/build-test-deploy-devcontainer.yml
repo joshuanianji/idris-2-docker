@@ -128,8 +128,8 @@ jobs:
       - name: Run Test 2
         run: |
           export LIB_PATH=/usr/lib/
-          DOCKER_IMAGE=${{ env.TAG }}-test
-          bats -r tests
+          export DOCKER_IMAGE=${{ env.TAG }}-test
+          bats tests
 
   deploy:
     name: Deploy
