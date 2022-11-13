@@ -1,5 +1,5 @@
 name: "Get Idris SHA"
-description: "Retrieves latest Idris Commit SHA from Github API"
+description: "Retrieves latest Idris and Idris LSP Commit SHA from Github API"
 
 # This might be overkill to use a composite action, but it seems like the cleanest way
 # Plus, I want to learn about composite actions
@@ -9,6 +9,9 @@ outputs:
   sha:
     description: "The latest Idris Commit SHA"
     value: ${{ steps.get-sha.outputs.sha }}
+  lsp-sha:
+    description: "The latest Idris LSP Commit SHA"
+    value: ${{ steps.get-lsp-sha.outputs.sha }}
 
 runs:
   using: composite
@@ -17,4 +20,9 @@ runs:
       id: get-sha
       run: |
         echo "name=sha::$(curl -s 'https://api.github.com/repos/idris-lang/Idris2/commits' | jq -r '.[0].sha')" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Get LSP SHA
+      id: get-lsp-sha
+      run: |
+        echo "name=lsp-sha::$(curl -s 'https://api.github.com/repos/idris-community/idris2-lsp/commits' | jq -r '.[0].sha')" >> $GITHUB_OUTPUT
       shell: bash

@@ -28,27 +28,43 @@ permissions:
   contents: read
 
 jobs:
-  base-matrix:
+  base:
     name: Base - ${{ matrix.idris-version }}
     strategy:
       matrix:
-        idris-version: ["v0.5.0", "v0.5.1", "v0.6.0", "latest"]
+        idris-version: ["0.5.1", "0.6.0", "latest"]
     uses: ./.github/workflows/build-test-deploy-base.yml
     with:
       version: ${{ matrix.idris-version }}
-      dockerfile: base.Dockerfile
       image-name: ${{ github.repository }}/base
-      scope: ${{ matrix.idris-version }}
+      scope: base-${{ matrix.idris-version }}
       push: ${{ github.event_name == 'push' }}
     secrets: inherit
 
-  consumer-matrix:
-    name: Consumer - ${{ matrix.consumer }} ${{ matrix.idris-version }}
-    needs: base-matrix
+  devcontainer:
+    name: Devcontainer - ${{ matrix.idris-version }}
+    needs: base
     strategy:
       matrix:
-        idris-version: ["v0.5.0", "v0.5.1", "v0.6.0", "latest"]
-        consumer: [devcontainer, ubuntu, debian]
+        # latest does not work right now!
+        idris-version: ["0.5.1", "0.6.0"]
+    uses: ./.github/workflows/build-test-deploy-devcontainer.yml
+    with:
+      version: ${{ matrix.idris-version }}
+      image-name: ${{ github.repository }}/devcontainer
+      scope: devcontainer-${{ matrix.idris-version }}
+      push: ${{ github.event_name == 'push' }}
+    secrets: inherit
+
+  # "consumer" images just "consume" the base image and do nothing else
+  # no testing needed for these.
+  consumer:
+    name: Consumer - ${{ matrix.consumer }} ${{ matrix.idris-version }}
+    needs: base
+    strategy:
+      matrix:
+        idris-version: ["0.5.1", "0.6.0", "latest"]
+        consumer: [ubuntu, debian]
     uses: ./.github/workflows/build-deploy-consumer.yml
     with:
       version: ${{ matrix.idris-version }}
