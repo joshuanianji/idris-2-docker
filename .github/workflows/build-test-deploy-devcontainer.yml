@@ -115,13 +115,21 @@ jobs:
         with:
           bats-version: '1.8.2'
 
-      # seems to setup the libs in /tmp/
       - name: Setup Bats libs
         uses: brokenpip3/setup-bats-libs@0.1.0
+        with:
+          support-version: 0.3.0
+          assert-version: 2.1.0
+          file-install: false
+          detik-install: false
 
+      # LIB_PATH is a env var I use in the setup() function of my bats tests
+      # it points to the folder containing bats-assert and bats-support
       - name: Run Test 2
         run: |
-          DOCKER_IMAGE=${{ env.TAG }}-test bats -r tests
+          export LIB_PATH=/usr/lib/
+          DOCKER_IMAGE=${{ env.TAG }}-test
+          bats -r tests
 
   deploy:
     name: Deploy
