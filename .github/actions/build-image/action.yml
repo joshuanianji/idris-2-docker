@@ -12,7 +12,7 @@ inputs:
     type: string
 
 env:
-  TAG: ghcr.io/${{ inputs.image-name }}:${{ inputs.version }}
+  TAG: ghcr.io/${{ github.repository }}/${{ inputs.dockerfile }}:${{ inputs.version }}
 
 runs:
   using: composite
