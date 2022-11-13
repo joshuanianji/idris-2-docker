@@ -1,5 +1,5 @@
-# Devcontainer idris
-# Tests the idris installation inside the devcontainer image
+# Consumer idris
+# Tests the idris installation inside the "consumer" images - Ubuntu and Debian
 
 function setup() {
     # Assumes the BATS_TEST_FILENAME is always one layer deep inside tests/
@@ -16,24 +16,23 @@ function setup() {
 }
 
 @test "Test location of Idris binary" {
-    echo "Running idris bin location tests on docker image $DOCKER_IMAGE"
-
-    run docker run $DOCKER_IMAGE which idris2
-    assert_output '/usr/local/lib/idris2/bin/idris2'
+    # note that the consumer images have an entrypoint of the "idris2" binary
+    run docker run --entrypoint /bin/bash $DOCKER_IMAGE which idris2
+    assert_output '/root/.idris2/bin/idris2'
 }
 
-@test "Test Idris prefix" {
-    echo "Testing Idris prefix in $DOCKER_IMAGE"
-
-    run docker run $DOCKER_IMAGE idris2 --prefix
-    assert_output '/usr/local/lib/idris2'
+@test "Test idris version" {
+    # since we can't guess the idris version (e.g. the commit hash if we're on latest)
+    # we just test if it has "Idris 2, version" at the beginning
+    run docker run $DOCKER_IMAGE --version
+    assert_output --partial 'Idris 2, version'
 }
 
 @test "Test Idris2 command output" {
     # make sure it doesn't have "Module Prelude not found"
     # https://github.com/joshuanianji/idris-2-docker/issues/16#issuecomment-1254561254
-    echo "Testing Idris2 command output $DOCKER_IMAGE"
 
-    run docker run $DOCKER_IMAGE idris2
+    # the ENTRYPOINT is already the `idris2` command, so we just `docker run` without any other stuff
+    run docker run $DOCKER_IMAGE
     refute_output --partial "Module Prelude not found"
 }
