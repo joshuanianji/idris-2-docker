@@ -129,7 +129,7 @@ jobs:
         run: |
           export LIB_PATH=/usr/lib/
           export DOCKER_IMAGE=${{ env.TAG }}-test
-          bats tests
+          bats tests/devcontainer-idris.bats
 
   deploy:
     name: Deploy
