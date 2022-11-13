@@ -188,7 +188,6 @@ jobs:
   
   consumer-deploy:
     name: Deploy Consumer - ${{ matrix.dockerfile }} ${{ matrix.idris-version }}
-    uses: ./.github/workflows/build-deploy-consumer.yml
     needs: consumer-build
     if: github.event_name == 'push'
     steps:
