@@ -22,6 +22,11 @@ inputs:
     description: "Either 'base', 'debian', 'ubuntu' or 'devcontainer"
     required: true
     type: string
+  lsp-version:
+    description: "The version of the Idris LSP server to build"
+    required: false
+    type: string
+    default: "latest"
   # somehow, composable actions cannot reference github context
   repo:
     description: "value of github.repository env var"
@@ -62,10 +67,13 @@ runs:
         context: .
         platforms: linux/arm64,linux/amd64
         push: true
-        file: base.Dockerfile
+        file: ${{ inputs.dockerfile }}.Dockerfile
+        # not all the images need all these build args, but we put this here anyway
         build-args: |
           IDRIS_VERSION=${{ inputs.version }}
           IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
+          IDRIS_LSP_VERSION=${{ inputs.lsp-version }}
+          IDRIS_LSP_SHA=${{ steps.get-sha.outputs.lsp-sha }}
         tags: ghcr.io/${{ inputs.repo }}/${{ inputs.dockerfile }}:${{ inputs.version }}
 
         # When doing matrix builds, we need to scope the image

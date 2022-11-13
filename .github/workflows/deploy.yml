@@ -149,6 +149,7 @@ jobs:
           version: ${{ matrix.idris-version }}
           dockerfile: devcontainer
           repo: ${{ github.repository }}
+          lsp-version: ${{ matrix.lsp-version }}
 
       - name: Setup BATS
         uses: mig4/setup-bats@v1
@@ -178,7 +179,12 @@ jobs:
     strategy:
       matrix:
         # latest does not work right now!
-        idris-version: ["0.5.1", "0.6.0"]
+        idris-version: ["v0.5.1", "v0.6.0"]
+        include:
+          - idris-version: "v0.5.1"
+            lsp-version: "idris2-0.5.1"
+          - idris-version: "v0.6.0"
+            lsp-version: "idris2-0.6.0"
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -189,12 +195,14 @@ jobs:
           version: ${{ matrix.idris-version }}
           dockerfile: devcontainer
           repo: ${{ github.repository }}
+          lsp-version: ${{ matrix.lsp-version }}
 
       - name: Deploy 
         if: github.event_name == 'push'
         uses: ./.github/actions/deploy-image
         with:
           version: ${{ matrix.idris-version }}
+          lsp-version: ${{ matrix.lsp-version }}
           dockerfile: devcontainer
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh_user: ${{ secrets.SSH_USER }}
