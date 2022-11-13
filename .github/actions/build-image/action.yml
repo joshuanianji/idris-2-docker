@@ -11,6 +11,8 @@ inputs:
     required: true
     type: string
 
+env:
+  TAG: ghcr.io/${{ inputs.image-name }}:${{ inputs.version }}
 
 runs:
   using: composite
@@ -30,6 +32,7 @@ runs:
         build-args: |
           IDRIS_VERSION=${{ inputs.version }}
           IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
+        tags: ${{ env.TAG }}
         
         # When doing matrix builds, we need to scope the image
         # https://github.com/moby/buildkit/issues/2885
