@@ -65,7 +65,7 @@ jobs:
       matrix:
         idris-version: ["0.5.1", "0.6.0", "latest"]
         consumer: [ubuntu, debian]
-    uses: ./.github/workflows/build-deploy-consumer.yml
+    uses: ./.github/workflows/build-test-deploy-consumer.yml
     with:
       version: ${{ matrix.idris-version }}
       dockerfile: ${{ matrix.consumer }}.Dockerfile
