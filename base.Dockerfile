@@ -37,7 +37,7 @@ WORKDIR /root
 # https://stackoverflow.com/a/41361804
 RUN if [ $IDRIS_VERSION = "latest" ] ; \ 
     then git clone https://github.com/idris-lang/Idris2.git && cd Idris2 && git checkout $IDRIS_SHA ; \
-    else git clone --depth 1 --branch "v$IDRIS_VERSION" https://github.com/idris-lang/Idris2.git ; \
+    else git clone --depth 1 --branch $IDRIS_VERSION https://github.com/idris-lang/Idris2.git ; \
     fi
 
 WORKDIR /root/Idris2 

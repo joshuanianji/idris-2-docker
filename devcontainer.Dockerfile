@@ -1,12 +1,13 @@
-# IDRIS_VERSION is in the format "x.y.z" (e.g. "0.5.1") or "latest"
 ARG IDRIS_VERSION=latest
+# LSP_VERSION is in the form "idris2-0.5.1", or "latest"
+ARG IDRIS_LSP_VERSION=latest
 
-FROM ghcr.io/joshuanianji/idris-2-docker/base:v${IDRIS_VERSION} as base
+FROM ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION} as base
 
 FROM debian:bullseye as builder 
 # args are not shared between build stages
 # https://github.com/moby/moby/issues/37345
-ARG IDRIS_VERSION
+ARG IDRIS_LSP_VERSION
 ARG IDRIS_LSP_SHA
 
 RUN apt-get update && \
@@ -19,9 +20,9 @@ COPY --from=base /root/scheme-lib/ /usr/lib/
 # git clone idris2-lsp, as well as underlying Idris2 submodule
 WORKDIR /build
 # Using --recurse-submodules, we get the underlying idris2 repo in the recorded state (https://stackoverflow.com/a/3797061)
-RUN if [ $IDRIS_VERSION = "latest" ] ; \ 
+RUN if [ $IDRIS_LSP_VERSION = "latest" ] ; \ 
     then git clone https://github.com/idris-community/idris2-lsp.git && cd idris2-lsp && git checkout $IDRIS_LSP_SHA ; \
-    else git clone --depth 1 --branch "idris2-$IDRIS_VERSION" https://github.com/idris-community/idris2-lsp.git ; \
+    else git clone --depth 1 --branch $IDRIS_LSP_VERSION https://github.com/idris-community/idris2-lsp.git ; \
     fi
 
 WORKDIR /build/idris2-lsp

@@ -1,6 +1,6 @@
 ARG IDRIS_VERSION=latest
 
-FROM ghcr.io/joshuanianji/idris-2-docker/base:v${IDRIS_VERSION} as base
+FROM ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION} as base
 
 FROM ubuntu:20.04
 

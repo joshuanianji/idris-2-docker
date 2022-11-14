@@ -1,0 +1,52 @@
+name: "Build Image"
+description: "Builds a Docker Image"
+
+inputs:
+  version:
+    description: "The version of Idris to build"
+    required: true
+    type: string
+  dockerfile:
+    description: "Either 'base', 'debian', 'ubuntu' or 'devcontainer"
+    required: true
+    type: string
+  # somehow, composable actions cannot reference github context
+  repo:
+    description: "value of github.repository env var"
+    required: true 
+    type: string
+  lsp-version:
+    description: "The version of the Idris LSP server to build"
+    required: false
+    type: string
+    default: "latest"
+
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    
+    - name: Get Latest Idris Commit SHA
+      id: get-sha
+      uses: ./.github/actions/get-idris-sha
+
+    - name: Build Image
+      uses: docker/build-push-action@c56af957549030174b10d6867f20e78cfd7debc5
+      with:
+        context: .
+        file: ${{ inputs.dockerfile }}.Dockerfile
+        # not all the images need all these build args, but we put this here anyway
+        build-args: |
+          IDRIS_VERSION=${{ inputs.version }}
+          IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
+          IDRIS_LSP_VERSION=${{ inputs.lsp-version }}
+          IDRIS_LSP_SHA=${{ steps.get-sha.outputs.lsp-sha }}
+        tags: ghcr.io/${{ inputs.repo }}/${{ inputs.dockerfile }}:${{ inputs.version }}
+        
+        # When doing matrix builds, we need to scope the image
+        # https://github.com/moby/buildkit/issues/2885
+        cache-from: type=gha,scope=build-test-${{ inputs.dockerfile }}-${{ inputs.version }}
+        cache-to: type=gha,mode=max,scope=build-test-${{ inputs.dockerfile }}-${{ inputs.version }}
+
