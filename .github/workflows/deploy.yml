@@ -143,7 +143,7 @@ jobs:
           - idris-version: "v0.6.0"
             lsp-version: "idris2-0.6.0"
     env:
-      TAG: ghcr.io/${{ github.repository }}/base:${{ matrix.idris-version }}
+      TAG: ghcr.io/${{ github.repository }}/devcontainer:${{ matrix.idris-version }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
