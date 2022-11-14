@@ -14,16 +14,17 @@ function setup() {
 
 @test "Test location of Idris binary" {
     echo "Running idris bin location tests on docker image $DOCKER_IMAGE"
+    # use "partial" in case we need to pull the image from the cloud
 
     run docker run $DOCKER_IMAGE which idris2
-    assert_output '/usr/local/lib/idris2/bin/idris2'
+    assert_output --partial '/usr/local/lib/idris2/bin/idris2'
 }
 
 @test "Test Idris prefix" {
     echo "Testing Idris prefix in $DOCKER_IMAGE"
 
     run docker run $DOCKER_IMAGE idris2 --prefix
-    assert_output '/usr/local/lib/idris2'
+    assert_output --partial '/usr/local/lib/idris2'
 }
 
 @test "Test Idris2 command output" {
