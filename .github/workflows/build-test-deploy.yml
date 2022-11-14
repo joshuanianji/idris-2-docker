@@ -1,4 +1,4 @@
-name: Deploy Matrix
+name: Build, Test and Deploy All Images
 
 on:
   # can we be more DRY here?
@@ -22,6 +22,9 @@ on:
       - ".github/actions/build-image/action.yml"
       - ".github/actions/deploy-image/action.yml"
       - ".github/actions/get-idris-sha/action.yml"
+  # Deploy every day at 1am
+  schedule:
+    - cron: "0 1 * * *"
 
 permissions:
   packages: write
