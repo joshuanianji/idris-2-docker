@@ -109,14 +109,6 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v3
 
-      # mainly just for caching purposes - makes it faster to build later on
-      - name: Build
-        uses: ./.github/actions/build-image
-        with:
-          version: ${{ matrix.idris-version }}
-          dockerfile: base
-          repo: ${{ github.repository }}
-
       - name: Deploy 
         if: github.event_name == 'push'
         uses: ./.github/actions/deploy-image
@@ -194,14 +186,6 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v3
 
-      - name: Build
-        uses: ./.github/actions/build-image
-        with:
-          version: ${{ matrix.idris-version }}
-          dockerfile: devcontainer
-          repo: ${{ github.repository }}
-          lsp-version: ${{ matrix.lsp-version }}
-
       - name: Deploy 
         if: github.event_name == 'push'
         uses: ./.github/actions/deploy-image
@@ -213,6 +197,8 @@ jobs:
           ssh_user: ${{ secrets.SSH_USER }}
           ssh_ip: ${{ secrets.SSH_IP }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          repo: ${{ github.repository }}
+
 
 
   # "consumer" images just "consume" the base image and do nothing else
@@ -249,13 +235,6 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
-
-      - name: Build
-        uses: ./.github/actions/build-image
-        with:
-          version: ${{ matrix.idris-version }}
-          dockerfile: ${{ matrix.dockerfile }}
-          repo: ${{ github.repository }}
 
       - name: Deploy 
         if: github.event_name == 'push'
