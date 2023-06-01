@@ -1,0 +1,11 @@
+{
+    "[github-actions-workflow]": {
+        "editor.tabSize": 2
+    },
+    "[yaml]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2,
+        "editor.autoIndent": "advanced",
+        "diffEditor.ignoreTrimWhitespace": false
+    }
+}

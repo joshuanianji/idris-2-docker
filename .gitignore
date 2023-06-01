@@ -1,3 +1,2 @@
-.vscode/
-# we use this director to install bats-assert and bats-support
+# we use this directory to install bats-assert and bats-support
 tests/test_helper/
