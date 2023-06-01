@@ -152,7 +152,7 @@ jobs:
           lsp-version: ${{ matrix.lsp-version }}
 
       - name: Setup BATS
-        uses: mig4/setup-bats@v1
+        uses: andmos/setup-bats@patch-1
         with:
           bats-version: '1.8.2'
 
