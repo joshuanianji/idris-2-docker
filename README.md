@@ -8,19 +8,21 @@ Idris Versions: `v0.5.1`, `v0.6.0`, `latest` (Up to date with [Idris2/main](http
 
 ## Table of Contents
 
-* [Motivation](#motivation)
-* [Images](#images)
-* [Devcontainer Demo: Wordle in Idris](#devcontainer-demo-wordle-in-idris)
-  * [Prerequisites](#prerequisites)
-  * [Opening in a Devcontainer](#opening-in-a-devcontainer)
-* [Usage](#usage)
-  * [Devcontainer](#devcontainer)
-  * [Command Line](#command-line)
-  * [Base Image](#base-image)
-* [Running Locally](#running-locally)
-  * [Build Latest (or a Specific Commit)](#build-latest-or-a-specific-commit)
-  * [Build From a Tagged Release](#build-from-a-tagged-release)
-* [Credit](#credit)
+- [Idris 2 Docker](#idris-2-docker)
+  - [Table of Contents](#table-of-contents)
+  - [Motivation](#motivation)
+  - [Images](#images)
+  - [Devcontainer Demo: Wordle in Idris](#devcontainer-demo-wordle-in-idris)
+    - [Prerequisites](#prerequisites)
+    - [Opening in a Devcontainer](#opening-in-a-devcontainer)
+  - [Usage](#usage)
+    - [Devcontainer](#devcontainer)
+    - [Command Line](#command-line)
+    - [Base Image](#base-image)
+  - [Running Locally](#running-locally)
+    - [Build Latest (or a Specific Commit)](#build-latest-or-a-specific-commit)
+    - [Build From a Tagged Release](#build-from-a-tagged-release)
+  - [Credit](#credit)
 
 ## Motivation
 
@@ -92,7 +94,7 @@ FROM ghcr.io/joshuanianji/idris-2-docker/debian:v0.5.1
 
 ## Running Locally
 
-We require some environment variables to be able to build the images locally.
+To run the images locally, I recommend opening the workspace in the Devcontainer to provide a fully-featured development environment.
 
 ### Build Latest (or a Specific Commit)
 
