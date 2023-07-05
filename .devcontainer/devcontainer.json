@@ -15,7 +15,8 @@
         "vscode": {
             "extensions": [
 				"github.vscode-github-actions",
-				"yzhang.markdown-all-in-one"
+				"yzhang.markdown-all-in-one",
+				"jetmartin.bats"
 			]
         }
     }
