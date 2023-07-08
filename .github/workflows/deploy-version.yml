@@ -22,6 +22,7 @@ jobs:
       - name: Deploy 
         uses: ./.github/actions/deploy-image
         with:
+          build-arm: true
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh_user: ${{ secrets.SSH_USER }}
           ssh_ip: ${{ secrets.SSH_IP }}
@@ -36,13 +37,32 @@ jobs:
     strategy:
       matrix:
         dockerfile: [ubuntu, debian]
+    env:
+      BASE_TAG: idris-base-${{ inputs.idris-version }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
 
+      # build base and deploy consumers based on a local version of the base image
+      # I think i might be able to use the remote version, since base is already deployed
+      # but I'd rather rely on local versions for now. 
+      # I am also building on arm but i really have no idea if docker will load the image on my oracle server lol
+      - name: Build Base
+        uses: ./.github/actions/build-image
+        with:
+          build-arm: true
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh_user: ${{ secrets.SSH_USER }}
+          ssh_ip: ${{ secrets.SSH_IP }}
+          version: ${{ inputs.idris-version }}
+          dockerfile: ${{ matrix.dockerfile }}
+          repo: ${{ github.repository }}
+          tag: ${{ env.BASE_TAG }}
+
       - name: Deploy 
         uses: ./.github/actions/deploy-image
         with:
+          build-arm: true
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh_user: ${{ secrets.SSH_USER }}
           ssh_ip: ${{ secrets.SSH_IP }}
@@ -50,4 +70,6 @@ jobs:
           dockerfile: base
           github_token: ${{ secrets.GITHUB_TOKEN }}
           repo: ${{ github.repository }}
+          build-args: |
+            BASE_TAG=${{ env.BASE_TAG }}
 
