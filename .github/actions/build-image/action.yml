@@ -2,15 +2,20 @@ name: Build Image
 description: Builds a Docker Image
 
 inputs:
+  build-arm:
+    description: "Whether to build arm or not. 'true' or 'false'"
+    required: false
+    default: false
+    type: boolean
   ssh_private_key:
     description: "The private key to use to connect to the builder"
-    required: true
+    required: false
   ssh_user:
     description: "The user to use to connect to the builder"
-    required: true
+    required: false
   ssh_ip:
     description: "The IP to use to connect to the builder"
-    required: true
+    required: false
   version:
     description: "The version of Idris to build"
     required: true
@@ -24,41 +29,70 @@ inputs:
     description: "value of github.repository env var"
     required: true 
     type: string
-  lsp-version:
-    description: "The version of the Idris LSP server to build"
+  base-img:
+    description: "Sets the BASE_IMG argument (when building debian or ubuntu)"
     required: false
     type: string
-    default: "latest"
-
+    default: ""
+  tag:
+    description: "tag of the image"
+    required: false
+    type: string
+  build-args:
+    description: "All other build Args"
+    required: false
+    type: string
 
 runs:
   using: composite
   steps:
     - name: Setup Buildx
+      if: ${{ inputs.build-arm == 'true' }}
       uses: "./.github/actions/setup-buildx"
       with:
         ssh_private_key: ${{ inputs.ssh_private_key }}
         ssh_user: ${{ inputs.ssh_user }}
         ssh_ip: ${{ inputs.ssh_ip }}
 
-
     - name: Get Latest Idris Commit SHA
       id: get-sha
       uses: ./.github/actions/get-idris-sha
 
-    - name: Build Image
+    # lots of code duplication going on...
+    - name: Build Image (with ARM)
+      if: ${{ inputs.build-arm == 'true' }}
       uses: docker/build-push-action@v4.1.1
       with:
         context: .
         platforms: linux/arm64,linux/amd64
         file: ${{ inputs.dockerfile }}.Dockerfile
         # not all the images need all these build args, but we put this here anyway
+        build-args: | 
+          IDRIS_VERSION=${{ inputs.version }}
+          IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
+          ${{ inputs.build-args }}
+        tags: ${{ inputs.tag }}
+        load: true
+
+        # When doing matrix builds, we need to scope the image
+        # https://github.com/moby/buildkit/issues/2885
+        cache-from: type=gha,scope=build-test-${{ inputs.dockerfile }}-${{ inputs.version }}
+        cache-to: type=gha,mode=max,scope=build-test-${{ inputs.dockerfile }}-${{ inputs.version }}
+
+    - name: Build Image (no ARM)
+      if: ${{ inputs.build-arm != 'true' }}
+      uses: docker/build-push-action@v4.1.1
+      with:
+        context: .
+        platforms: linux/amd64
+        file: ${{ inputs.dockerfile }}.Dockerfile
+        # not all the images need all these build args, but we put this here anyway
         build-args: |
           IDRIS_VERSION=${{ inputs.version }}
           IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
-          IDRIS_LSP_VERSION=${{ inputs.lsp-version }}
-          IDRIS_LSP_SHA=${{ steps.get-sha.outputs.lsp-sha }}
-        tags: ghcr.io/${{ inputs.repo }}/${{ inputs.dockerfile }}:${{ inputs.version }}
+          ${{ inputs.build-args }}
+        tags: ${{ inputs.tag }}
+        load: true
         
         # When doing matrix builds, we need to scope the image
         # https://github.com/moby/buildkit/issues/2885
