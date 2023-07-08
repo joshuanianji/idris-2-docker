@@ -7,8 +7,8 @@ on:
         required: true
         type: string
 
+# Don't allow us to read from packages
 permissions:
-  packages: read
   contents: read
 
 jobs:
@@ -26,13 +26,6 @@ jobs:
           version: ${{ inputs.idris-version }}
           dockerfile: base
           repo: ${{ github.repository }}
-      
-      - name: Setup Buildx
-        uses: "./.github/actions/setup-buildx"
-        with:
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh_user: ${{ secrets.SSH_USER }}
-          ssh_ip: ${{ secrets.SSH_IP }}
 
   base-test-1:
     name: Test 1 Base
