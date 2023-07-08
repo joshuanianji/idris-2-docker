@@ -1,0 +1,42 @@
+name: Build Test and Deploy
+
+on:
+  # can we be more DRY here?
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/**/*.yml"
+      - "*.Dockerfile"
+      - "tests/*.sh"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/**/*.yml"
+      - "*.Dockerfile"
+      - "tests/*.sh"
+
+jobs:
+  build-and-test:
+    name: Build and Test - ${{ matrix.idris-version }}
+    strategy:
+      matrix:
+        idris-version: ["v0.5.1", "v0.6.0", "latest"]
+    uses: ./.github/workflows/build-and-test-version.yml
+    with:
+      idris-version: ${{ matrix.idris-version }}
+  
+  deploy:
+    name: Deploy - ${{ matrix.idris-version }}
+    # only deploy if it's a push to main
+    if: github.event_name == 'schedule' || github.event_name == 'push'
+    needs: [build-and-test]
+    strategy:
+      matrix:
+        idris-version: ["v0.5.1", "v0.6.0", "latest"]
+      # deploy one at a time, so the latest is always the latest deployed
+      max-parallel: 1 
+    uses: ./.github/workflows/deploy-version.yml
+    with:
+      idris-version: ${{ matrix.idris-version }}
