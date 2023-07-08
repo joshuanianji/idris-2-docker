@@ -1,5 +1,5 @@
-name: "Build Image"
-description: "Builds a Docker Image"
+name: Build Image
+description: Builds a Docker Image
 
 inputs:
   version:
@@ -25,9 +25,14 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
-    
+    - name: Setup Buildx
+      uses: "./.github/actions/setup-buildx"
+      with:
+        ssh_private_key: ${{ inputs.ssh_private_key }}
+        ssh_user: ${{ inputs.ssh_user }}
+        ssh_ip: ${{ inputs.ssh_ip }}
+
+
     - name: Get Latest Idris Commit SHA
       id: get-sha
       uses: ./.github/actions/get-idris-sha
@@ -36,6 +41,7 @@ runs:
       uses: docker/build-push-action@v4.1.1
       with:
         context: .
+        platforms: linux/arm64,linux/amd64
         file: ${{ inputs.dockerfile }}.Dockerfile
         # not all the images need all these build args, but we put this here anyway
         build-args: |
