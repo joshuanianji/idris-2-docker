@@ -26,6 +26,7 @@ jobs:
     uses: ./.github/workflows/build-and-test-version.yml
     with:
       idris-version: ${{ matrix.idris-version }}
+    secrets: inherit
   
   deploy:
     name: Deploy - ${{ matrix.idris-version }}
@@ -40,3 +41,4 @@ jobs:
     uses: ./.github/workflows/deploy-version.yml
     with:
       idris-version: ${{ matrix.idris-version }}
+    secrets: inherit
