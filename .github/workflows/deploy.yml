@@ -30,7 +30,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           repo: ${{ github.repository }}
 
-
   deploy-consumers:
     name: Deploy Consumer - ${{ matrix.dockerfile }} ${{ inputs.idris-version }}
     runs-on: ubuntu-latest

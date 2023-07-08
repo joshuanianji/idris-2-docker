@@ -38,11 +38,8 @@ jobs:
     name: Test 1 Base
     runs-on: ubuntu-latest
     needs: base-build
-    strategy:
-      matrix:
-        idris-version: ["v0.5.1", "v0.6.0", "latest"]
     env:
-      TAG: ghcr.io/${{ github.repository }}/base:${{ matrix.idris-version }}
+      TAG: ghcr.io/${{ github.repository }}/base:${{ inputs.idris-version }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -51,7 +48,7 @@ jobs:
       - name: Build
         uses: ./.github/actions/build-image
         with:
-          version: ${{ matrix.idris-version }}
+          version: ${{ inputs.idris-version }}
           dockerfile: base
           repo: ${{ github.repository }}
       
@@ -60,14 +57,11 @@ jobs:
           docker run ${{ env.TAG }} /bin/bash -c "make clean; make all && make install"
 
   base-test-2:
-    name: Test 2 Base - ${{ matrix.idris-version }}
+    name: Test 2 Base - ${{ inputs.idris-version }}
     runs-on: ubuntu-latest
     needs: base-build
-    strategy:
-      matrix:
-        idris-version: ["v0.5.1", "v0.6.0", "latest"]
     env:
-      TAG: ghcr.io/${{ github.repository }}/base:${{ matrix.idris-version }}
+      TAG: ghcr.io/${{ github.repository }}/base:${{ inputs.idris-version }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -76,7 +70,7 @@ jobs:
       - name: Build
         uses: ./.github/actions/build-image
         with:
-          version: ${{ matrix.idris-version }}
+          version: ${{ inputs.idris-version }}
           dockerfile: base
           repo: ${{ github.repository }}
 
@@ -84,98 +78,18 @@ jobs:
         run: |
           docker run ${{ env.TAG }} /bin/bash -c "make clean; make all; make test"
 
-  devcontainer-build-test:
-    name: Build/Test Devcontainer - ${{ matrix.idris-version }}
-    runs-on: ubuntu-latest
-    needs: base-deploy
-    strategy:
-      matrix:
-        # latest does not work right now!
-        idris-version: ["v0.5.1", "v0.6.0"]
-        include:
-          - idris-version: "v0.5.1"
-            lsp-version: "idris2-0.5.1"
-          - idris-version: "v0.6.0"
-            lsp-version: "idris2-0.6.0"
-    env:
-      TAG: ghcr.io/${{ github.repository }}/devcontainer:${{ matrix.idris-version }}
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
-
-      - name: Build
-        uses: ./.github/actions/build-image
-        with:
-          version: ${{ matrix.idris-version }}
-          dockerfile: devcontainer
-          repo: ${{ github.repository }}
-          lsp-version: ${{ matrix.lsp-version }}
-
-      - name: Setup BATS
-        uses: andmos/setup-bats@patch-1
-        with:
-          bats-version: '1.8.2'
-
-      - name: Setup Bats libs
-        uses: brokenpip3/setup-bats-libs@0.1.0
-        with:
-          support-version: 0.3.0
-          assert-version: 2.1.0
-          file-install: false
-          detik-install: false
-
-      # LIB_PATH is a env var I use in the setup() function of my bats tests
-      # it points to the folder containing bats-assert and bats-support
-      - name: Run Test 2
-        run: |
-          export LIB_PATH=/usr/lib/
-          export DOCKER_IMAGE=${{ env.TAG }}
-          bats tests/devcontainer-idris.bats 
-  
-  devcontainer-deploy:
-    name: Deploy Devcontainer - ${{ matrix.idris-version }}
-    runs-on: ubuntu-latest
-    needs: devcontainer-build-test
-    strategy:
-      matrix:
-        # latest does not work right now!
-        idris-version: ["v0.5.1", "v0.6.0"]
-        include:
-          - idris-version: "v0.5.1"
-            lsp-version: "idris2-0.5.1"
-          - idris-version: "v0.6.0"
-            lsp-version: "idris2-0.6.0"
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
-
-      - name: Deploy 
-        if: github.event_name == 'push' || github.event_name == 'schedule'
-        uses: ./.github/actions/deploy-image
-        with:
-          version: ${{ matrix.idris-version }}
-          lsp-version: ${{ matrix.lsp-version }}
-          dockerfile: devcontainer
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh_user: ${{ secrets.SSH_USER }}
-          ssh_ip: ${{ secrets.SSH_IP }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          repo: ${{ github.repository }}
-
-
 
   # "consumer" images just "consume" the base image and do nothing else
-  # no tests for these
+  # basic tests for these
   consumer-build-test:
-    name: Build Consumer - ${{ matrix.dockerfile }} ${{ matrix.idris-version }}
+    name: Build Consumer - ${{ matrix.dockerfile }} ${{ inputs.idris-version }}
     runs-on: ubuntu-latest
-    needs: base-deploy
+    needs: [base-test-1, base-test-2]
     strategy:
       matrix:
-        idris-version: ["v0.5.1", "v0.6.0", "latest"]
         dockerfile: [ubuntu, debian]
     env:
-      TAG: ghcr.io/${{ github.repository }}/${{ matrix.dockerfile }}:${{ matrix.idris-version }}
+      TAG: ghcr.io/${{ github.repository }}/${{ matrix.dockerfile }}:${{ inputs.idris-version }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -183,7 +97,7 @@ jobs:
       - name: Build
         uses: ./.github/actions/build-image
         with:
-          version: ${{ matrix.idris-version }}
+          version: ${{ inputs.idris-version }}
           dockerfile: ${{ matrix.dockerfile }}
           repo: ${{ github.repository }}
 
