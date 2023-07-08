@@ -1,42 +1,20 @@
-name: Build, Test and Deploy All Images
+name: Build and Test a Single Version
 
 on:
-  # can we be more DRY here?
-  push:
-    branches:
-      - main
-    paths:
-      - ".github/workflows/deploy.yml" # this file
-      - "*.Dockerfile"
-      # single
-      - ".github/actions/build-image/action.yml"
-      - ".github/actions/deploy-image/action.yml"
-      - ".github/actions/get-idris-sha/action.yml"
-  pull_request:
-    branches:
-      - main
-    paths:
-      - ".github/workflows/deploy.yml" # this file
-      - "*.Dockerfile"
-      # single
-      - ".github/actions/build-image/action.yml"
-      - ".github/actions/deploy-image/action.yml"
-      - ".github/actions/get-idris-sha/action.yml"
-  # Deploy every day at 1am
-  schedule:
-    - cron: "0 1 * * *"
+  workflow_call:
+    inputs:
+      idris-version:
+        required: true
+        type: string
 
 permissions:
-  packages: write
+  packages: read
   contents: read
 
 jobs:
   base-build:
-    name: Build Base - ${{ matrix.idris-version }}
+    name: Build Base
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        idris-version: ["v0.5.1", "v0.6.0", "latest"]
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -45,12 +23,19 @@ jobs:
       - name: Build
         uses: ./.github/actions/build-image
         with:
-          version: ${{ matrix.idris-version }}
+          version: ${{ inputs.idris-version }}
           dockerfile: base
           repo: ${{ github.repository }}
+      
+      - name: Setup Buildx
+        uses: "./.github/actions/setup-buildx"
+        with:
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh_user: ${{ secrets.SSH_USER }}
+          ssh_ip: ${{ secrets.SSH_IP }}
 
   base-test-1:
-    name: Test 1 Base - ${{ matrix.idris-version }}
+    name: Test 1 Base
     runs-on: ubuntu-latest
     needs: base-build
     strategy:
@@ -98,31 +83,6 @@ jobs:
       - name: Run Test
         run: |
           docker run ${{ env.TAG }} /bin/bash -c "make clean; make all; make test"
-
-  # it would be nice to make the if conditional in the top level of the job,
-  # but since devcontainer-build depends on this, we need this to run on a PR success as well
-  base-deploy:
-    name: Deploy Base - ${{ matrix.idris-version }}
-    runs-on: ubuntu-latest
-    needs: [base-test-1, base-test-2]
-    strategy:
-      matrix:
-        idris-version: ["v0.5.1", "v0.6.0", "latest"]
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
-
-      - name: Deploy 
-        if: github.event_name == 'schedule' || github.event_name == 'push'
-        uses: ./.github/actions/deploy-image
-        with:
-          version: ${{ matrix.idris-version }}
-          dockerfile: base
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh_user: ${{ secrets.SSH_USER }}
-          ssh_ip: ${{ secrets.SSH_IP }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          repo: ${{ github.repository }}
 
   devcontainer-build-test:
     name: Build/Test Devcontainer - ${{ matrix.idris-version }}
@@ -247,28 +207,3 @@ jobs:
           export LIB_PATH=/usr/lib/
           export DOCKER_IMAGE=${{ env.TAG }}
           bats tests/consumer-idris.bats
-  
-  
-  consumer-deploy:
-    name: Deploy Consumer - ${{ matrix.dockerfile }} ${{ matrix.idris-version }}
-    runs-on: ubuntu-latest
-    needs: consumer-build-test
-    strategy:
-      matrix:
-        idris-version: ["v0.5.1", "v0.6.0", "latest"]
-        dockerfile: [ubuntu, debian]
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
-
-      - name: Deploy 
-        if: github.event_name == 'schedule' || github.event_name == 'push'
-        uses: ./.github/actions/deploy-image
-        with:
-          version: ${{ matrix.idris-version }}
-          dockerfile: base
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh_user: ${{ secrets.SSH_USER }}
-          ssh_ip: ${{ secrets.SSH_IP }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          repo: ${{ github.repository }}

@@ -1,0 +1,54 @@
+name: Deploy One Version
+
+on:
+  workflow_call:
+    inputs:
+      idris-version:
+        required: true
+        type: string
+
+permissions:
+  packages: write
+  contents: read
+
+jobs:
+  deploy-base:
+    name: Deploy Base - ${{ inputs.idris-version }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Deploy 
+        uses: ./.github/actions/deploy-image
+        with:
+          version: ${{ inputs.idris-version }}
+          dockerfile: base
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh_user: ${{ secrets.SSH_USER }}
+          ssh_ip: ${{ secrets.SSH_IP }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          repo: ${{ github.repository }}
+
+
+  deploy-consumers:
+    name: Deploy Consumer - ${{ matrix.dockerfile }} ${{ inputs.idris-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dockerfile: [ubuntu, debian]
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Deploy 
+        uses: ./.github/actions/deploy-image
+        with:
+          version: ${{ inputs.idris-version }}
+          dockerfile: base
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh_user: ${{ secrets.SSH_USER }}
+          ssh_ip: ${{ secrets.SSH_IP }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          repo: ${{ github.repository }}
+
