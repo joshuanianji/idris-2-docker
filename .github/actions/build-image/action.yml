@@ -2,6 +2,15 @@ name: Build Image
 description: Builds a Docker Image
 
 inputs:
+  ssh_private_key:
+    description: "The private key to use to connect to the builder"
+    required: true
+  ssh_user:
+    description: "The user to use to connect to the builder"
+    required: true
+  ssh_ip:
+    description: "The IP to use to connect to the builder"
+    required: true
   version:
     description: "The version of Idris to build"
     required: true
