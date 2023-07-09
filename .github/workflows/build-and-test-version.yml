@@ -105,6 +105,9 @@ jobs:
           dockerfile: ${{ matrix.dockerfile }}
           repo: ${{ github.repository }}
           tag: ${{ env.BASE_TAG }}
+      
+      - name: Run `docker image ls`
+        run: docker image ls
 
       - name: Build
         uses: ./.github/actions/build-image
