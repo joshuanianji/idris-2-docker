@@ -92,7 +92,9 @@ runs:
           IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
           ${{ inputs.build-args }}
         tags: ${{ inputs.tag }}
-        load: true
+        # we do NOT want to load the image when we are also building on ARM, as this results in errors
+        # https://github.com/docker/buildx/issues/59
+        load: ${{ inputs.build-arm != 'true' }}
         
         # When doing matrix builds, we need to scope the image
         # https://github.com/moby/buildkit/issues/2885
