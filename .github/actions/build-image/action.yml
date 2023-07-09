@@ -72,7 +72,7 @@ runs:
           IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
           ${{ inputs.build-args }}
         tags: ${{ inputs.tag }}
-        load: true
+        load: ${{ inputs.build-arm != 'true' }}
 
         # When doing matrix builds, we need to scope the image
         # https://github.com/moby/buildkit/issues/2885
