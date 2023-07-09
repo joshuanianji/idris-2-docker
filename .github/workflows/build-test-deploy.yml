@@ -42,3 +42,6 @@ jobs:
     with:
       idris-version: ${{ matrix.idris-version }}
     secrets: inherit
+
+
+# docker buildx build --build-arg IDRIS_VERSION=latest --file base.Dockerfile --tag idris-consumer-debian-latest:test --load .
