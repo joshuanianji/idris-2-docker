@@ -59,7 +59,7 @@ jobs:
           docker run ${{ env.TAG }} /bin/bash -c "make clean; make all && make install"
 
   base-test-2:
-    name: Test 2 Base - ${{ inputs.idris-version }}
+    name: Test 2 Base
     runs-on: ubuntu-latest
     needs: base-build
     env:
@@ -85,7 +85,7 @@ jobs:
   # "consumer" images just "consume" the base image and do nothing else
   # basic tests for these
   consumer-build-test:
-    name: Build Consumer - ${{ matrix.dockerfile }} ${{ inputs.idris-version }}
+    name: Build Consumer - ${{ matrix.dockerfile }}
     runs-on: ubuntu-latest
     needs: [base-test-1, base-test-2]
     strategy:
