@@ -92,7 +92,10 @@ jobs:
       matrix:
         dockerfile: [ubuntu, debian]
     env:
-      BASE_TAG: idris-base-${{ inputs.idris-version }}:base
+      # attempt to use bogus registry name so docker won't think this is a remote image
+      # when using it as a base image in the Dockerfile
+      # https://stackoverflow.com/a/70733299
+      BASE_TAG: dne/joshuanianji/idris-base-${{ inputs.idris-version }}
       TAG: idris-consumer-${{ matrix.dockerfile }}-${{ inputs.idris-version }}:test
     steps:
       - name: Checkout Repo
