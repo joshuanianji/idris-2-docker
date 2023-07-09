@@ -92,7 +92,7 @@ jobs:
       matrix:
         dockerfile: [ubuntu, debian]
     env:
-      BASE_TAG: idris-base-${{ inputs.idris-version }}
+      BASE_TAG: idris-base-${{ inputs.idris-version }}:base
       TAG: idris-consumer-${{ matrix.dockerfile }}-${{ inputs.idris-version }}:test
     steps:
       - name: Checkout Repo
