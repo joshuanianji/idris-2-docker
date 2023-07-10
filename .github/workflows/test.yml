@@ -38,7 +38,6 @@ jobs:
         with:
           context: .
           file: ${{ matrix.dockerfile }}.Dockerfile
-          # not all the images need all these build args, but we put this here anyway
           build-args: | 
             IDRIS_VERSION=${{ matrix.idris-version }}
           tags: ${{ env.BASE_TAG }}
@@ -46,8 +45,8 @@ jobs:
   
           # When doing matrix builds, we need to scope the image
           # https://github.com/moby/buildkit/issues/2885
-          cache-from: type=gha,scope=build-test-${{ matrix.dockerfile }}-${{ matrix.idris-version }}
-          cache-to: type=gha,mode=max,scope=build-test-${{ matrix.dockerfile }}-${{ matrix.idris-version }}
+          cache-from: type=gha,scope=build-base-${{ matrix.idris-version }}
+          cache-to: type=gha,mode=max,scope=build-base-${{ matrix.idris-version }}
   
 
       - name: Run `docker image ls`
@@ -58,7 +57,6 @@ jobs:
         with:
           context: .
           file: ${{ matrix.dockerfile }}.Dockerfile
-          # not all the images need all these build args, but we put this here anyway
           build-args: | 
             IDRIS_VERSION=${{ matrix.idris-version }}
             BASE_IMG=${{ env.BASE_TAG }}
