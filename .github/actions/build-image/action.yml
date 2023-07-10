@@ -51,9 +51,8 @@ outputs:
 
 runs:
   using: composite
-  run-name: Build Image - ARM: ${{ inputs.build-arm }}
   steps:
-    - name: Setup Buildx (with ARM)
+    - name: Setup Buildx - ARM: ${{ inputs.build-arm }}
       uses: "./.github/actions/setup-buildx"
       with:
         ssh_private_key: ${{ inputs.ssh_private_key }}
@@ -72,7 +71,7 @@ runs:
       shell: bash
 
     # lots of code duplication going on...
-    - name: Build
+    - name: Build - ARM: ${{ inputs.build-arm }}
       uses: docker/build-push-action@v4.1.1
       id: build-image
       with:
