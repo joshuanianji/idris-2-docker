@@ -15,7 +15,7 @@ jobs:
       # attempt to use bogus registry name so docker won't think this is a remote image
       # when using it as a base image in the Dockerfile
       # https://stackoverflow.com/a/70733299
-      BASE_TAG: base-${{ matrix.dockerfile }}-${{ matrix.idris-version }}:base
+      BASE_TAG: base-${{ matrix.idris-version }}:base
       TAG: idris-consumer-${{ matrix.dockerfile }}-${{ matrix.idris-version }}:test
     steps:
       - name: Checkout Repo
@@ -25,7 +25,7 @@ jobs:
         uses: ./.github/actions/build-image
         with:
           version: ${{ matrix.idris-version }}
-          dockerfile: ${{ matrix.dockerfile }}
+          dockerfile: base.Dockerfile
           repo: ${{ github.repository }}
           tag: ${{ env.BASE_TAG }}
       
