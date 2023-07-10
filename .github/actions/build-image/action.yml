@@ -43,6 +43,12 @@ inputs:
     required: false
     type: string
 
+outputs:
+  imageid:
+    description: "Image ID"
+    value: ${{ steps.build-image.outputs.imageid }}
+
+
 runs:
   using: composite
   steps:
@@ -57,13 +63,20 @@ runs:
       id: get-sha
       uses: ./.github/actions/get-idris-sha
 
+    # get variables that change depending on if we're building with ARM or not
+    - name: ARM/No ARM vars
+      id: get-arm-vars
+      run: |
+        echo "name=platforms::$(if [ ${{ inputs.build-arm }} ]; then echo "linux/arm64,linux/amd64"; else echo "linux/amd64"; fi)" >> $GITHUB_OUTPUT
+      shell: bash
+
     # lots of code duplication going on...
-    - name: Build Image (with ARM)
-      if: ${{ inputs.build-arm == 'true' }}
+    - name: Build Image (ARM: ${{ inputs.build-arm }})
       uses: docker/build-push-action@v4.1.1
+      id: build-image
       with:
         context: .
-        platforms: linux/arm64,linux/amd64
+        platforms: ${{ steps.get-arm-vars.outputs.platforms }}
         file: ${{ inputs.dockerfile }}.Dockerfile
         # not all the images need all these build args, but we put this here anyway
         build-args: | 
@@ -77,26 +90,3 @@ runs:
         # https://github.com/moby/buildkit/issues/2885
         cache-from: type=gha,scope=build-test-${{ inputs.dockerfile }}-${{ inputs.version }}
         cache-to: type=gha,mode=max,scope=build-test-${{ inputs.dockerfile }}-${{ inputs.version }}
-
-    - name: Build Image (no ARM)
-      if: ${{ inputs.build-arm != 'true' }}
-      uses: docker/build-push-action@v4.1.1
-      with:
-        context: .
-        platforms: linux/amd64
-        file: ${{ inputs.dockerfile }}.Dockerfile
-        # not all the images need all these build args, but we put this here anyway
-        build-args: |
-          IDRIS_VERSION=${{ inputs.version }}
-          IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
-          ${{ inputs.build-args }}
-        tags: ${{ inputs.tag }}
-        # we do NOT want to load the image when we are also building on ARM, as this results in errors
-        # https://github.com/docker/buildx/issues/59
-        load: ${{ inputs.build-arm != 'true' }}
-        
-        # When doing matrix builds, we need to scope the image
-        # https://github.com/moby/buildkit/issues/2885
-        cache-from: type=gha,scope=build-test-${{ inputs.dockerfile }}-${{ inputs.version }}
-        cache-to: type=gha,mode=max,scope=build-test-${{ inputs.dockerfile }}-${{ inputs.version }}
-
