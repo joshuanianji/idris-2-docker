@@ -24,11 +24,6 @@ inputs:
     description: "Either 'base', 'debian', 'ubuntu' or 'devcontainer"
     required: true
     type: string
-  base-img:
-    description: "Sets the BASE_IMG argument (when building debian or ubuntu)"
-    required: false
-    type: string
-    default: ""
   tag:
     description: "tag of the image"
     required: false

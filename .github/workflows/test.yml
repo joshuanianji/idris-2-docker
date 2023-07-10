@@ -27,29 +27,43 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v3
       
-      - name: Build Base
-        id: build-base
-        uses: ./.github/actions/build-image
+      - name: Setup Buildx (no ARM)
+        uses: docker/setup-buildx-action@v2
         with:
-          version: ${{ matrix.idris-version }}
-          dockerfile: base
-          tag: ${{ env.BASE_TAG }}
-      
+          # since we're using a local registry
+          driver-opts: network=host
+
+      - name: Build Base
+        uses: docker/build-push-action@v4.1.1
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}.Dockerfile
+          # not all the images need all these build args, but we put this here anyway
+          build-args: | 
+            IDRIS_VERSION=${{ matrix.idris-version }}
+          tags: ${{ env.BASE_TAG }}
+          push: true
+  
+          # When doing matrix builds, we need to scope the image
+          # https://github.com/moby/buildkit/issues/2885
+          cache-from: type=gha,scope=build-test-${{ matrix.dockerfile }}-${{ matrix.idris-version }}
+          cache-to: type=gha,mode=max,scope=build-test-${{ matrix.dockerfile }}-${{ matrix.idris-version }}
+  
+
       - name: Run `docker image ls`
         run: docker image ls
 
-      - name: Build
-        uses: ./.github/actions/build-image
+      - name: Build ${{ matrix.dockerfile}}
+        uses: docker/build-push-action@v4.1.1
         with:
-          version: ${{ matrix.idris-version }}
-          dockerfile: ${{ matrix.dockerfile }}
-          tag: ${{ env.TAG }}
-          # referencing the tag I manually set keeps erroring, it tried to pull from docker.io!
-          # https://stackoverflow.com/q/20481225
-          # Instead, I'm referring to the image ID, maybe it'll work
-          # https://stackoverflow.com/a/71565133
-          build-args: |
+          context: .
+          file: ${{ matrix.dockerfile }}.Dockerfile
+          # not all the images need all these build args, but we put this here anyway
+          build-args: | 
+            IDRIS_VERSION=${{ matrix.idris-version }}
             BASE_IMG=${{ env.BASE_TAG }}
+          tags: ${{ env.TAG }}
+          load: true
 
       - name: Setup BATS
         uses: mig4/setup-bats@v1
