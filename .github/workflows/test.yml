@@ -4,7 +4,7 @@ on:
   push:
 
 jobs:
-  consumer-build-test:
+  consumer-build-test-1:
     name: Build Consumer - ${{ matrix.dockerfile }}
     runs-on: ubuntu-latest
     strategy:
@@ -15,7 +15,67 @@ jobs:
       # attempt to use bogus registry name so docker won't think this is a remote image
       # when using it as a base image in the Dockerfile
       # https://stackoverflow.com/a/70733299
-      BASE_TAG: dne/joshuanianji/idrisbase${{ matrix.idris-version }}
+      BASE_TAG: base-${{ matrix.dockerfile }}-${{ matrix.idris-version }}:base
+      TAG: idris-consumer-${{ matrix.dockerfile }}-${{ matrix.idris-version }}:test
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+      
+      - name: Build Base
+        uses: ./.github/actions/build-image
+        with:
+          version: ${{ matrix.idris-version }}
+          dockerfile: ${{ matrix.dockerfile }}
+          repo: ${{ github.repository }}
+          tag: ${{ env.BASE_TAG }}
+      
+      - name: Run `docker image ls`
+        run: docker image ls
+
+      - name: Build
+        uses: ./.github/actions/build-image
+        with:
+          version: ${{ matrix.idris-version }}
+          dockerfile: ${{ matrix.dockerfile }}
+          repo: ${{ github.repository }}
+          tag: ${{ env.TAG }}
+          build-args: |
+            BASE_IMG=${{ env.BASE_TAG }}
+
+      - name: Setup BATS
+        uses: mig4/setup-bats@v1
+        with:
+          bats-version: '1.8.2'
+
+      - name: Setup Bats libs
+        uses: brokenpip3/setup-bats-libs@0.1.0
+        with:
+          support-version: 0.3.0
+          assert-version: 2.1.0
+          file-install: false
+          detik-install: false
+
+      # LIB_PATH is a env var I use in the setup() function of my bats tests
+      # it points to the folder containing bats-assert and bats-support
+      - name: Run Test
+        run: |
+          export LIB_PATH=/usr/lib/
+          export DOCKER_IMAGE=${{ env.TAG }}
+          bats tests/consumer-idris.bats
+
+
+  consumer-build-test-2:
+    name: Build Consumer - ${{ matrix.dockerfile }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        idris-version: ["v0.5.1", "v0.6.0", "latest"]
+        dockerfile: [debian]
+    env:
+      # attempt to use bogus registry name so docker won't think this is a remote image
+      # when using it as a base image in the Dockerfile
+      # https://stackoverflow.com/a/70733299
+      BASE_TAG: base${{ matrix.dockerfile }}${{ matrix.idris-version }}:base
       TAG: idris-consumer-${{ matrix.dockerfile }}-${{ matrix.idris-version }}:test
     steps:
       - name: Checkout Repo
