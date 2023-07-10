@@ -18,9 +18,8 @@ jobs:
         ports:
           - 5000:5000
     env:
-      # attempt to use bogus registry name so docker won't think this is a remote image
-      # when using it as a base image in the Dockerfile
-      # https://stackoverflow.com/a/70733299
+      # use local registry so we can reference the base image in another dockerfile
+      # https://github.com/docker/build-push-action/issues/738
       BASE_TAG: localhost:5000/base-${{ matrix.idris-version }}:latest
       TAG: idris-consumer-${{ matrix.dockerfile }}-${{ matrix.idris-version }}:test
     steps:
