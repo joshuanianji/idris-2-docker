@@ -27,7 +27,6 @@ jobs:
         with:
           version: ${{ matrix.idris-version }}
           dockerfile: base
-          repo: ${{ github.repository }}
           tag: ${{ env.BASE_TAG }}
       
       - name: Run `docker image ls`
@@ -38,7 +37,6 @@ jobs:
         with:
           version: ${{ matrix.idris-version }}
           dockerfile: ${{ matrix.dockerfile }}
-          repo: ${{ github.repository }}
           tag: ${{ env.TAG }}
           # referencing the tag I manually set keeps erroring, it tried to pull from docker.io!
           # https://stackoverflow.com/q/20481225

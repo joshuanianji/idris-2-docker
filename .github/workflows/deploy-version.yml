@@ -56,7 +56,6 @@ jobs:
           ssh_ip: ${{ secrets.SSH_IP }}
           version: ${{ inputs.idris-version }}
           dockerfile: ${{ matrix.dockerfile }}
-          repo: ${{ github.repository }}
           tag: ${{ env.BASE_TAG }}
 
       - name: Deploy 

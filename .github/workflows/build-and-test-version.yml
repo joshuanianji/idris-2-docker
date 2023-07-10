@@ -30,7 +30,6 @@ jobs:
           ssh_ip: ${{ secrets.SSH_IP }}
           version: ${{ inputs.idris-version }}
           dockerfile: base
-          repo: ${{ github.repository }}
 
   base-test-1:
     name: Test 1 Base
@@ -48,7 +47,6 @@ jobs:
         with:
           version: ${{ inputs.idris-version }}
           dockerfile: base
-          repo: ${{ github.repository }}
           tag: ${{ env.TAG }}
       
       - name: Run `docker image ls`
@@ -74,7 +72,6 @@ jobs:
         with:
           version: ${{ inputs.idris-version }}
           dockerfile: base
-          repo: ${{ github.repository }}
           tag: ${{ env.TAG }}
 
       - name: Run Test
@@ -106,7 +103,6 @@ jobs:
         with:
           version: ${{ inputs.idris-version }}
           dockerfile: ${{ matrix.dockerfile }}
-          repo: ${{ github.repository }}
           tag: ${{ env.BASE_TAG }}
       
       - name: Run `docker image ls`
@@ -117,7 +113,6 @@ jobs:
         with:
           version: ${{ inputs.idris-version }}
           dockerfile: ${{ matrix.dockerfile }}
-          repo: ${{ github.repository }}
           tag: ${{ env.TAG }}
           build-args: |
             BASE_IMG=${{ env.BASE_TAG }}
