@@ -29,7 +29,8 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
         with:
-          endpoint: ssh://${{ secrets.SSH_USER }}@${{ secrets.SSH_IP }}
+          append: |
+            - endpoint: ssh://${{ secrets.SSH_USER }}@${{ secrets.SSH_IP }}
 
       - name: Test docker buildx
         run: docker buildx ls
