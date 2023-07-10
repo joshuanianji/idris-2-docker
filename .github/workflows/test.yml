@@ -25,7 +25,7 @@ jobs:
         uses: ./.github/actions/build-image
         with:
           version: ${{ matrix.idris-version }}
-          dockerfile: base.Dockerfile
+          dockerfile: base
           repo: ${{ github.repository }}
           tag: ${{ env.BASE_TAG }}
       
