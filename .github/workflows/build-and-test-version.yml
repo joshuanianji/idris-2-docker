@@ -33,6 +33,10 @@ jobs:
 
       - name: Test docker buildx
         run: docker buildx ls
+      
+      - name: Get Latest Idris Commit SHA
+        id: get-sha
+        uses: ./.github/actions/get-idris-sha
 
       # mainly just for caching purposes - makes it faster to build later on
       # build in arm (or my oracle server) as well so we can make the most use of our time in the build step
@@ -44,7 +48,7 @@ jobs:
           file: base.Dockerfile
           build-args: | 
             IDRIS_VERSION=${{ inputs.idris-version }}
-  
+            IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
           # When doing matrix builds, we need to scope the image
           # https://github.com/moby/buildkit/issues/2885
           cache-from: type=gha,scope=build-base-${{ inputs.idris-version }}
@@ -62,6 +66,10 @@ jobs:
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+      
+      - name: Get Latest Idris Commit SHA
+        id: get-sha
+        uses: ./.github/actions/get-idris-sha
 
       - name: Build Base
         uses: docker/build-push-action@v4.1.1
@@ -70,6 +78,7 @@ jobs:
           file: base.Dockerfile
           build-args: | 
             IDRIS_VERSION=${{ inputs.idris-version }}
+            IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
           tags: ${{ env.TAG }}
           cache-from: type=gha,scope=build-base-${{ inputs.idris-version }}
       
@@ -92,6 +101,10 @@ jobs:
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+      
+      - name: Get Latest Idris Commit SHA
+        id: get-sha
+        uses: ./.github/actions/get-idris-sha
 
       - name: Build Base
         uses: docker/build-push-action@v4.1.1
@@ -100,13 +113,13 @@ jobs:
           file: base.Dockerfile
           build-args: | 
             IDRIS_VERSION=${{ inputs.idris-version }}
+            IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
           tags: ${{ env.TAG }}
           cache-from: type=gha,scope=build-base-${{ inputs.idris-version }}
 
       - name: Run Test
         run: |
           docker run ${{ env.TAG }} /bin/bash -c "make clean; make all; make test"
-
 
   # "consumer" images just "consume" the base image and do nothing else
   # basic tests for these
@@ -136,6 +149,10 @@ jobs:
         with:
           # since we're using a local registry
           driver-opts: network=host
+        
+      - name: Get Latest Idris Commit SHA
+        id: get-sha
+        uses: ./.github/actions/get-idris-sha
 
       - name: Build Base
         uses: docker/build-push-action@v4.1.1
@@ -143,11 +160,12 @@ jobs:
           context: .
           file: base.Dockerfile
           build-args: | 
-            IDRIS_VERSION=${{ matrix.idris-version }}
+            IDRIS_VERSION=${{ inputs.idris-version }}
+            IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
           tags: ${{ env.BASE_TAG }}
           # push to local registry
           push: true
-          cache-from: type=gha,scope=build-base-${{ matrix.idris-version }}
+          cache-from: type=gha,scope=build-base-${{ inputs.idris-version }}
 
       - name: Run `docker image ls`
         run: docker image ls
@@ -158,7 +176,7 @@ jobs:
           context: .
           file: ${{ matrix.dockerfile }}.Dockerfile
           build-args: | 
-            IDRIS_VERSION=${{ matrix.idris-version }}
+            IDRIS_VERSION=${{ inputs.idris-version }}
             BASE_IMG=${{ env.BASE_TAG }}
           tags: ${{ env.TAG }}
           load: true
