@@ -115,8 +115,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        idris-version: ["v0.6.0"]
-        dockerfile: [debian]
+        dockerfile: [debian, ubuntu]
     # use a local registry
     services:
       registry:
@@ -126,8 +125,8 @@ jobs:
     env:
       # use local registry so we can reference the base image in another dockerfile
       # https://github.com/docker/build-push-action/issues/738
-      BASE_TAG: localhost:5000/base-${{ matrix.idris-version }}:latest
-      TAG: idris-consumer-${{ matrix.dockerfile }}-${{ matrix.idris-version }}:test
+      BASE_TAG: localhost:5000/base-${{ inputs.idris-version }}:latest
+      TAG: idris-consumer-${{ matrix.dockerfile }}-${{ inputs.idris-version }}:test
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
