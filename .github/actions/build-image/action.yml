@@ -52,12 +52,17 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Setup Buildx
+    - name: Setup Buildx (ARM)
+      if: ${{ inputs.build-arm == 'true' }}
       uses: "./.github/actions/setup-buildx"
       with:
         ssh_private_key: ${{ inputs.ssh_private_key }}
         ssh_user: ${{ inputs.ssh_user }}
         ssh_ip: ${{ inputs.ssh_ip }}
+    
+    - name: Setup Buildx (no ARM)
+      if: ${{ inputs.build-arm != 'true' }}
+      uses: docker/setup-buildx-action@v2
 
     - name: Get Latest Idris Commit SHA
       id: get-sha
