@@ -81,6 +81,7 @@ jobs:
             IDRIS_VERSION=${{ inputs.idris-version }}
             IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
           tags: ${{ env.TAG }}
+          load: true
           cache-from: type=gha,scope=build-base-${{ inputs.idris-version }}
       
       - name: Run `docker image ls`
@@ -116,6 +117,7 @@ jobs:
             IDRIS_VERSION=${{ inputs.idris-version }}
             IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
           tags: ${{ env.TAG }}
+          load: true
           cache-from: type=gha,scope=build-base-${{ inputs.idris-version }}
 
       - name: Run Test
