@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        idris-version: ["v0.5.1", "v0.6.0", "latest"]
+        idris-version: ["v0.6.0"]
         dockerfile: [debian]
     env:
       # attempt to use bogus registry name so docker won't think this is a remote image

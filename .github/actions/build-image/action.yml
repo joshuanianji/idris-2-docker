@@ -52,7 +52,7 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Setup Buildx - ARM: ${{ inputs.build-arm }}
+    - name: Setup Buildx
       uses: "./.github/actions/setup-buildx"
       with:
         ssh_private_key: ${{ inputs.ssh_private_key }}
@@ -70,8 +70,7 @@ runs:
         echo "name=platforms::$(if [ ${{ inputs.build-arm }} ]; then echo "linux/arm64,linux/amd64"; else echo "linux/amd64"; fi)" >> $GITHUB_OUTPUT
       shell: bash
 
-    # lots of code duplication going on...
-    - name: Build - ARM: ${{ inputs.build-arm }}
+    - name: Build
       uses: docker/build-push-action@v4.1.1
       id: build-image
       with:
