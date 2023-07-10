@@ -49,7 +49,7 @@ jobs:
           # Instead, I'm referring to the image ID, maybe it'll work
           # https://stackoverflow.com/a/71565133
           build-args: |
-            BASE_IMG=${{ steps.build-base.outputs.imageid }}
+            BASE_IMG=${{ env.BASE_TAG }}
 
       - name: Setup BATS
         uses: mig4/setup-bats@v1
