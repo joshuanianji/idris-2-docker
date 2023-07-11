@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # installs chez scheme from source for aarch based systems
 # https://github.com/racket/ChezScheme/blob/master/BUILDING
 
