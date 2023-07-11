@@ -1,0 +1,18 @@
+name: Build Test and Deploy
+
+on:
+  # can we be more DRY here?
+  push:
+
+jobs:
+  deploy:
+    name: Deploy - ${{ matrix.idris-version }}
+    strategy:
+      matrix:
+        idris-version: ["v0.5.1", "v0.6.0", "latest"]
+      # deploy one at a time, so the latest is always the latest deployed
+      max-parallel: 1 
+    uses: ./.github/workflows/deploy-local.yml
+    with:
+      idris-version: ${{ matrix.idris-version }}
+    secrets: inherit
