@@ -24,17 +24,9 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v3
       
-      - name: Set up SSH
-        uses: MrSquaare/ssh-setup-action@v2
-        with:
-          host: ${{ secrets.SSH_IP }}
-          private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          private-key-name: oracle-arm
-      
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
         with:
-          # since we're using a local registry
           driver-opts: network=host
 
       - name: Get Latest Idris Commit SHA
@@ -55,7 +47,7 @@ jobs:
         uses: docker/build-push-action@v4.1.1
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
+          # platforms: linux/amd64,linux/arm64
           file: base.Dockerfile
           build-args: | 
             IDRIS_VERSION=${{ inputs.idris-version }}
@@ -69,8 +61,9 @@ jobs:
       
       - name: Check Images
         run: |
-          docker images
-          docker manifest inspect localhost:5000/${{ github.repository }}/base
+          docker images ls
+          docker buildx imagetools inspect localhost:5000/${{ github.repository }}/base
+
 
   deploy-consumers:
     name: Deploy Consumer - ${{ matrix.dockerfile }} ${{ inputs.idris-version }}
@@ -103,7 +96,7 @@ jobs:
         id: create-meta
         uses: docker/metadata-action@v4
         with:
-          images: localhost:5000/${{ github.repository }}/base
+          images: localhost:5000/${{ github.repository }}/${{ matrix.dockerfile }}
           tags: |
             type=semver,pattern={{version}},value=${{ inputs.idris-version }}
             type=semver,pattern={{major}}.{{minor}},value=${{ inputs.idris-version }}
@@ -115,7 +108,7 @@ jobs:
         uses: docker/build-push-action@v4.1.1
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
+          # platforms: linux/amd64,linux/arm64
           file: ${{ matrix.dockerfile }}.Dockerfile
           tags: ${{ steps.create-meta.outputs.tags }}
           build-args: | 
@@ -125,5 +118,5 @@ jobs:
       - name: Check Images
         run: |
           docker images
-          docker manifest inspect localhost:5000/${{ github.repository }}/${{ matrix.dockerfile }}
+          docker buildx imagetools inspect localhost:5000/${{ github.repository }}/${{ matrix.dockerfile }}
 
