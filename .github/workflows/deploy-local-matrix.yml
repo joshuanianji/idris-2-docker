@@ -1,11 +1,11 @@
-name: Build Test and Deploy
+name: Local test
 
 on:
   push:
 
 jobs:
   deploy:
-    name: Deploy - ${{ matrix.idris-version }}
+    name: Deploy Local - ${{ matrix.idris-version }}
     strategy:
       matrix:
         idris-version: ["v0.5.1", "v0.6.0", "latest"]
