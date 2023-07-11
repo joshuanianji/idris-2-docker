@@ -34,8 +34,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
         with:
-          append: |
-            - endpoint: ssh://${{ secrets.SSH_USER }}@${{ secrets.SSH_IP }}
           # since we're using a local registry
           driver-opts: network=host
 
@@ -119,6 +117,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           file: ${{ matrix.dockerfile }}.Dockerfile
+          tags: ${{ steps.create-meta.outputs.tags }}
           build-args: | 
             IDRIS_VERSION=${{ inputs.idris-version }}
           push: true
