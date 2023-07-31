@@ -157,7 +157,7 @@ jobs:
           bats-version: '1.8.2'
 
       - name: Setup Bats libs
-        uses: brokenpip3/setup-bats-libs@0.1.0
+        uses: brokenpip3/setup-bats-libs@1.0.0
         with:
           support-version: 0.3.0
           assert-version: 2.1.0
@@ -233,7 +233,7 @@ jobs:
           bats-version: '1.8.2'
 
       - name: Setup Bats libs
-        uses: brokenpip3/setup-bats-libs@0.1.0
+        uses: brokenpip3/setup-bats-libs@1.0.0
         with:
           support-version: 0.3.0
           assert-version: 2.1.0
