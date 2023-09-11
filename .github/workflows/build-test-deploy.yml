@@ -39,7 +39,7 @@ jobs:
         idris-version: ["v0.5.1", "v0.6.0", "latest"]
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # mainly just for caching purposes - makes it faster to build later on
       - name: Build
@@ -60,7 +60,7 @@ jobs:
       TAG: ghcr.io/${{ github.repository }}/base:${{ matrix.idris-version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # mainly just for caching purposes - makes it faster to build later on
       - name: Build
@@ -85,7 +85,7 @@ jobs:
       TAG: ghcr.io/${{ github.repository }}/base:${{ matrix.idris-version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # mainly just for caching purposes - makes it faster to build later on
       - name: Build
@@ -110,7 +110,7 @@ jobs:
         idris-version: ["v0.5.1", "v0.6.0", "latest"]
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Deploy 
         if: github.event_name == 'schedule' || github.event_name == 'push'
@@ -141,7 +141,7 @@ jobs:
       TAG: ghcr.io/${{ github.repository }}/devcontainer:${{ matrix.idris-version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build
         uses: ./.github/actions/build-image
@@ -187,7 +187,7 @@ jobs:
             lsp-version: "idris2-0.6.0"
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Deploy 
         if: github.event_name == 'push' || github.event_name == 'schedule'
@@ -218,7 +218,7 @@ jobs:
       TAG: ghcr.io/${{ github.repository }}/${{ matrix.dockerfile }}:${{ matrix.idris-version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build
         uses: ./.github/actions/build-image
@@ -259,7 +259,7 @@ jobs:
         dockerfile: [ubuntu, debian]
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Deploy 
         if: github.event_name == 'schedule' || github.event_name == 'push'
