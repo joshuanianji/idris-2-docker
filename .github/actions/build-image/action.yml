@@ -20,6 +20,11 @@ inputs:
     required: false
     type: string
     default: "latest"
+  tags:
+    description: "Alternate tags to use"
+    required: false
+    type: string
+    default: ""
 
 
 runs:
@@ -43,7 +48,10 @@ runs:
           IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
           IDRIS_LSP_VERSION=${{ inputs.lsp-version }}
           IDRIS_LSP_SHA=${{ steps.get-sha.outputs.lsp-sha }}
-        tags: ghcr.io/${{ inputs.repo }}/${{ inputs.dockerfile }}:${{ inputs.version }}
+        load: true
+        tags: |
+          ghcr.io/${{ inputs.repo }}/${{ inputs.dockerfile }}:${{ inputs.version }}
+          ${{ inputs.tags }} # alternate tags to use (e.g. TEST for testing)
         
         # When doing matrix builds, we need to scope the image
         # https://github.com/moby/buildkit/issues/2885
