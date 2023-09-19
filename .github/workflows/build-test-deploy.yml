@@ -151,14 +151,10 @@ jobs:
           repo: ${{ github.repository }}
           lsp-version: ${{ matrix.lsp-version }}
 
-      - name: Setup BATS
-        uses: andmos/setup-bats@patch-1
+      - name: Setup Bats and Bats libs
+        uses: brokenpip3/setup-bats-libs@1.5.1
         with:
           bats-version: '1.8.2'
-
-      - name: Setup Bats libs
-        uses: brokenpip3/setup-bats-libs@0.1.0
-        with:
           support-version: 0.3.0
           assert-version: 2.1.0
           file-install: false
@@ -227,14 +223,10 @@ jobs:
           dockerfile: ${{ matrix.dockerfile }}
           repo: ${{ github.repository }}
 
-      - name: Setup BATS
-        uses: mig4/setup-bats@v1
+      - name: Setup Bats and Bats libs
+        uses: brokenpip3/setup-bats-libs@1.5.1
         with:
           bats-version: '1.8.2'
-
-      - name: Setup Bats libs
-        uses: brokenpip3/setup-bats-libs@0.1.0
-        with:
           support-version: 0.3.0
           assert-version: 2.1.0
           file-install: false
