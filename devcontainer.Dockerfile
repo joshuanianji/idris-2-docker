@@ -41,7 +41,8 @@ RUN make install-with-src-api PREFIX=/usr/local/lib/idris2
 WORKDIR /build/idris2-lsp
 RUN git submodule update --init LSP-lib
 WORKDIR /build/idris2-lsp/LSP-lib
-RUN idris2 --install-with-src
+ENV IDRIS2_PREFIX="/usr/local/lib/idris2"
+RUN idris2 --prefix --install-with-src
 WORKDIR /build/idris2-lsp
 RUN make install PREFIX=/usr/local/lib/idris2
 
