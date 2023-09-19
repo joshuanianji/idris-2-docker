@@ -178,12 +178,8 @@ jobs:
     needs: devcontainer-build-test
     strategy:
       matrix:
-        idris-version: ["v0.5.1", "v0.6.0", "latest"]
+        idris-version: ["latest"]
         include:
-          - idris-version: "v0.5.1"
-            lsp-version: "idris2-0.5.1"
-          - idris-version: "v0.6.0"
-            lsp-version: "idris2-0.6.0"
           - idris-version: "latest"
             lsp-version: "latest"
     steps:
