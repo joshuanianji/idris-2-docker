@@ -13,9 +13,9 @@ COPY scripts/install-chezscheme-arch.sh ./install-chezscheme-arch.sh
 RUN if [ $(uname -m) = "aarch64" ] ; then ./install-chezscheme-arch.sh ; else apt-get install -y chezscheme ; fi
 RUN which scheme
 
-# copy csv9.5* to /root/move
+# copy csv* library to /root/move
 # this makes it a bit easier for us to move the csv folder to other build steps, since it is necessary for scheme to run
-RUN mkdir scheme-lib && cp -r /usr/lib/csv9.5* /root/scheme-lib
+RUN mkdir scheme-lib && cp -r /usr/lib/csv* /root/scheme-lib
 
 FROM debian:bullseye as idris-builder
 
@@ -28,7 +28,7 @@ ARG IDRIS_VERSION
 ARG IDRIS_SHA
 
 COPY --from=scheme-builder /usr/bin/scheme /usr/bin/scheme
-# copy csv9.5* to /usr/lib, and also to /root/move for easier access for other build steps
+# copy csv* to /usr/lib, and also to /root/move for easier access for other build steps
 COPY --from=scheme-builder /root/scheme-lib/ /usr/lib/
 COPY --from=scheme-builder /root/scheme-lib/ /root/scheme-lib 
 
@@ -36,7 +36,7 @@ WORKDIR /root
 # if IDRIS_VERSION is 'latest', do not switch to a branch. Checkout the latest commit - ensures docker cache won't use stale versions
 # https://stackoverflow.com/a/41361804
 RUN if [ $IDRIS_VERSION = "latest" ] ; \ 
-    then git clone https://github.com/idris-lang/Idris2.git && cd Idris2 && git checkout ${IDRIS_SHA} ; \
+    then git clone https://github.com/idris-lang/Idris2.git && cd Idris2 && git checkout $IDRIS_SHA ; \
     else git clone --depth 1 --branch $IDRIS_VERSION https://github.com/idris-lang/Idris2.git ; \
     fi
 
