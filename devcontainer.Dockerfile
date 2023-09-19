@@ -33,7 +33,7 @@ ENV LD_LIBRARY_PATH="/usr/local/lib/idris2/lib:${LD_LIBRARY_PATH}"
 
 RUN make clean
 RUN make all
-RUN make install
+RUN make install PREFIX=/usr/local/lib/idris2
 RUN make install-with-src-libs PREFIX=/usr/local/lib/idris2
 RUN make install-with-src-api PREFIX=/usr/local/lib/idris2
 
