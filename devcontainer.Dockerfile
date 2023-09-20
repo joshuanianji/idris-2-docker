@@ -1,8 +1,9 @@
 ARG IDRIS_VERSION=latest
 # LSP_VERSION is in the form "idris2-0.5.1", or "latest"
 ARG IDRIS_LSP_VERSION=latest
+ARG BASE_IMG=ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION}
 
-FROM ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION} as base
+FROM $BASE_IMG as base
 
 FROM debian:bullseye as builder 
 # args are not shared between build stages
