@@ -102,6 +102,7 @@ jobs:
             type=semver,pattern={{version}},value=${{ inputs.idris-version }}
             type=semver,pattern={{major}}.{{minor}},value=${{ inputs.idris-version }}
             type=semver,pattern={{major}},value=${{ inputs.idris-version }}
+            type=raw,value=latest,enable=${{ inputs.idris-version == 'latest' }}
 
       # here, we assume the base image is already built and pushed to GHCR
       # not sure if this is a good idea!!
