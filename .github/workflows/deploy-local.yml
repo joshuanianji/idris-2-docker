@@ -42,6 +42,7 @@ jobs:
             type=semver,pattern={{version}},value=${{ inputs.idris-version }}
             type=semver,pattern={{major}}.{{minor}},value=${{ inputs.idris-version }}
             type=semver,pattern={{major}},value=${{ inputs.idris-version }}
+            type=raw,value=latest,enable=${{ inputs.idris-version == 'latest' }}
 
       - name: Build Base
         uses: docker/build-push-action@v4.1.1
