@@ -135,7 +135,7 @@ jobs:
           - idris-version: "latest"
             lsp-version: "latest"
     env:
-      TAG: ghcr.io/${{ github.repository }}/devcontainer:${{ matrix.idris-version }}
+      TEST_TAG: devcontainer-test
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -147,6 +147,7 @@ jobs:
           dockerfile: devcontainer
           repo: ${{ github.repository }}
           lsp-version: ${{ matrix.lsp-version }}
+          tags: ${{ env.TEST_TAG }}
 
       - name: Setup BATS
         uses: andmos/setup-bats@patch-1
@@ -166,7 +167,7 @@ jobs:
       - name: Run Test 2
         run: |
           export LIB_PATH=/usr/lib/
-          export DOCKER_IMAGE=${{ env.TAG }}
+          export DOCKER_IMAGE=${{ env.TEST_TAG }}
           bats tests/devcontainer-idris.bats 
   
   devcontainer-deploy:
@@ -209,7 +210,7 @@ jobs:
         idris-version: ["v0.5.1", "v0.6.0", "latest"]
         dockerfile: [ubuntu, debian]
     env:
-      TAG: ghcr.io/${{ github.repository }}/${{ matrix.dockerfile }}:${{ matrix.idris-version }}
+      TEST_TAG: test-${{ matrix.dockerfile }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -220,6 +221,7 @@ jobs:
           version: ${{ matrix.idris-version }}
           dockerfile: ${{ matrix.dockerfile }}
           repo: ${{ github.repository }}
+          tags: ${{ env.TEST_TAG }}
 
       - name: Setup BATS
         uses: mig4/setup-bats@v1
@@ -239,7 +241,7 @@ jobs:
       - name: Run Test
         run: |
           export LIB_PATH=/usr/lib/
-          export DOCKER_IMAGE=${{ env.TAG }}
+          export DOCKER_IMAGE=${{ env.TEST_TAG }}
           bats tests/consumer-idris.bats
   
   
