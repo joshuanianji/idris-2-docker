@@ -39,7 +39,7 @@ jobs:
         idris-version: ["v0.5.1", "v0.6.0", "latest"]
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # mainly just for caching purposes - makes it faster to build later on
       - name: Build
@@ -60,7 +60,7 @@ jobs:
       TAG: ghcr.io/${{ github.repository }}/base:${{ matrix.idris-version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # mainly just for caching purposes - makes it faster to build later on
       - name: Build
@@ -85,7 +85,7 @@ jobs:
       TAG: ghcr.io/${{ github.repository }}/base:${{ matrix.idris-version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # mainly just for caching purposes - makes it faster to build later on
       - name: Build
@@ -110,7 +110,7 @@ jobs:
         idris-version: ["v0.5.1", "v0.6.0", "latest"]
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Deploy 
         if: github.event_name == 'schedule' || github.event_name == 'push'
@@ -138,7 +138,7 @@ jobs:
       TEST_TAG: devcontainer-test
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build
         uses: ./.github/actions/build-image
@@ -149,14 +149,10 @@ jobs:
           lsp-version: ${{ matrix.lsp-version }}
           tags: ${{ env.TEST_TAG }}
 
-      - name: Setup BATS
-        uses: andmos/setup-bats@patch-1
+      - name: Setup Bats and Bats libs
+        uses: brokenpip3/setup-bats-libs@1.5.1
         with:
           bats-version: '1.8.2'
-
-      - name: Setup Bats libs
-        uses: brokenpip3/setup-bats-libs@0.1.0
-        with:
           support-version: 0.3.0
           assert-version: 2.1.0
           file-install: false
@@ -182,7 +178,7 @@ jobs:
             lsp-version: "latest"
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Deploy 
         if: github.event_name == 'push' || github.event_name == 'schedule'
@@ -213,7 +209,7 @@ jobs:
       TEST_TAG: test-${{ matrix.dockerfile }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build
         uses: ./.github/actions/build-image
@@ -223,14 +219,10 @@ jobs:
           repo: ${{ github.repository }}
           tags: ${{ env.TEST_TAG }}
 
-      - name: Setup BATS
-        uses: mig4/setup-bats@v1
+      - name: Setup Bats and Bats libs
+        uses: brokenpip3/setup-bats-libs@1.5.1
         with:
           bats-version: '1.8.2'
-
-      - name: Setup Bats libs
-        uses: brokenpip3/setup-bats-libs@0.1.0
-        with:
           support-version: 0.3.0
           assert-version: 2.1.0
           file-install: false
@@ -255,7 +247,7 @@ jobs:
         dockerfile: [ubuntu, debian]
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Deploy 
         if: github.event_name == 'schedule' || github.event_name == 'push'
