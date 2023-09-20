@@ -1,7 +1,6 @@
 name: Build Test and Deploy
 
 on:
-  # can we be more DRY here?
   push:
     branches:
       - main
