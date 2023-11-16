@@ -71,7 +71,7 @@ jobs:
           repo: ${{ github.repository }}
       
       - name: Setup Bats and Bats libs
-        uses: brokenpip3/setup-bats-libs@1.5.1
+        uses: brokenpip3/setup-bats-libs@1.5.2
         with:
           bats-version: '1.8.2'
           support-version: 0.3.0
@@ -163,7 +163,7 @@ jobs:
           tags: ${{ env.TEST_TAG }}
 
       - name: Setup Bats and Bats libs
-        uses: brokenpip3/setup-bats-libs@1.5.1
+        uses: brokenpip3/setup-bats-libs@1.5.2
         with:
           bats-version: '1.8.2'
           support-version: 0.3.0
@@ -233,7 +233,7 @@ jobs:
           tags: ${{ env.TEST_TAG }}
 
       - name: Setup Bats and Bats libs
-        uses: brokenpip3/setup-bats-libs@1.5.1
+        uses: brokenpip3/setup-bats-libs@1.5.2
         with:
           bats-version: '1.8.2'
           support-version: 0.3.0
