@@ -43,6 +43,11 @@ RUN if [ $IDRIS_VERSION = "latest" ] ; \
 WORKDIR /root/Idris2 
 RUN make bootstrap SCHEME=scheme && make install
 
+# add idris2 to path
+ENV PATH="/root/.idris2/bin:${PATH}"
+# add idris lib to LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH="/root/.idris2/lib:${LD_LIBRARY_PATH}"
+
 # self-hosting (needed for Idris2 API)
 # in my experience, the Idris2 API seems to still work without the self-hosting step
 # At least, it builds the idris2-python correctly (although i haven't checked anything else)
@@ -50,11 +55,3 @@ RUN make bootstrap SCHEME=scheme && make install
 # NOTE: not sure if the install-api transfers to the child images
 RUN make clean && make all && make install
 RUN make install-api
-
-# these things aren't strictly necessary for a functioning base image, 
-# but they make it possible for us to test the image 
-
-# add idris2 to path
-ENV PATH="/root/.idris2/bin:${PATH}"
-# add idris lib to LD_LIBRARY_PATH
-ENV LD_LIBRARY_PATH="/root/.idris2/lib:${LD_LIBRARY_PATH}"
