@@ -70,9 +70,22 @@ jobs:
           dockerfile: base
           repo: ${{ github.repository }}
       
-      - name: Run Test 
+      - name: Setup Bats and Bats libs
+        uses: brokenpip3/setup-bats-libs@1.5.1
+        with:
+          bats-version: '1.8.2'
+          support-version: 0.3.0
+          assert-version: 2.1.0
+          file-install: false
+          detik-install: false
+  
+      # LIB_PATH is a env var I use in the setup() function of my bats tests
+      # it points to the folder containing bats-assert and bats-support
+      - name: Run Test
         run: |
-          docker run ${{ env.TAG }} /bin/bash -c "make clean; make all && make install"
+          export LIB_PATH=/usr/lib/
+          export DOCKER_IMAGE=${{ env.TAG }}
+          bats tests/base.bats
 
   base-test-2:
     name: Test 2 Base - ${{ matrix.idris-version }}
@@ -97,7 +110,7 @@ jobs:
 
       - name: Run Test
         run: |
-          docker run ${{ env.TAG }} /bin/bash -c "make clean; make all; make test"
+          docker run ${{ env.TAG }} /bin/bash -c "make test"
 
   # it would be nice to make the if conditional in the top level of the job,
   # but since devcontainer-build depends on this, we need this to run on a PR success as well
