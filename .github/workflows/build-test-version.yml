@@ -60,36 +60,35 @@ jobs:
     runs-on: ubuntu-latest
     needs: base-build
     env:
-      TAG: base-${{ inputs.idris-version }}:test
+      TAG: ghcr.io/${{ github.repository }}/base:${{ inputs.idris-version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
-      
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      
-      - name: Get Latest Idris Commit SHA
-        id: get-sha
-        uses: ./.github/actions/get-idris-sha
+        uses: actions/checkout@v4
 
-      - name: Build Base
-        uses: docker/build-push-action@v4.1.1
+      # mainly just for caching purposes - makes it faster to build later on
+      - name: Build
+        uses: ./.github/actions/build-image
         with:
-          context: .
-          file: base.Dockerfile
-          build-args: | 
-            IDRIS_VERSION=${{ inputs.idris-version }}
-            IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
-          tags: ${{ env.TAG }}
-          load: true
-          cache-from: type=gha,scope=build-base-${{ inputs.idris-version }}
+          version: ${{ inputs.idris-version }}
+          dockerfile: base
+          repo: ${{ github.repository }}
       
-      - name: Run `docker image ls`
-        run: docker image ls
-      
-      - name: Run Test 
+      - name: Setup Bats and Bats libs
+        uses: brokenpip3/setup-bats-libs@1.5.1
+        with:
+          bats-version: '1.8.2'
+          support-version: 0.3.0
+          assert-version: 2.1.0
+          file-install: false
+          detik-install: false
+  
+      # LIB_PATH is a env var I use in the setup() function of my bats tests
+      # it points to the folder containing bats-assert and bats-support
+      - name: Run Test
         run: |
-          docker run ${{ env.TAG }} /bin/bash -c "make clean; make all && make install"
+          export LIB_PATH=/usr/lib/
+          export DOCKER_IMAGE=${{ env.TAG }}
+          bats tests/base.bats
 
   base-test-2:
     name: Test 2 Base
@@ -122,7 +121,7 @@ jobs:
 
       - name: Run Test
         run: |
-          docker run ${{ env.TAG }} /bin/bash -c "make clean; make all; make test"
+          docker run ${{ env.TAG }} /bin/bash -c "make test"
 
   # "consumer" images just "consume" the base image and do nothing else
   # basic tests for these
