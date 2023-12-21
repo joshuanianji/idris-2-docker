@@ -18,14 +18,14 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
-      
+
       - name: Set up SSH
         uses: MrSquaare/ssh-setup-action@v2
         with:
           host: ${{ secrets.SSH_IP }}
           private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           private-key-name: oracle-arm
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
         with:
@@ -65,14 +65,25 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      # mainly just for caching purposes - makes it faster to build later on
-      - name: Build
-        uses: ./.github/actions/build-image
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Get Latest Idris Commit SHA
+        id: get-sha
+        uses: ./.github/actions/get-idris-sha
+
+      - name: Build Base
+        uses: docker/build-push-action@v4.1.1
         with:
-          version: ${{ inputs.idris-version }}
-          dockerfile: base
-          repo: ${{ github.repository }}
-      
+          context: .
+          file: base.Dockerfile
+          build-args: | 
+            IDRIS_VERSION=${{ inputs.idris-version }}
+            IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
+          tags: ${{ env.TAG }}
+          load: true
+          cache-from: type=gha,scope=build-base-${{ inputs.idris-version }}
+
       - name: Setup Bats and Bats libs
         uses: brokenpip3/setup-bats-libs@1.5.1
         with:
