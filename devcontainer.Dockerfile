@@ -29,6 +29,7 @@ RUN apt-get update && \
 
 # copy scheme
 COPY --from=scheme-builder /usr/bin/scheme /usr/bin/scheme
+COPY --from=scheme-builder /root/scheme-lib/ /usr/lib/
 
 # git clone idris2-lsp, as well as underlying Idris2 submodule
 WORKDIR /build
