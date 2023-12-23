@@ -23,9 +23,6 @@ jobs:
       
       - name: Setup Buildx (no ARM)
         uses: docker/setup-buildx-action@v2
-        with:
-          # since we're using a local registry
-          driver-opts: network=host
         
       - name: Get Latest Idris Commit SHA
         id: get-sha
@@ -40,8 +37,6 @@ jobs:
             IDRIS_LSP_VERSION=${{ inputs.idris-lsp-version }}
             IDRIS_LSP_SHA=${{ steps.get-sha.outputs.lsp-sha }}
           tags: ${{ env.TAG }}
-          # push to local registry
-          push: true
           cache-from: type=gha,scope=build-devcontainer-${{ inputs.idris-lsp-version }}
 
       - name: Setup BATS
