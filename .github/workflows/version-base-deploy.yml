@@ -1,4 +1,4 @@
-name: Deploy One Version
+name: Deploy One Version (Base + Consumers)
 
 on:
   workflow_call:
@@ -64,7 +64,6 @@ jobs:
           # When doing matrix builds, we need to scope the image
           # https://github.com/moby/buildkit/issues/2885
           cache-from: type=gha,scope=build-base-${{ inputs.idris-version }}
-          cache-to: type=gha,mode=max,scope=build-base-${{ inputs.idris-version }}
 
   deploy-consumers:
     name: Deploy Consumer - ${{ matrix.dockerfile }} ${{ inputs.idris-version }}

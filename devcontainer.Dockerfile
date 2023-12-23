@@ -1,21 +1,34 @@
-ARG IDRIS_VERSION=latest
-# LSP_VERSION is in the form "idris2-0.5.1", or "latest"
-ARG IDRIS_LSP_VERSION=latest
-ARG BASE_IMG=ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION}
+# like base, we install scheme
+FROM debian:bullseye as scheme-builder
 
-FROM $BASE_IMG as base
+WORKDIR /root
+
+RUN apt-get update && \
+    apt-get install -y git make gcc libncurses5-dev libncursesw5-dev libx11-dev libgmp-dev
+
+COPY scripts/install-chezscheme-arch.sh ./install-chezscheme-arch.sh 
+
+# check if system is arm based
+# if so, install chez scheme from source
+
+RUN if [ $(uname -m) = "aarch64" ] ; then ./install-chezscheme-arch.sh ; else apt-get install -y chezscheme ; fi
+RUN which scheme
+
+# copy csv* library to /root/move
+# this makes it a bit easier for us to move the csv folder to other build steps, since it is necessary for scheme to run
+RUN mkdir scheme-lib && cp -r /usr/lib/csv* /root/scheme-lib
 
 FROM debian:bullseye as builder 
-# IDRIS_LSP_VERSION is in the form "idris2-0.5.1", "idris2-0.6.0", or "latest"
+
+# LSP_VERSION is in the form "idris2-0.5.1", or "latest"
 ARG IDRIS_LSP_VERSION=latest
 ARG IDRIS_LSP_SHA
 
 RUN apt-get update && \
     apt-get install -y git make gcc libgmp-dev curl
 
-# add scheme from base
-COPY --from=base /usr/bin/scheme /usr/bin/scheme
-COPY --from=base /root/scheme-lib/ /usr/lib/
+# copy scheme
+COPY --from=scheme-builder /usr/bin/scheme /usr/bin/scheme
 
 # git clone idris2-lsp, as well as underlying Idris2 submodule
 WORKDIR /build
@@ -54,9 +67,9 @@ FROM mcr.microsoft.com/vscode/devcontainers/base:bullseye
 
 # add idris2 and scheme from builder
 COPY --from=builder /usr/local/lib/idris2 /usr/local/lib/idris2
-COPY --from=base /usr/bin/scheme /usr/bin/scheme
+COPY --from=scheme-builder /usr/bin/scheme /usr/bin/scheme
 # copy csv* to /usr/lib
-COPY --from=base /root/scheme-lib/ /usr/lib/ 
+COPY --from=scheme-builder /root/scheme-lib/ /usr/lib/ 
 
 # set new Idris2
 ENV PATH="/usr/local/lib/idris2/bin:${PATH}"
