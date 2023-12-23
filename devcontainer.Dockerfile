@@ -1,4 +1,5 @@
-# like base, we install scheme
+# =====
+# Scheme Builder
 FROM debian:bullseye as scheme-builder
 
 WORKDIR /root
@@ -18,11 +19,9 @@ RUN which scheme
 # this makes it a bit easier for us to move the csv folder to other build steps, since it is necessary for scheme to run
 RUN mkdir scheme-lib && cp -r /usr/lib/csv* /root/scheme-lib
 
+# =====
+# Idris Builder
 FROM debian:bullseye as builder 
-
-# LSP_VERSION is in the form "idris2-0.5.1", or "latest"
-ARG IDRIS_LSP_VERSION=latest
-ARG IDRIS_LSP_SHA
 
 RUN apt-get update && \
     apt-get install -y git make gcc libgmp-dev curl
@@ -30,6 +29,15 @@ RUN apt-get update && \
 # copy scheme
 COPY --from=scheme-builder /usr/bin/scheme /usr/bin/scheme
 COPY --from=scheme-builder /root/scheme-lib/ /usr/lib/
+
+# necessary environment variables for building Idris and the LSP
+ENV PATH="/usr/local/lib/idris2/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/usr/local/lib/idris2/lib:${LD_LIBRARY_PATH}"
+ENV IDRIS2_PREFIX="/usr/local/lib/idris2"
+
+# LSP_VERSION is in the form "idris2-0.5.1", or "latest"
+ARG IDRIS_LSP_VERSION=latest
+ARG IDRIS_LSP_SHA
 
 # git clone idris2-lsp, as well as underlying Idris2 submodule
 WORKDIR /build
@@ -39,15 +47,15 @@ RUN if [ $IDRIS_LSP_VERSION = "latest" ] ; \
     else git clone --depth 1 --branch $IDRIS_LSP_VERSION https://github.com/idris-community/idris2-lsp.git ; \
     fi
 
-# necessary environment variables for building Idris and the LSP
-ENV PATH="/usr/local/lib/idris2/bin:${PATH}"
-ENV LD_LIBRARY_PATH="/usr/local/lib/idris2/lib:${LD_LIBRARY_PATH}"
-ENV IDRIS2_PREFIX="/usr/local/lib/idris2"
-
 COPY scripts/install-idris-lsp.sh ./install-idris-lsp.sh 
 RUN ./install-idris-lsp.sh
 
+# =====
+# Final Image
 FROM mcr.microsoft.com/vscode/devcontainers/base:bullseye
+
+ARG IDRIS_LSP_VERSION=latest
+ARG IDRIS_LSP_SHA
 
 # idris2 + idris2-lsp compiled from source
 COPY --from=builder /usr/local/lib/idris2 /usr/local/lib/idris2
@@ -59,3 +67,8 @@ COPY --from=scheme-builder /root/scheme-lib/ /usr/lib/
 ENV PATH="/usr/local/lib/idris2/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/local/lib/idris2/lib:${LD_LIBRARY_PATH}"
 ENV IDRIS2_PREFIX="/usr/local/lib/idris2"
+ENV SCHEME=scheme
+
+# re-expose IDRIS_LSP_VERSION and IDRIS_LSP_SHA args as env vars in the container
+ENV IDRIS_LSP_VERSION=$IDRIS_LSP_VERSION
+ENV IDRIS_LSP_SHA=$IDRIS_LSP_SHA
