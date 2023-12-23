@@ -36,6 +36,7 @@ jobs:
           build-args: | 
             IDRIS_LSP_VERSION=${{ inputs.idris-lsp-version }}
             IDRIS_LSP_SHA=${{ steps.get-sha.outputs.lsp-sha }}
+          load: true
           tags: ${{ env.TAG }}
           cache-from: type=gha,scope=build-devcontainer-${{ inputs.idris-lsp-version }}
 
