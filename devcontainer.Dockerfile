@@ -39,39 +39,23 @@ RUN if [ $IDRIS_LSP_VERSION = "latest" ] ; \
     else git clone --depth 1 --branch $IDRIS_LSP_VERSION https://github.com/idris-community/idris2-lsp.git ; \
     fi
 
-WORKDIR /build/idris2-lsp
-RUN git submodule update --init Idris2
-WORKDIR /build/idris2-lsp/Idris2
-RUN make bootstrap SCHEME=scheme PREFIX=/usr/local/lib/idris2
-RUN make install PREFIX=/usr/local/lib/idris2
-
-# ensure idris2 is in path
+# necessary environment variables for building Idris and the LSP
 ENV PATH="/usr/local/lib/idris2/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/local/lib/idris2/lib:${LD_LIBRARY_PATH}"
-
-RUN make clean PREFIX=/usr/local/lib/idris2
-RUN make all PREFIX=/usr/local/lib/idris2
-RUN make install PREFIX=/usr/local/lib/idris2
-RUN make install-with-src-libs PREFIX=/usr/local/lib/idris2
-RUN make install-with-src-api PREFIX=/usr/local/lib/idris2
-
-# Manually install LSP library and idris2-lsp
-WORKDIR /build/idris2-lsp
-RUN git submodule update --init LSP-lib
-WORKDIR /build/idris2-lsp/LSP-lib
 ENV IDRIS2_PREFIX="/usr/local/lib/idris2"
-RUN idris2 --install-with-src
-WORKDIR /build/idris2-lsp
-RUN make install PREFIX=/usr/local/lib/idris2
+
+COPY scripts/install-idris-lsp.sh ./install-idris-lsp.sh 
+RUN ./install-idris-lsp.sh
 
 FROM mcr.microsoft.com/vscode/devcontainers/base:bullseye
 
-# add idris2 and scheme from builder
+# idris2 + idris2-lsp compiled from source
 COPY --from=builder /usr/local/lib/idris2 /usr/local/lib/idris2
+# scheme + csv library
 COPY --from=scheme-builder /usr/bin/scheme /usr/bin/scheme
-# copy csv* to /usr/lib
 COPY --from=scheme-builder /root/scheme-lib/ /usr/lib/ 
 
-# set new Idris2
+# set required environment variables
 ENV PATH="/usr/local/lib/idris2/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/local/lib/idris2/lib:${LD_LIBRARY_PATH}"
+ENV IDRIS2_PREFIX="/usr/local/lib/idris2"
