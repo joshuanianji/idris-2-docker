@@ -47,7 +47,7 @@ jobs:
     strategy:
       matrix:
         # based off of the branches in the idris-lsp repo
-        idris-lsp-version: ["idris2-0.6.0", "latest"]
+        idris-lsp-version: ["idris2-0.5.1", "idris2-0.6.0", "latest"]
     uses: ./.github/workflows/version-devcontainer-build-test.yml
     with:
       idris-lsp-version: ${{ matrix.idris-lsp-version }}
@@ -60,7 +60,7 @@ jobs:
     needs: [devcontainer-build-test]
     strategy:
       matrix:
-        idris-lsp-version: ["idris2-0.6.0", "latest"]
+        idris-lsp-version: ["idris2-0.5.1", "idris2-0.6.0", "latest"]
       max-parallel: 1 
     uses: ./.github/workflows/version-devcontainer-deploy.yml
     with:
