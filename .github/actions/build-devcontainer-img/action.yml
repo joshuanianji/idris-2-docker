@@ -38,8 +38,8 @@ runs:
   using: composite
   steps:
     - name: Get Latest Idris Commit SHA
-        id: get-sha
-        uses: ./.github/actions/get-idris-sha
+      id: get-sha
+      uses: ./.github/actions/get-idris-sha
     
     - name: Build Devcontainer (versioned)
       if: ${{ inputs.idris-lsp-version != 'latest' }}

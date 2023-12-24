@@ -31,8 +31,8 @@ runs:
   using: composite
   steps:
     - name: Get Latest Idris Commit SHA
-        id: get-sha
-        uses: ./.github/actions/get-idris-sha
+      id: get-sha
+      uses: ./.github/actions/get-idris-sha
 
     - name: Build Base (versioned)
       uses: docker/build-push-action@v4.1.1
