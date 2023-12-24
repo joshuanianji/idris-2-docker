@@ -57,6 +57,7 @@ FROM mcr.microsoft.com/vscode/devcontainers/base:bullseye
 
 ARG IDRIS_LSP_VERSION=latest
 ARG IDRIS_LSP_SHA
+ARG IDRIS_VERSION
 ARG IDRIS_SHA
 
 # idris2 + idris2-lsp compiled from source
@@ -71,8 +72,9 @@ ENV PATH="/usr/local/lib/idris2/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/local/lib/idris2/lib:${LD_LIBRARY_PATH}" 
 ENV SCHEME=scheme
 
-# re-expose IDRIS_LSP_VERSION and IDRIS_LSP_SHA args as env vars in the container
+# re-expose version information
 ENV IDRIS_LSP_VERSION=$IDRIS_LSP_VERSION
 ENV IDRIS_LSP_SHA=$IDRIS_LSP_SHA
+ENV IDRIS_VERSION=$IDRIS_VERSION
 ENV IDRIS_SHA=$IDRIS_SHA
 

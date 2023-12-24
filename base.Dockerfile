@@ -55,3 +55,7 @@ ENV LD_LIBRARY_PATH="/root/.idris2/lib:${LD_LIBRARY_PATH}"
 # NOTE: not sure if the install-api transfers to the child images
 RUN make clean && make all && make install
 RUN make install-api
+
+# re-expose version information
+ENV IDRIS_VERSION=$IDRIS_VERSION
+ENV IDRIS_SHA=$IDRIS_SHA
