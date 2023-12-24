@@ -9,10 +9,9 @@ ARG BASE_IMG=ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION}
 # Rebuild with correct prefix. Somehow, building from scratch with a different prefix fails
 FROM $BASE_IMG as idris-builder
 ARG IDRIS_VERSION
-ARG IDRIS_SHA
 
 WORKDIR /build
-RUN git clone https://github.com/idris-lang/Idris2.git && cd Idris2 && git checkout $IDRIS_SHA
+RUN git clone --depth 1 --branch $IDRIS_VERSION https://github.com/idris-lang/Idris2.git
 WORKDIR /build/Idris2
 RUN make all PREFIX=/usr/local/lib/idris2
 RUN make install PREFIX=/usr/local/lib/idris2
