@@ -10,7 +10,7 @@ inputs:
     description: "The Idris version to build"
     required: false
     default: "latest"
-  base-img:
+  base-tag:
     description: "Tag of the base image to use. Should be from base.Dockerfile"
     required: true
   push:
@@ -51,7 +51,7 @@ runs:
         build-args: | 
           IDRIS_LSP_VERSION=${{ inputs.idris-lsp-version }}
           IDRIS_VERSION=${{ inputs.idris-version }}
-          BASE_IMG=${{ inputs.base-img }}
+          BASE_IMG=${{ inputs.base-tag }}
         tags: ${{ inputs.tags }}
         load: ${{ inputs.load }}
         push: ${{ inputs.push }}
@@ -71,7 +71,7 @@ runs:
           IDRIS_LSP_SHA=${{ steps.get-sha.outputs.lsp-sha }}
           IDRIS_VERSION=${{ inputs.idris-version }}
           IDRIS_SHA=${{ steps.get-sha.outputs.idris-sha }}
-          BASE_IMG=${{ inputs.base-img }}
+          BASE_IMG=${{ inputs.base-tag }}
         tags: ${{ inputs.tags }}
         load: ${{ inputs.load }}
         push: ${{ inputs.push }}
