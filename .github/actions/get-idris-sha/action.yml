@@ -11,7 +11,7 @@ outputs:
     value: ${{ steps.get-sha.outputs.sha }}
   lsp-sha:
     description: "The latest Idris LSP Commit SHA"
-    value: ${{ steps.get-lsp-sha.outputs.sha }}
+    value: ${{ steps.get-lsp-sha.outputs.lsp-sha }}
 
 runs:
   using: composite
@@ -25,4 +25,8 @@ runs:
       id: get-lsp-sha
       run: |
         echo "name=lsp-sha::$(curl -s 'https://api.github.com/repos/idris-community/idris2-lsp/commits' | jq -r '.[0].sha')" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Print Output
+      run: |
+        echo $GITHUB_OUTPUT
       shell: bash

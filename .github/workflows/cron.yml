@@ -1,0 +1,42 @@
+name: Release Latest
+
+on:
+  workflow_dispatch:
+  # every day at 1am
+  schedule:
+    - cron: '0 1 * * *'
+
+
+jobs:
+  base-build-test:
+    name: Base Build and Test
+    uses: ./.github/workflows/version-base-build-test.yml
+    with:
+      idris-version: latest
+    secrets: inherit
+  
+  base-deploy:
+    name: Base Deploy
+    needs: [base-build-test]
+    uses: ./.github/workflows/version-base-deploy.yml
+    with:
+      idris-version: latest
+    secrets: inherit
+  
+  devcontainer-build-test:
+    name: Devcontainer Build and Test
+    needs: [base-build-test] # needs cached base builds
+    uses: ./.github/workflows/version-devcontainer-build-test.yml
+    with:
+      idris-lsp-version: latest
+      idris-version: latest
+    secrets: inherit
+  
+  devcontainer-deploy:
+    name: Devcontainer Deploy
+    needs: [base-deploy, devcontainer-build-test] # needs base deployed to registry
+    uses: ./.github/workflows/version-devcontainer-deploy.yml
+    with:
+      idris-lsp-version: latest
+      idris-version: latest
+    secrets: inherit

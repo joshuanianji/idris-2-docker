@@ -29,3 +29,12 @@ function setup() {
     run docker run -i --entrypoint /bin/bash $DOCKER_IMAGE < tests/build-idris2-python.sh
     refute_output --partial "required idris2 any but no matching version is installed"
 }
+
+@test "Test Idris2 command output" {
+    # make sure it doesn't have "Module Prelude not found" or any other errors
+    # https://github.com/joshuanianji/idris-2-docker/issues/16#issuecomment-1254561254
+
+    # the ENTRYPOINT is already the `idris2` command, so we just `docker run` without any other stuff
+    run docker run $DOCKER_IMAGE idris2
+    refute_output --partial "Uncaught error:"
+}

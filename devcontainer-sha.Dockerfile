@@ -1,6 +1,7 @@
-# expects IDRIS_VERSION and IDRIS_LSP_VERSION to NOT be `latest`
+# Basically `devcontainer.Dockerfile` but takes in a SHA instead of a version
+# To read more, look at base-sha.Dockerfile
 
-ARG IDRIS_VERSION=0.7.0
+ARG IDRIS_VERSION=latest
 ARG BASE_IMG=ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION}
 
 # =====
@@ -8,9 +9,10 @@ ARG BASE_IMG=ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION}
 # Rebuild with correct prefix. Somehow, building from scratch with a different prefix fails
 FROM $BASE_IMG as idris-builder
 ARG IDRIS_VERSION
+ARG IDRIS_SHA
 
 WORKDIR /build
-RUN git clone --depth 1 --branch $IDRIS_VERSION https://github.com/idris-lang/Idris2.git
+RUN git clone https://github.com/idris-lang/Idris2.git && cd Idris2 && git checkout $IDRIS_SHA
 WORKDIR /build/Idris2
 RUN make all PREFIX=/usr/local/lib/idris2
 RUN make install PREFIX=/usr/local/lib/idris2
@@ -39,7 +41,7 @@ ARG IDRIS_LSP_SHA
 # git clone idris2-lsp, as well as underlying Idris2 submodule
 WORKDIR /build
 # Using --recurse-submodules, we get the underlying idris2 repo in the recorded state (https://stackoverflow.com/a/3797061)
-RUN git clone --depth 1 --branch $IDRIS_LSP_VERSION https://github.com/idris-community/idris2-lsp.git
+RUN git clone https://github.com/idris-community/idris2-lsp.git && cd idris2-lsp && git checkout $IDRIS_LSP_SHA
 WORKDIR /build/idris2-lsp
 RUN git submodule update --init --recursive
 
@@ -51,7 +53,8 @@ RUN ./install-idris-lsp.sh
 FROM mcr.microsoft.com/vscode/devcontainers/base:bullseye
 
 ARG IDRIS_LSP_VERSION=latest
-ARG IDRIS_VERSION
+ARG IDRIS_LSP_SHA
+ARG IDRIS_SHA
 
 # idris2 + idris2-lsp compiled from source
 COPY --from=lsp-builder /usr/local/lib/idris2 /usr/local/lib/idris2
@@ -67,5 +70,6 @@ ENV SCHEME=scheme
 
 # re-expose version information
 ENV IDRIS_LSP_VERSION=$IDRIS_LSP_VERSION
-ENV IDRIS_VERSION=$IDRIS_VERSION
+ENV IDRIS_LSP_SHA=$IDRIS_LSP_SHA
+ENV IDRIS_SHA=$IDRIS_SHA
 
