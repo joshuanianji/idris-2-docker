@@ -29,9 +29,10 @@ function setup() {
 
 @test "Test Idris2 command output" {
     # make sure it doesn't have "Module Prelude not found"
+    # or, i guess any other error.
     # https://github.com/joshuanianji/idris-2-docker/issues/16#issuecomment-1254561254
     echo "Testing Idris2 command output $DOCKER_IMAGE"
 
     run docker run $DOCKER_IMAGE idris2
-    refute_output --partial "Module Prelude not found"
+    refute_output --partial "Uncaught error:"
 }
