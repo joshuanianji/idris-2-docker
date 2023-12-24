@@ -195,14 +195,10 @@ jobs:
           tags: ${{ env.TAG }}
           load: true
 
-      - name: Setup BATS
-        uses: mig4/setup-bats@v1
+      - name: Setup Bats and Bats libs
+        uses: brokenpip3/setup-bats-libs@1.5.2
         with:
           bats-version: '1.8.2'
-
-      - name: Setup Bats libs
-        uses: brokenpip3/setup-bats-libs@0.1.0
-        with:
           support-version: 0.3.0
           assert-version: 2.1.0
           file-install: false
