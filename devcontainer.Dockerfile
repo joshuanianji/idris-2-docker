@@ -1,9 +1,10 @@
 ARG IDRIS_VERSION=latest
+ARG BASE_IMG=ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION}
 
 # =====
 # Idris Builder
 # Rebuild with correct prefix. Somehow, building from scratch with a different prefix fails
-FROM ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION} as idris-builder
+FROM $BASE_IMG as idris-builder
 ARG IDRIS_VERSION
 ARG IDRIS_SHA
 
