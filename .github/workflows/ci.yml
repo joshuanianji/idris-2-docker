@@ -17,42 +17,45 @@ on:
       - "tests/*.sh"
 
 jobs:
-  # base-build-test:
-  #   name: Base Build and Test - ${{ matrix.idris-version }}
-  #   strategy:
-  #     matrix:
-  #       idris-version: ["v0.5.1", "v0.6.0", "latest"]
-  #   uses: ./.github/workflows/version-base-build-test.yml
-  #   with:
-  #     idris-version: ${{ matrix.idris-version }}
-  #   secrets: inherit
+  base-build-test:
+    name: Base Build and Test - ${{ matrix.idris-version }}
+    strategy:
+      matrix:
+        idris-version: ["v0.5.1", "v0.6.0", "v0.7.0", "latest"]
+    uses: ./.github/workflows/version-base-build-test.yml
+    with:
+      idris-version: ${{ matrix.idris-version }}
+    secrets: inherit
   
-  # base-deploy:
-  #   name: Base Deploy - ${{ matrix.idris-version }}
-  #   # only deploy if it's a push to main
-  #   if: github.event_name == 'schedule' || github.event_name == 'push'
-  #   needs: [base-build-test]
-  #   strategy:
-  #     matrix:
-  #       idris-version: ["v0.5.1", "v0.6.0", "latest"]
-  #     # deploy one at a time, so the latest is always the latest deployed
-  #     max-parallel: 1 
-  #   uses: ./.github/workflows/version-base-deploy.yml
-  #   with:
-  #     idris-version: ${{ matrix.idris-version }}
-  #   secrets: inherit
+  base-deploy:
+    name: Base Deploy - ${{ matrix.idris-version }}
+    # only deploy if it's a push to main
+    if: github.event_name == 'schedule' || github.event_name == 'push'
+    needs: [base-build-test]
+    strategy:
+      matrix:
+        idris-version: ["v0.5.1", "v0.6.0", "v0.7.0", "latest"]
+      # deploy one at a time, so the latest is always the latest deployed
+      max-parallel: 1 
+    uses: ./.github/workflows/version-base-deploy.yml
+    with:
+      idris-version: ${{ matrix.idris-version }}
+    secrets: inherit
   
   devcontainer-build-test:
     name: Devcontainer Build and Test - ${{ matrix.idris-lsp-version }}
+    needs: [base-build-test] # needs cached base builds
     strategy:
       matrix:
         # based off of the branches in the idris-lsp repo
-        idris-lsp-version: ["idris2-0.5.1", "idris2-0.6.0", "latest"]
+        idris-lsp-version: ["idris2-0.5.1", "idris2-0.6.0", "idris2-0.7.0", "latest"]
         include:
           - idris-lsp-version: "idris2-0.5.1"
             idris-version: "v0.5.1"
           - idris-lsp-version: "idris2-0.6.0"
             idris-version: "v0.6.0"
+          - idris-lsp-version: "idris2-0.7.0"
+            idris-version: "v0.7.0"
           - idris-lsp-version: "latest"
             idris-version: "latest"
     uses: ./.github/workflows/version-devcontainer-build-test.yml
@@ -65,15 +68,17 @@ jobs:
     name: Devcontainer Deploy - ${{ matrix.idris-lsp-version }}
     # only deploy if it's a push to main
     if: github.event_name == 'schedule' || github.event_name == 'push'
-    needs: [devcontainer-build-test]
+    needs: [base-deploy, devcontainer-build-test] # needs base deployed to registry
     strategy:
       matrix:
-        idris-lsp-version: ["idris2-0.5.1", "idris2-0.6.0", "latest"]
+        idris-lsp-version: ["idris2-0.5.1", "idris2-0.6.0", "idris2-0.7.0", "latest"]
         include:
           - idris-lsp-version: "idris2-0.5.1"
             idris-version: "v0.5.1"
           - idris-lsp-version: "idris2-0.6.0"
             idris-version: "v0.6.0"
+          - idris-lsp-version: "idris2-0.7.0"
+            idris-version: "v0.7.0"
           - idris-lsp-version: "latest"
             idris-version: "latest"
       max-parallel: 1 
