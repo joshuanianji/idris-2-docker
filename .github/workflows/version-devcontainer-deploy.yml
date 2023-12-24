@@ -50,22 +50,14 @@ jobs:
         id: create-meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ github.repository }}/base
-
+          images: ${{ github.repository }}/devcontainer
+      
       - name: Build Devcontainer
-        uses: docker/build-push-action@v4.1.1
+        uses: ./.github/actions/build-devcontainer-img
         with:
-          context: .
-          platforms: linux/amd64,linux/arm64
-          file: devcontainer.Dockerfile
-          # we run this after base so we can pull the base_img from the registry
-          build-args: | 
-            IDRIS_LSP_VERSION=${{ inputs.idris-lsp-version }}
-            IDRIS_LSP_SHA=${{ steps.get-sha.outputs.lsp-sha }}
-            IDRIS_VERSION=${{ inputs.idris-version }}
-            IDRIS_SHA=${{ steps.get-sha.outputs.idris-sha }}
-            BASE_IMG=ghcr.io/joshuanianji/idris-2-docker/base:${{ inputs.idris-version }}
-          tags: ghcr.io/${{ github.repository }}/base:${{ inputs.idris-lsp-version }}
-          labels: ${{ steps.create-meta.outputs.labels }}
+          idris-lsp-version: ${{ inputs.idris-lsp-version }}
+          idris-version: ${{ inputs.idris-version }}
           push: true
-          cache-from: type=gha,scope=build-devcontainer-${{ inputs.idris-lsp-version }}
+          tags: ghcr.io/${{ github.repository }}/base:${{ inputs.idris-lsp-version }}
+          base-tag: ghcr.io/joshuanianji/idris-2-docker/base:${{ inputs.idris-version }}
+

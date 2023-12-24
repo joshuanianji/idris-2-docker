@@ -1,5 +1,7 @@
-# Expects IDRIS_VERSION to NOT be `latest`
-# uBut a tag of the form `v0.7.0`
+# Basically `base.Dockerfile` but takes in a SHA instead of a version
+# This is so that we can use the latest commit on the idris-lang/idris2 repo
+# separating this into a separate file so we can get better caching
+# there is a lot of redundancy between this and base.Dockerfile, but I don't think it's worth it to try to abstract it out
 
 FROM debian:bullseye as scheme-builder
 
@@ -27,6 +29,8 @@ RUN apt-get update && \
 
 ENV DEBIAN_FRONTEND noninteractive
 ARG IDRIS_VERSION
+# SHA of the latest commit on the idris-lang/idris2 repo
+ARG IDRIS_SHA
 
 COPY --from=scheme-builder /usr/bin/scheme /usr/bin/scheme
 # copy csv* to /usr/lib, and also to /root/move for easier access for other build steps
@@ -34,7 +38,9 @@ COPY --from=scheme-builder /root/scheme-lib/ /usr/lib/
 COPY --from=scheme-builder /root/scheme-lib/ /root/scheme-lib 
 
 WORKDIR /root
-RUN git clone --depth 1 --branch $IDRIS_VERSION https://github.com/idris-lang/Idris2.git
+# if IDRIS_VERSION is 'latest', do not switch to a branch. Checkout the latest commit - ensures docker cache won't use stale versions
+# https://stackoverflow.com/a/41361804
+RUN git clone https://github.com/idris-lang/Idris2.git && cd Idris2 && git checkout $IDRIS_SHA
 WORKDIR /root/Idris2 
 RUN make bootstrap SCHEME=scheme && make install
 
@@ -53,3 +59,4 @@ RUN make install-api
 
 # re-expose version information
 ENV IDRIS_VERSION=$IDRIS_VERSION
+ENV IDRIS_SHA=$IDRIS_SHA

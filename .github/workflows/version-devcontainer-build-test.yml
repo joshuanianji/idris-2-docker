@@ -35,45 +35,25 @@ jobs:
         with:
           # since we're using a local registry
           driver-opts: network=host
-        
-      - name: Get Latest Idris Commit SHA
-        id: get-sha
-        uses: ./.github/actions/get-idris-sha
       
-      # Building base because devcontainer image depends on it for idris binary
-      # only using cache-from because this should already be cached (we won't be writing to cache)
-      - name: Build Base
-        uses: docker/build-push-action@v4.1.1
+      - name: Build Base Image
+        uses: ./.github/actions/build-base-img
         with:
-          context: .
-          file: base.Dockerfile
-          build-args: | 
-            IDRIS_VERSION=${{ inputs.idris-version }}
-            IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
-          tags: ${{ env.BASE_TAG }}
-          # push to local registry
+          idris-version: ${{ inputs.idris-version }}
           push: true
-          cache-from: type=gha,scope=build-base-${{ inputs.idris-version }}
-      
+          tags:  ${{ env.BASE_TAG }}
+
       - name: Run `docker image ls`
         run: docker image ls
-
-      - name: Build Devcontainer
-        uses: docker/build-push-action@v4.1.1
+      
+      - name: Build Devcontainer Image
+        uses: ./.github/actions/build-devcontainer-img
         with:
-          context: .
-          file: devcontainer.Dockerfile
-          build-args: | 
-            IDRIS_LSP_VERSION=${{ inputs.idris-lsp-version }}
-            IDRIS_LSP_SHA=${{ steps.get-sha.outputs.lsp-sha }}
-            IDRIS_VERSION=${{ inputs.idris-version }}
-            IDRIS_SHA=${{ steps.get-sha.outputs.idris-sha }}
-            BASE_IMG=${{ env.BASE_TAG }}
+          idris-lsp-version: ${{ inputs.idris-lsp-version }}
+          idris-version: ${{ inputs.idris-version }}
           load: true
-          tags: ${{ env.TAG }}
-          cache-from: type=gha,scope=build-devcontainer-${{ inputs.idris-lsp-version }}
-          cache-to: type=gha,mode=max,scope=build-devcontainer-${{ inputs.idris-lsp-version }}
-
+          tags:  ${{ env.TAG }}
+          base-tag: ${{ env.BASE_TAG }}
       
       - name: Setup Bats and Bats libs
         uses: brokenpip3/setup-bats-libs@1.5.2

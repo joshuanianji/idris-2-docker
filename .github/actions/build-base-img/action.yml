@@ -1,0 +1,72 @@
+name: "Build Base Image"
+description: "Builds the correct base image depending on the idris version"
+
+inputs:
+  idris-version:
+    description: "The Idris version to build"
+    required: false
+    default: "latest"
+  push:
+    description: "Whether to push the image to Docker Hub"
+    required: false
+    default: false
+  load:
+    description: "Whether to load the image into the local Docker daemon"
+    required: false
+    default: false
+  tags:
+    description: "The tag to use for the image"
+    required: false
+    default: idris-base-img
+  labels:
+    description: "The labels to apply to the image"
+    required: false
+    default: ""
+  platforms: 
+    description: "The platforms to build for"
+    required: false
+    default: "linux/amd64"
+
+runs:
+  using: composite
+  steps:
+    - name: Get Latest Idris Commit SHA
+        id: get-sha
+        uses: ./.github/actions/get-idris-sha
+
+    - name: Build Base (versioned)
+      uses: docker/build-push-action@v4.1.1
+      if: ${{ inputs.idris-version != 'latest' }}
+      with:
+        context: .
+        platforms: ${{ inputs.platforms }}
+        file: base.Dockerfile
+        build-args: | 
+          IDRIS_VERSION=${{ inputs.idris-version }}
+        tags: ${{ inputs.tags }}
+        load: ${{ inputs.load }}
+        push: ${{ inputs.push }}
+        labels: ${{ inputs.labels }}
+        # When doing matrix builds, we need to scope the image
+        # https://github.com/moby/buildkit/issues/2885
+        cache-from: type=gha,scope=build-base-${{ inputs.idris-version }}
+        cache-to: type=gha,mode=max,scope=build-base-${{ inputs.idris-version }}
+
+    - name: Build Base (latest)
+      uses: docker/build-push-action@v4.1.1
+      if: ${{ inputs.idris-version == 'latest' }}
+      with:
+        context: .
+        platforms: ${{ inputs.platforms }}
+        file: base-sha.Dockerfile
+        build-args: | 
+          IDRIS_VERSION=${{ inputs.idris-version }}
+          IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
+        tags: ${{ inputs.tags }}
+        load: ${{ inputs.load }}
+        push: ${{ inputs.push }}
+        labels: ${{ inputs.labels }}
+        # When doing matrix builds, we need to scope the image
+        # https://github.com/moby/buildkit/issues/2885
+        cache-from: type=gha,scope=build-base-${{ inputs.idris-version }}
+        cache-to: type=gha,mode=max,scope=build-base-${{ inputs.idris-version }}
