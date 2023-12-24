@@ -20,8 +20,8 @@ Idris Versions: `v0.5.1`, `v0.6.0`, `latest` (Up to date with [Idris2/main](http
     - [Command Line](#command-line)
     - [Base Image](#base-image)
   - [Running Locally](#running-locally)
-    - [Build Latest (or a Specific Commit)](#build-latest-or-a-specific-commit)
-    - [Build From a Tagged Release](#build-from-a-tagged-release)
+    - [Build Latest](#build-latest)
+    - [Build From a Tagged Release/SHA commit](#build-from-a-tagged-releasesha-commit)
   - [Credit](#credit)
 
 ## Motivation
@@ -30,7 +30,8 @@ Installing Idris2 is [quite time consuming](https://idris2.readthedocs.io/en/lat
 
 ## Images
 
-* [idris-2-docker/devcontainer](https://github.com/joshuanianji/idris-2-docker/pkgs/container/idris-2-docker%2Fdevcontainer) - Debian bullseye built off of [Microsoft's Devcontainer Base image](https://github.com/microsoft/vscode-dev-containers/tree/main/containers/debian)
+* [idris-2-docker/base](https://github.com/joshuanianji/idris-2-docker/pkgs/container/idris-2-docker%2Fbase) - Base image with Idris2 installed from source.
+* [idris-2-docker/devcontainer](https://github.com/joshuanianji/idris-2-docker/pkgs/container/idris-2-docker%2Fdevcontainer) - Includes [Idris2 LSP](https://github.com/idris-community/idris2-lsp)
 * [idris-2-docker/ubuntu](https://github.com/joshuanianji/idris-2-docker/pkgs/container/idris-2-docker%2Fubuntu) - Ubuntu 20.04
 * [idris-2-docker/debian](https://github.com/joshuanianji/idris-2-docker/pkgs/container/idris-2-docker%2Fdebian) - Debian bullseye
 
@@ -65,7 +66,7 @@ Click "Reopen in Container" and it will download the image and open the project 
 Add devcontainers to your own project by copying the following contents to `Dockerfile` in the root of your project:
 
 ```dockerfile
-FROM ghcr.io/joshuanianji/idris-2-docker/devcontainer:v0.5.1
+FROM ghcr.io/joshuanianji/idris-2-docker/devcontainer:v0.7.0
 ```
 
 Then, using Microsoft's Remote SSH tools, click "Reopen in container" and choose that Dockerfile.
@@ -94,40 +95,24 @@ FROM ghcr.io/joshuanianji/idris-2-docker/debian:v0.5.1
 
 ## Running Locally
 
-To run the images locally, I recommend opening the workspace in the Devcontainer to provide a fully-featured development environment.
+To run the images locally, I recommend opening the workspace in the Devcontainer to provide a fully-featured development environment. I made a `scripts/build-image.py` which can build the base, debian, ubuntu or devcontainer from an idris version or a SHA commit.
 
-### Build Latest (or a Specific Commit)
+### Build Latest
+
+This is the default behaviour when running the script.
 
 ```bash
-export IDRIS_VERSION=latest
-# get latest commit - here we're using the github api and jq
-export IDRIS_SHA=$(curl -s 'https://api.github.com/repos/idris-lang/Idris2/commits' | jq -r '.[0].sha')
-
-# tagging the base image so other Dockerfiles can reference it
-docker build \
-  --build-arg IDRIS_SHA=$IDRIS_SHA \
-  --build-arg IDRIS_VERSION=$IDRIS_VERSION \
-  -f base.Dockerfile \
-  -t "ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION}" .
-
-# Build other images
-# the devcontainer image needs $IDRIS_SHA but debian and ubuntu do not
-docker build \
-  --build-arg IDRIS_SHA=$IDRIS_SHA \
-  --build-arg IDRIS_VERSION=$IDRIS_VERSION \
-  -f devcontainer.Dockerfile .
+# builds base from latest commit on the Idris repo. Tag is base-latest
+python scripts/build-image.py --image base
+python scripts/build-image.py --image devcontainer --tag devcontainer-latest-test
 ```
 
-### Build From a Tagged Release
+### Build From a Tagged Release/SHA commit
 
 ```bash
-export IDRIS_VERSION=v0.6.0
-
-# tagging the base image so other Dockerfiles can reference it
-docker build -f base.Dockerfile -t "ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION}" .
-
-# Build other images 
-docker build -f devcontainer.Dockerfile .
+python scripts/build-image.py --image base --version v0.6.0
+python scripts/build-image.py --image base --sha 58e5d156621cfdd4c54df26abf7ac9620cfebdd8
+python scripts/build-image.py --image devcontainer --version v0.6.0
 ```
 
 ## Credit
