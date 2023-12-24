@@ -10,24 +10,12 @@ else
     echo "LSP Version is set to '$IDRIS_LSP_VERSION'"; 
 fi
 
-# install idris
-# cd /build/idris2-lsp/Idris2
-# make bootstrap SCHEME=scheme PREFIX=/usr/local/lib/idris2
-# make all PREFIX=/usr/local/lib/idris2
-# make install PREFIX=/usr/local/lib/idris2
-
-# make clean PREFIX=/usr/local/lib/idris2
-# make all PREFIX=/usr/local/lib/idris2
-# make install PREFIX=/usr/local/lib/idris2
-# make install-with-src-libs PREFIX=/usr/local/lib/idris2
-# make install-with-src-api PREFIX=/usr/local/lib/idris2
-
 # check if the version is "idris2-0.4.0" or "idris2-0.5.1"
 # these are the "older" supported versions, before the idris2-lsp repo was split a reusable LSP-lib
 if [[ $IDRIS_LSP_VERSION == "idris2-0.4.0" ]] || [[ $IDRIS_LSP_VERSION == "idris2-0.5.1" ]]; then
     echo "Installing older version of idris2-lsp"
     
-    # Manual install of idris2-lsp 
+    # Manual install of idris2-lsp (no need to rebuild idris)
     cd /build/idris2-lsp
     make install PREFIX=/usr/local/lib/idris2
 else 
