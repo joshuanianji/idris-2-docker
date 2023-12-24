@@ -56,6 +56,7 @@ FROM mcr.microsoft.com/vscode/devcontainers/base:bullseye
 
 ARG IDRIS_LSP_VERSION=latest
 ARG IDRIS_LSP_SHA
+ARG IDRIS_SHA
 
 # idris2 + idris2-lsp compiled from source
 COPY --from=lsp-builder /usr/local/lib/idris2 /usr/local/lib/idris2
@@ -65,10 +66,12 @@ COPY --from=idris-builder /root/scheme-lib/ /usr/lib/
 
 # set required environment variables
 ENV PATH="/usr/local/lib/idris2/bin:${PATH}"
-ENV LD_LIBRARY_PATH="/usr/local/lib/idris2/lib:${LD_LIBRARY_PATH}"
-ENV IDRIS2_PREFIX="/usr/local/lib/idris2"
+# LD_LIBRARY_PATH is only required for v0.5.1 and earlier
+ENV LD_LIBRARY_PATH="/usr/local/lib/idris2/lib:${LD_LIBRARY_PATH}" 
 ENV SCHEME=scheme
 
 # re-expose IDRIS_LSP_VERSION and IDRIS_LSP_SHA args as env vars in the container
 ENV IDRIS_LSP_VERSION=$IDRIS_LSP_VERSION
 ENV IDRIS_LSP_SHA=$IDRIS_LSP_SHA
+ENV IDRIS_SHA=$IDRIS_SHA
+
