@@ -85,21 +85,23 @@ jobs:
           cache-from: type=gha,scope=build-base-${{ inputs.idris-version }}
 
       - name: Setup Bats and Bats libs
-        uses: brokenpip3/setup-bats-libs@1.5.1
+        uses: brokenpip3/setup-bats-libs@1.5.2
         with:
-          bats-version: '1.8.2'
+          bats-version: '1.10.0'
           support-version: 0.3.0
+          support-path: '${{ github.workspace }}/.bats/bats-support'
           assert-version: 2.1.0
+          assert-path: '${{ github.workspace }}/.bats/bats-assert'
           file-install: false
           detik-install: false
   
       # LIB_PATH is a env var I use in the setup() function of my bats tests
       # it points to the folder containing bats-assert and bats-support
       - name: Run Test
-        run: |
-          export LIB_PATH=/usr/lib/
-          export DOCKER_IMAGE=${{ env.TAG }}
-          bats tests/base.bats
+        env:
+          LIB_PATH: /usr/lib/
+          DOCKER_IMAGE: ${{ env.TAG }}
+        run: bats tests/base.bats
 
   base-test-2:
     name: Test 2 Base
@@ -194,20 +196,22 @@ jobs:
             BASE_IMG=${{ env.BASE_TAG }}
           tags: ${{ env.TAG }}
           load: true
-
+      
       - name: Setup Bats and Bats libs
         uses: brokenpip3/setup-bats-libs@1.5.2
         with:
-          bats-version: '1.8.2'
+          bats-version: '1.10.0'
           support-version: 0.3.0
+          support-path: '${{ github.workspace }}/.bats/bats-support'
           assert-version: 2.1.0
+          assert-path: '${{ github.workspace }}/.bats/bats-assert'
           file-install: false
           detik-install: false
 
       # LIB_PATH is a env var I use in the setup() function of my bats tests
       # it points to the folder containing bats-assert and bats-support
       - name: Run Test
-        run: |
-          export LIB_PATH=/usr/lib/
-          export DOCKER_IMAGE=${{ env.TAG }}
-          bats tests/consumer-idris.bats
+        env:
+          LIB_PATH: /usr/lib/
+          DOCKER_IMAGE: ${{ env.TAG }}
+        run: bats tests/consumer-idris.bats
