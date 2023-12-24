@@ -70,6 +70,7 @@ runs:
           IDRIS_LSP_VERSION=${{ inputs.idris-lsp-version }}
           IDRIS_LSP_SHA=${{ steps.get-sha.outputs.lsp-sha }}
           IDRIS_VERSION=${{ inputs.idris-version }}
+          IDRIS_SHA=${{ steps.get-sha.outputs.idris-sha }}
           BASE_IMG=${{ inputs.base-tag }}
         tags: ${{ inputs.tags }}
         load: ${{ inputs.load }}
