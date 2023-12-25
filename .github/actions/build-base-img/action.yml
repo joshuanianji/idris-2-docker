@@ -47,9 +47,11 @@ runs:
         load: ${{ inputs.load }}
         push: ${{ inputs.push }}
         labels: ${{ inputs.labels }}
-        # When doing matrix builds, we need to scope the image
-        # https://github.com/moby/buildkit/issues/2885
+        # Along with caching from gha, also cache from gh registry
+        # the gha cache is limited to 10GB and I think i cause a lot of cache thrashing
+        # when I also make PRs, it seems that the cache is not shared, so I'll need to look into this
         cache-from: type=gha,scope=build-base-${{ inputs.idris-version }}
+        cache-from: type=registry,ref=ghcr.io/joshuanianji/idris-2-docker/base:${{ inputs.idris-version }}
         cache-to: type=gha,mode=max,scope=build-base-${{ inputs.idris-version }}
 
     - name: Build Base (latest)
@@ -66,7 +68,6 @@ runs:
         load: ${{ inputs.load }}
         push: ${{ inputs.push }}
         labels: ${{ inputs.labels }}
-        # When doing matrix builds, we need to scope the image
-        # https://github.com/moby/buildkit/issues/2885
         cache-from: type=gha,scope=build-base-${{ inputs.idris-version }}
+        cache-from: type=registry,ref=ghcr.io/joshuanianji/idris-2-docker/base:${{ inputs.idris-version }}
         cache-to: type=gha,mode=max,scope=build-base-${{ inputs.idris-version }}
