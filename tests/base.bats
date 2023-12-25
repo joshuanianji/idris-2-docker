@@ -46,6 +46,6 @@ function setup() {
     if [[ $IDRIS_VERSION != "latest" ]]; then
         skip "IDRIS_VERSION is not latest"
     fi
-    
-    docker run devcontainer-latest bash -c "if [[ -z \$IDRIS_SHA ]]; then exit 1; else exit 0; fi"
+
+    docker run $DOCKER_IMAGE bash -c "if [[ -z \$IDRIS_SHA ]]; then exit 1; else exit 0; fi"
 }
