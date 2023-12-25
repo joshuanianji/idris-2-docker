@@ -58,7 +58,7 @@ jobs:
           idris-lsp-version: ${{ inputs.idris-lsp-version }}
           idris-version: ${{ inputs.idris-version }}
           push: true
-          tags: ghcr.io/${{ github.repository }}/base:${{ inputs.idris-lsp-version }}
+          tags: ghcr.io/${{ github.repository }}/devcontainer:${{ inputs.idris-version }}
           labels: ${{ steps.create-meta.outputs.labels }}
           base-tag: ghcr.io/joshuanianji/idris-2-docker/base:${{ inputs.idris-version }}
           platforms: linux/arm64,linux/amd64
