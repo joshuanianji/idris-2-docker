@@ -30,7 +30,7 @@ jobs:
           private-key-name: oracle-arm
       
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
         with:
           append: |
             - endpoint: ssh://${{ secrets.SSH_USER }}@${{ secrets.SSH_IP }}
