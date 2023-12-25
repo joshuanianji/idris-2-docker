@@ -39,13 +39,15 @@ function setup() {
     refute_output --partial "Uncaught error:"
 }
 
-@test "IDRIS_SHA should be set" {
+@test "Check environment variables" {
     # make sure IDRIS_SHA is set
     # https://bats-core.readthedocs.io/en/stable/writing-tests.html#run-test-other-commands
     # expects the cmd to return 0
     if [[ $IDRIS_VERSION != "latest" ]]; then
-        skip "IDRIS_VERSION is not latest"
+        # For versions that are not latest, IDRIS_VERSION should be set
+        docker run $DOCKER_IMAGE bash -c "if [[ -z \$IDRIS_VERSION ]]; then exit 1; else exit 0; fi"
+    else 
+        # For latest, IDRIS_SHA should be set
+        docker run $DOCKER_IMAGE bash -c "if [[ -z \$IDRIS_SHA ]]; then exit 1; else exit 0; fi"
     fi
-
-    docker run $DOCKER_IMAGE bash -c "if [[ -z \$IDRIS_SHA ]]; then exit 1; else exit 0; fi"
 }
