@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Set up SSH
-        uses: MrSquaare/ssh-setup-action@v2
+        uses: MrSquaare/ssh-setup-action@v3
         with:
           host: ${{ secrets.SSH_IP }}
           private-key: ${{ secrets.SSH_PRIVATE_KEY }}
