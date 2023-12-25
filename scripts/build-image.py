@@ -83,8 +83,8 @@ if __name__ == '__main__':
     
     if args.version and args.version != 'latest':
         # Build versioned image.
-        dockerfile = f'{parser.image}.Dockerfile'
-        tag = f'{parser.image}-{parser.version}' if not args.tag else args.tag
+        dockerfile = f'{args.image}.Dockerfile'
+        tag = f'{args.image}-{args.version}' if not args.tag else args.tag
         print(f'Building {dockerfile} with tag {tag}')
 
         # build image
