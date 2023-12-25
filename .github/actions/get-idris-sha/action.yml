@@ -26,7 +26,8 @@ runs:
       run: |
         echo "name=lsp-sha::$(curl -s 'https://api.github.com/repos/idris-community/idris2-lsp/commits' | jq -r '.[0].sha')" >> $GITHUB_OUTPUT
       shell: bash
-    - name: Print Output
+    - name: Outputs
       run: |
-        echo $GITHUB_OUTPUT
+        echo "LSP Sha: ${{ steps.get-lsp-sha.outputs.lsp-sha }}"
+        echo "Idris Commit Sha: ${{ steps.get-sha.outputs.sha }}"
       shell: bash

@@ -42,10 +42,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get Latest Idris Commit SHA
-        id: get-sha
-        uses: ./.github/actions/get-idris-sha
-
       - name: Docker meta
         id: create-meta
         uses: docker/metadata-action@v5
