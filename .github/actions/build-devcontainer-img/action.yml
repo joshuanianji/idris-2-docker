@@ -41,6 +41,17 @@ runs:
       id: get-sha
       uses: ./.github/actions/get-idris-sha
     
+    # if platforms is not equal to linux/amd64, do not cache-to (output empty string)
+    # See: https://github.com/joshuanianji/idris-2-docker/pull/71
+    - name: Calculate cache-to
+      id: calculate-cache-to
+      run: |
+        if [ "${{ inputs.platforms }}" == "linux/amd64" ]; then
+          echo "cache-to=type=gha,mode=max,scope=build-devcontainer-${{ inputs.idris-version }}" >> $GITHUB_OUTPUT
+        else
+          echo "cache-to=" >> $GITHUB_OUTPUT
+        fi
+    
     - name: Build Devcontainer (versioned)
       if: ${{ inputs.idris-lsp-version != 'latest' }}
       uses: docker/build-push-action@v5
@@ -59,7 +70,7 @@ runs:
         cache-from: |
           type=gha,scope=build-devcontainer-${{ inputs.idris-version }}
           type=registry,ref=ghcr.io/joshuanianji/idris-2-docker/devcontainer:${{ inputs.idris-version }}
-        cache-to: type=gha,mode=max,scope=build-devcontainer-${{ inputs.idris-version }}
+        cache-to: ${{ steps.calculate-cache-to.outputs.cache-to }}
 
     - name: Build Devcontainer (latest)
       if: ${{ inputs.idris-lsp-version == 'latest' }}
@@ -81,4 +92,4 @@ runs:
         cache-from: |
           type=gha,scope=build-devcontainer-${{ inputs.idris-version }}
           type=registry,ref=ghcr.io/joshuanianji/idris-2-docker/devcontainer:${{ inputs.idris-version }}
-        cache-to: type=gha,mode=max,scope=build-devcontainer-${{ inputs.idris-version }}
+        cache-to: ${{ steps.calculate-cache-to.outputs.cache-to }}
