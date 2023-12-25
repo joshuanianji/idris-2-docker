@@ -48,10 +48,8 @@ jobs:
     strategy:
       matrix:
         # based off of the branches in the idris-lsp repo
-        idris-lsp-version: ["idris2-0.5.1", "idris2-0.6.0", "idris2-0.7.0", "latest"]
+        idris-lsp-version: ["idris2-0.6.0", "idris2-0.7.0", "latest"]
         include:
-          - idris-lsp-version: "idris2-0.5.1"
-            idris-version: "v0.5.1"
           - idris-lsp-version: "idris2-0.6.0"
             idris-version: "v0.6.0"
           - idris-lsp-version: "idris2-0.7.0"

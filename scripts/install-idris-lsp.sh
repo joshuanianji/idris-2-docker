@@ -21,6 +21,11 @@ fi
 # these are the "older" supported versions, before the idris2-lsp repo was split a reusable LSP-lib
 if [[ $IDRIS_LSP_VERSION == "idris2-0.4.0" ]] || [[ $IDRIS_LSP_VERSION == "idris2-0.5.1" ]]; then
     echo "Installing older version of idris2-lsp"
+
+    # Rebuild idris2
+    # https://github.com/joshuanianji/idris-2-docker/blob/1039bc7bb6de70a2e3d915469cc22067cfd30cac/devcontainer.Dockerfile
+    cd /build/idris2-lsp/Idris2
+    make bootstrap SCHEME=scheme PREFIX=/usr/local/lib/idris2 && make install PREFIX=/usr/local/lib/idris2
     
     # Manual install of idris2-lsp (no need to rebuild idris)
     cd /build/idris2-lsp
