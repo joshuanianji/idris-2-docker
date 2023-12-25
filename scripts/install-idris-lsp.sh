@@ -1,7 +1,14 @@
+#!/bin/bash
+
+set -o errexit   # abort on nonzero exitstatus
+set -o nounset   # abort on unbound variable
+set -o pipefail  # don't hide errors within pipes
+
 # Given a cloned idris LSP repo, install the lsp server
 # distinguishes between the "old" repo (pre 0.5.1) and the new one
 
 # Also assumes that PATH and LD_LIBRARY_PATH are set correctly
+
 
 if [ -z ${IDRIS_LSP_VERSION+x} ]; then 
     echo "IDRIS LSP VAR IS UNSET!";

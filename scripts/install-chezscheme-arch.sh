@@ -1,5 +1,9 @@
 #!/bin/bash
 
+set -o errexit   # abort on nonzero exitstatus
+set -o nounset   # abort on unbound variable
+set -o pipefail  # don't hide errors within pipes
+
 # installs chez scheme from source for aarch based systems
 # https://github.com/racket/ChezScheme/blob/master/BUILDING
 
