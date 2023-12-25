@@ -1,4 +1,4 @@
-name: Build Test and Deploy
+name: CI
 
 on:
   push:
@@ -18,7 +18,7 @@ on:
 
 jobs:
   base-build-test:
-    name: Base Build and Test - ${{ matrix.idris-version }}
+    name: Base Build/Test - ${{ matrix.idris-version }}
     strategy:
       matrix:
         idris-version: ["v0.5.1", "v0.6.0", "v0.7.0", "latest"]
@@ -43,7 +43,7 @@ jobs:
     secrets: inherit
   
   devcontainer-build-test:
-    name: Devcontainer Build and Test - ${{ matrix.idris-lsp-version }}
+    name: Devcontainer Build/Test - ${{ matrix.idris-lsp-version }}
     needs: [base-build-test] # needs cached base builds
     strategy:
       matrix:
@@ -69,10 +69,8 @@ jobs:
     needs: [base-deploy, devcontainer-build-test] # needs base deployed to registry
     strategy:
       matrix:
-        idris-lsp-version: ["idris2-0.5.1", "idris2-0.6.0", "idris2-0.7.0", "latest"]
+        idris-lsp-version: ["idris2-0.6.0", "idris2-0.7.0", "latest"]
         include:
-          - idris-lsp-version: "idris2-0.5.1"
-            idris-version: "v0.5.1"
           - idris-lsp-version: "idris2-0.6.0"
             idris-version: "v0.6.0"
           - idris-lsp-version: "idris2-0.7.0"
