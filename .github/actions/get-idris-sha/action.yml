@@ -19,15 +19,15 @@ runs:
     - name: Get SHA
       id: get-sha
       run: |
-        echo "name=sha::$(curl -s 'https://api.github.com/repos/idris-lang/Idris2/commits' | jq -r '.[0].sha')" >> $GITHUB_OUTPUT
+        echo "sha=$(curl -s 'https://api.github.com/repos/idris-lang/Idris2/commits' | jq -r '.[0].sha')" >> $GITHUB_OUTPUT
       shell: bash
     - name: Get LSP SHA
       id: get-lsp-sha
       run: |
-        echo "name=lsp-sha::$(curl -s 'https://api.github.com/repos/idris-community/idris2-lsp/commits' | jq -r '.[0].sha')" >> $GITHUB_OUTPUT
+        echo "lsp-sha=$(curl -s 'https://api.github.com/repos/idris-community/idris2-lsp/commits' | jq -r '.[0].sha')" >> $GITHUB_OUTPUT
       shell: bash
     - name: Outputs
       run: |
-        echo "LSP Sha: ${{ steps.get-lsp-sha.outputs.lsp-sha }}"
-        echo "Idris Commit Sha: ${{ steps.get-sha.outputs.sha }}"
+        echo "LSP SHA: ${{ steps.get-lsp-sha.outputs.lsp-sha }}"
+        echo "Idris Commit SHA: ${{ steps.get-sha.outputs.sha }}"
       shell: bash
