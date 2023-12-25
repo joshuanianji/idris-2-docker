@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: Set up SSH
         uses: MrSquaare/ssh-setup-action@v2
@@ -62,7 +62,7 @@ jobs:
         dockerfile: [ubuntu, debian]
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       # instead of native builds, we'll just use QEMU for consumers
       # consumer builds don't really do much intensive stuff anyway
