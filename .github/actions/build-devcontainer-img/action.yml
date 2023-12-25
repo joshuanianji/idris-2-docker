@@ -51,6 +51,7 @@ runs:
         else
           echo "cache-to=" >> $GITHUB_OUTPUT
         fi
+      shell: bash
     
     - name: Build Devcontainer (versioned)
       if: ${{ inputs.idris-lsp-version != 'latest' }}

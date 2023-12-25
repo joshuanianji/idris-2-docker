@@ -44,6 +44,7 @@ runs:
         else
           echo "cache-to=" >> $GITHUB_OUTPUT
         fi
+      shell: bash
 
     - name: Build Base (versioned)
       uses: docker/build-push-action@v5
