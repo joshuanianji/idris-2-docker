@@ -38,3 +38,14 @@ function setup() {
     run docker run $DOCKER_IMAGE idris2
     refute_output --partial "Uncaught error:"
 }
+
+@test "IDRIS_SHA should be set" {
+    # make sure IDRIS_SHA is set
+    # https://bats-core.readthedocs.io/en/stable/writing-tests.html#run-test-other-commands
+    # expects the cmd to return 0
+    if [[ $IDRIS_VERSION != "latest" ]]; then
+        skip "IDRIS_VERSION is not latest"
+    fi
+    
+    docker run devcontainer-latest bash -c "if [[ -z \$IDRIS_SHA ]]; then exit 1; else exit 0; fi"
+}

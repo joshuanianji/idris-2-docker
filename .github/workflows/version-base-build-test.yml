@@ -77,6 +77,7 @@ jobs:
         env:
           LIB_PATH: ${{ github.workspace }}/.bats
           DOCKER_IMAGE: ${{ env.TAG }}
+          IDRIS_VERSION: ${{ inputs.idris-version }}
         run: bats tests/base.bats
 
   base-test-2:
@@ -171,4 +172,5 @@ jobs:
         env:
           LIB_PATH: ${{ github.workspace }}/.bats
           DOCKER_IMAGE: ${{ env.TAG }}
+          IDRIS_VERSION: ${{ inputs.idris-version }}
         run: bats tests/consumer-idris.bats
