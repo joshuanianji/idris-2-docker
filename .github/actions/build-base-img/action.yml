@@ -35,7 +35,7 @@ runs:
       uses: ./.github/actions/get-idris-sha
 
     - name: Build Base (versioned)
-      uses: docker/build-push-action@v4.1.1
+      uses: docker/build-push-action@v5
       if: ${{ inputs.idris-version != 'latest' }}
       with:
         context: .
@@ -53,7 +53,7 @@ runs:
         cache-to: type=gha,mode=max,scope=build-base-${{ inputs.idris-version }}
 
     - name: Build Base (latest)
-      uses: docker/build-push-action@v4.1.1
+      uses: docker/build-push-action@v5
       if: ${{ inputs.idris-version == 'latest' }}
       with:
         context: .
