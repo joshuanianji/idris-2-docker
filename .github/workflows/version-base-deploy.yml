@@ -60,6 +60,7 @@ jobs:
     strategy:
       matrix:
         dockerfile: [ubuntu, debian]
+    needs: deploy-base
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
