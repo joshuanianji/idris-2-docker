@@ -43,7 +43,7 @@ runs:
     
     - name: Build Devcontainer (versioned)
       if: ${{ inputs.idris-lsp-version != 'latest' }}
-      uses: docker/build-push-action@v4.1.1
+      uses: docker/build-push-action@v5.1.0
       with:
         context: .
         file: devcontainer.Dockerfile
@@ -61,7 +61,7 @@ runs:
 
     - name: Build Devcontainer (latest)
       if: ${{ inputs.idris-lsp-version == 'latest' }}
-      uses: docker/build-push-action@v4.1.1
+      uses: docker/build-push-action@v5.1.0
       with:
         context: .
         file: devcontainer-sha.Dockerfile
