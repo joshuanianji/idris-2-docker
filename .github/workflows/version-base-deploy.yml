@@ -68,7 +68,7 @@ jobs:
       # instead of native builds, we'll just use QEMU for consumers
       # consumer builds don't really do much intensive stuff anyway
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
       
       - name: Setup Buildx
         uses: docker/setup-buildx-action@v3
