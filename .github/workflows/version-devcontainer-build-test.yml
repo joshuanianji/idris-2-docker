@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   devcontainer-build-test:
-    name: Build Devcontainer - ${{ inputs.idris-lsp-version }}
+    name: Build & Test
     runs-on: ubuntu-latest
     services:
       registry:

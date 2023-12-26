@@ -18,7 +18,7 @@ on:
 
 jobs:
   base-build-test:
-    name: Base Build/Test - ${{ matrix.idris-version }}
+    name: Base Build & Test - ${{ matrix.idris-version }}
     strategy:
       matrix:
         idris-version: ["v0.5.1", "v0.6.0", "v0.7.0", "latest"]
@@ -43,7 +43,7 @@ jobs:
     secrets: inherit
   
   devcontainer-build-test:
-    name: Devcontainer Build/Test - ${{ matrix.idris-lsp-version }}
+    name: Devcontainer Build & Test - ${{ matrix.idris-lsp-version }}
     needs: [base-build-test] # needs cached base builds
     strategy:
       matrix:

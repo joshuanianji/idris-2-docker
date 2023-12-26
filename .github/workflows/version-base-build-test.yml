@@ -107,7 +107,7 @@ jobs:
   # "consumer" images just "consume" the base image and do nothing else
   # basic tests for these
   consumer-build-test:
-    name: Build Consumer - ${{ matrix.dockerfile }}
+    name: Build Consumer
     runs-on: ubuntu-latest
     needs: [base-test-1, base-test-2]
     strategy:

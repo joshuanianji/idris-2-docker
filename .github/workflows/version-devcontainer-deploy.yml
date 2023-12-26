@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   deploy-devcontainer:
-    name: Deploy Devcontainer - ${{ inputs.idris-lsp-version }}
+    name: Deploy
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
