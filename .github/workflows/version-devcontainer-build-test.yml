@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   devcontainer-build-test:
-    name: Build Devcontainer - ${{ inputs.idris-lsp-version }}
+    name: Build & Test
     runs-on: ubuntu-latest
     services:
       registry:
@@ -72,4 +72,5 @@ jobs:
         env:
           LIB_PATH: ${{ github.workspace }}/.bats
           DOCKER_IMAGE: ${{ env.TAG }}
+          IDRIS_VERSION: ${{ inputs.idris-version }}
         run: bats tests/devcontainer-idris.bats

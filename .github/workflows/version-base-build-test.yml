@@ -77,6 +77,7 @@ jobs:
         env:
           LIB_PATH: ${{ github.workspace }}/.bats
           DOCKER_IMAGE: ${{ env.TAG }}
+          IDRIS_VERSION: ${{ inputs.idris-version }}
         run: bats tests/base.bats
 
   base-test-2:
@@ -106,7 +107,7 @@ jobs:
   # "consumer" images just "consume" the base image and do nothing else
   # basic tests for these
   consumer-build-test:
-    name: Build Consumer - ${{ matrix.dockerfile }}
+    name: Build Consumer
     runs-on: ubuntu-latest
     needs: [base-test-1, base-test-2]
     strategy:
@@ -171,4 +172,5 @@ jobs:
         env:
           LIB_PATH: ${{ github.workspace }}/.bats
           DOCKER_IMAGE: ${{ env.TAG }}
+          IDRIS_VERSION: ${{ inputs.idris-version }}
         run: bats tests/consumer-idris.bats

@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   deploy-base:
-    name: Deploy Base - ${{ inputs.idris-version }}
+    name: Deploy Base
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
@@ -55,7 +55,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
 
   deploy-consumers:
-    name: Deploy Consumer - ${{ matrix.dockerfile }} ${{ inputs.idris-version }}
+    name: Deploy Consumer
     runs-on: ubuntu-latest
     strategy:
       matrix:
