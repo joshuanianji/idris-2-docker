@@ -56,7 +56,7 @@ jobs:
           base-tag: ${{ env.BASE_TAG }}
       
       - name: Setup Bats and Bats libs
-        uses: brokenpip3/setup-bats-libs@1.5.2
+        uses: bats-core/bats-action@1.5.4
         with:
           bats-version: 1.10.0
           support-version: 0.3.0
