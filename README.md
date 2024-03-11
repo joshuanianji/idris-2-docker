@@ -12,9 +12,7 @@ Idris Versions: `v0.5.1`, `v0.6.0`, `v0.7.0`, `latest` (Up to date with [Idris2/
   - [Table of Contents](#table-of-contents)
   - [Motivation](#motivation)
   - [Images](#images)
-  - [Devcontainer Demo: Wordle in Idris](#devcontainer-demo-wordle-in-idris)
-    - [Prerequisites](#prerequisites)
-    - [Opening in a Devcontainer](#opening-in-a-devcontainer)
+  - [Example Project](#example-project)
   - [Usage](#usage)
     - [Devcontainer](#devcontainer)
     - [Command Line](#command-line)
@@ -35,29 +33,15 @@ Installing Idris2 is [quite time consuming](https://idris2.readthedocs.io/en/lat
 * [idris-2-docker/ubuntu](https://github.com/joshuanianji/idris-2-docker/pkgs/container/idris-2-docker%2Fubuntu) - Ubuntu 20.04
 * [idris-2-docker/debian](https://github.com/joshuanianji/idris-2-docker/pkgs/container/idris-2-docker%2Fdebian) - Debian bullseye
 
-## Devcontainer Demo: Wordle in Idris
+## Example Project
 
-Devcontainers use a Docker container as a full-featured development environment, making it super simple to get started with Idris2. For more information, check out [Microsoft's documentation](https://code.visualstudio.com/docs/remote/containers).
-
-If you want to try out a quick ready-to-use project, take a look at [calebji123/WordleInIdris](https://github.com/calebji123/WordleInIdris). The devcontainer files there are set up and it's super fun to play around with!
-
-### Prerequisites
-
-* A working instance of [Docker](https://docs.docker.com/get-docker/)
-* [VSCode](https://code.visualstudio.com/download)
-* [Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack) for VSCode
-
-### Opening in a Devcontainer
+An example Hello World project taken from the [Getting Started Guide](https://idris2.readthedocs.io/en/latest/tutorial/starting.html) can be found in [example](./example). It uses Idris 0.7.0. To start, clone this repo and open the example folder (not the root!) in VSCode.
 
 ```bash
-git clone https://github.com/calebji123/WordleInIdris.git
+git clone git@github.com:joshuanianji/idris-2-docker.git
+cd idris-2-docker/example
+code .
 ```
-
-Once you clone the repo, open the folder in VSCode. There will be a prompt on the bottom right.
-
-![Reopen in Container](./docs/reopen-in-container.png)
-
-Click "Reopen in Container" and it will download the image and open the project in a devcontainer. You'll be able to [run the project right away](https://github.com/calebji123/WordleInIdris#how-to-run-it)!
 
 ## Usage
 
