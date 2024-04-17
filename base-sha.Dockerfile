@@ -3,7 +3,7 @@
 # separating this into a separate file so we can get better caching
 # there is a lot of redundancy between this and base.Dockerfile, but I don't think it's worth it to try to abstract it out
 
-FROM debian:bullseye as scheme-builder
+FROM debian:bookworm as scheme-builder
 
 WORKDIR /root
 
@@ -22,7 +22,7 @@ RUN which scheme
 # this makes it a bit easier for us to move the csv folder to other build steps, since it is necessary for scheme to run
 RUN mkdir scheme-lib && cp -r /usr/lib/csv* /root/scheme-lib
 
-FROM debian:bullseye as idris-builder
+FROM debian:bookworm as idris-builder
 
 RUN apt-get update && \
     apt-get install -y git make gcc libgmp-dev curl
