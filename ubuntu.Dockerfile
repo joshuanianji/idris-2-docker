@@ -3,7 +3,7 @@ ARG BASE_IMG=ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION}
 
 FROM $BASE_IMG as base
 
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 
 # add idris2 and scheme from builder
 COPY --from=base /root/.idris2 /root/.idris2
