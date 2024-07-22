@@ -17,7 +17,7 @@ RUN make install PREFIX=/usr/local/lib/idris2
 
 # =====
 # LSP Builder
-FROM debian:bullseye as lsp-builder 
+FROM debian:bookworm as lsp-builder 
 
 RUN apt-get update && \
     apt-get install -y git make gcc libgmp-dev curl
