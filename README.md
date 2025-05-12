@@ -115,7 +115,7 @@ git clone https://github.com/bats-core/bats-support test/test_helper/bats-suppor
 git clone https://github.com/bats-core/bats-assert test/test_helper/bats-assert
 ```
 
-To run a test on a specific image, set the required variables, and run the bats command:
+To run a test on a specific image, set the required variables, and run the bats command. The following is an example for the base image
 
 ```bash
 export LIB_PATH=$(pwd)/tests/test_helper
