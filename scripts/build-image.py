@@ -57,7 +57,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Builds a docker image')
     parser.add_argument(
         '--image',
-        help='The image to build. One of (base | debian | ubuntu | devcontainer). Defaults to base.',
+        help='The image to build. One of (base | devcontainer). Defaults to base.',
         default='base')
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -66,7 +66,7 @@ if __name__ == '__main__':
         default='latest')
     group.add_argument(
         '--sha',
-        help='Idris/Idris LSP SHA to use. Should not be used with `--version`. SHAs also cannot be used with base or debian images.',
+        help='Idris/Idris LSP SHA to use. Should not be used with `--version`. SHAs cannot be used with base images.',
         default=None)
     parser.add_argument(
         '--tag',
@@ -79,8 +79,8 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
 
-    if args.image not in ['base', 'debian', 'ubuntu', 'devcontainer']:
-        print('Invalid image. Must be one of (base | debian | ubuntu | devcontainer).')
+    if args.image not in ['base', 'devcontainer']:
+        print('Invalid image. Must be one of (base | devcontainer).')
         exit(1)
 
     if args.version and args.version != 'latest':
@@ -116,10 +116,6 @@ if __name__ == '__main__':
             print(f'Image built with tag {tag}')
 
     elif args.sha:
-        if args.image in ['base', 'debian']:
-            print('Cannot build base or debian images with a sha.')
-            exit(1)
-
         sha_info = {
             'idris': args.sha,
             'lsp': args.sha
