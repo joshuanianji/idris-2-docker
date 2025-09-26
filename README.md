@@ -20,6 +20,7 @@ Idris Versions: `v0.5.1`, `v0.6.0`, `v0.7.0`, `latest` (Up to date with [Idris2/
   - [Running Locally](#running-locally)
     - [Build Latest](#build-latest)
     - [Build From a Tagged Release/SHA commit](#build-from-a-tagged-releasesha-commit)
+    - [Running tests](#running-tests)
   - [Credit](#credit)
 
 ## Motivation
@@ -28,10 +29,8 @@ Installing Idris2 is [quite time consuming](https://idris2.readthedocs.io/en/lat
 
 ## Images
 
-* [idris-2-docker/base](https://github.com/joshuanianji/idris-2-docker/pkgs/container/idris-2-docker%2Fbase) - Base image with Idris2 installed from source.
+* [idris-2-docker/base](https://github.com/joshuanianji/idris-2-docker/pkgs/container/idris-2-docker%2Fbase) - Base image with Idris2 installed from source (debian-based)
 * [idris-2-docker/devcontainer](https://github.com/joshuanianji/idris-2-docker/pkgs/container/idris-2-docker%2Fdevcontainer) - Includes [Idris2 LSP](https://github.com/idris-community/idris2-lsp)
-* [idris-2-docker/ubuntu](https://github.com/joshuanianji/idris-2-docker/pkgs/container/idris-2-docker%2Fubuntu) - Ubuntu 20.04
-* [idris-2-docker/debian](https://github.com/joshuanianji/idris-2-docker/pkgs/container/idris-2-docker%2Fdebian) - Debian bullseye
 
 ## Example Project
 
@@ -86,17 +85,41 @@ To run the images locally, I recommend opening the workspace in the Devcontainer
 This is the default behaviour when running the script.
 
 ```bash
+# this is the only module we need, so i chose not to create a requirements.txt file
+pip install -U requests
+
 # builds base from latest commit on the Idris repo. Tag is base-latest
 python scripts/build-image.py --image base
-python scripts/build-image.py --image devcontainer --tag devcontainer-latest-test
+python scripts/build-image.py --image ubuntu
+python scripts/build-image.py --image devcontainer --tag devcontainer-latest
 ```
 
 ### Build From a Tagged Release/SHA commit
 
 ```bash
-python scripts/build-image.py --image base --version v0.6.0
+python scripts/build-image.py --image base --version v0.7.0
 python scripts/build-image.py --image base --sha 58e5d156621cfdd4c54df26abf7ac9620cfebdd8
-python scripts/build-image.py --image devcontainer --version v0.6.0
+python scripts/build-image.py --image devcontainer --version v0.7.0
+```
+
+### Running tests
+
+We have some tests to ensure the docker images are working as expected, using [bats](https://github.com/bats-core/bats-core). The bats CLI tool should already be installed in the devcontainer.
+
+You'll need to install the `bats-support` and `bats-assert` libraries. I found the easiest way to do this was to clone via git:
+
+```bash
+git clone https://github.com/bats-core/bats-support test/test_helper/bats-support
+git clone https://github.com/bats-core/bats-assert test/test_helper/bats-assert
+```
+
+To run a test on a specific image, set the required variables, and run the bats command. The following is an example for the base image
+
+```bash
+export LIB_PATH=$(pwd)/tests/test_helper
+export DOCKER_IMAGE=
+export IDRIS_VERSION=latest
+bats tests/base.bats
 ```
 
 ## Credit
