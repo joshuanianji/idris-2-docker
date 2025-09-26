@@ -2,7 +2,7 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/debian
 {
     "name": "Idris2 Dockerfiles",
-    "image": "mcr.microsoft.com/devcontainers/python:1-3.11-bullseye",
+    "image": "mcr.microsoft.com/devcontainers/python:2-3.11-bullseye",
     "features": {
         "ghcr.io/devcontainers/features/common-utils:2": {},
         "ghcr.io/devcontainers/features/docker-in-docker:2": {},
