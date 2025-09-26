@@ -99,9 +99,9 @@ python scripts/build-image.py --image devcontainer --tag devcontainer-latest
 ### Build From a Tagged Release/SHA commit
 
 ```bash
-python scripts/build-image.py --image base --version v0.6.0
+python scripts/build-image.py --image base --version v0.7.0
 python scripts/build-image.py --image base --sha 58e5d156621cfdd4c54df26abf7ac9620cfebdd8
-python scripts/build-image.py --image devcontainer --version v0.6.0
+python scripts/build-image.py --image devcontainer --version v0.7.0
 ```
 
 ### Running tests
