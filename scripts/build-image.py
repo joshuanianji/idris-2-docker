@@ -39,16 +39,7 @@ def build_image_sha(image: str, sha_info: dict, idris_base_version: str, tag: st
     dockerfile = f'{image}-sha.Dockerfile'
     print(f'Building {dockerfile} with tag {tag}')
     if image == 'devcontainer':
-        # for sha-specific devcontainer images, we also need to pass in the sha from the idris2 github repo
-        # by default, this is the latest idris2 sha.
-        idris_sha = sha_info['idris'] if idris_base_version == 'latest' else idris_base_version
-        subprocess.run(['docker', 'build', '-t', tag, '-f', dockerfile,
-                        '--build-arg', f'IDRIS_SHA={idris_sha}',
-                        '--build-arg', f'IDRIS_LSP_SHA={sha_info["lsp"]}',
-                        '--build-arg', f'IDRIS_VERSION={idris_base_version}',
-                        '.'])
-    elif image == 'pack':
-        # pack images only need the idris SHA
+        # devcontainer images only need the idris SHA
         subprocess.run(['docker', 'build', '-t', tag, '-f', dockerfile,
                         '--build-arg', f'IDRIS_SHA={sha_info["idris"]}', '.'])
     else:
@@ -61,7 +52,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Builds a docker image')
     parser.add_argument(
         '--image',
-        help='The image to build. One of (base | devcontainer | pack). Defaults to base.',
+        help='The image to build. One of (base | devcontainer). Defaults to base.',
         default='base')
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -83,8 +74,8 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
 
-    if args.image not in ['base', 'devcontainer', 'pack']:
-        print('Invalid image. Must be one of (base | devcontainer | pack).')
+    if args.image not in ['base', 'devcontainer']:
+        print('Invalid image. Must be one of (base | devcontainer).')
         exit(1)
 
     if args.version and args.version != 'latest':
@@ -95,12 +86,6 @@ if __name__ == '__main__':
 
         # build image
         if args.image == 'devcontainer':
-            lsp_version = get_lsp_version(args.version)
-            subprocess.run(['docker', 'build', '-t', tag, '-f', dockerfile,
-                            '--build-arg', f'IDRIS_VERSION={args.version}',
-                            '--build-arg', f'IDRIS_LSP_VERSION={lsp_version}',
-                            '.'])
-        elif args.image == 'pack':
             subprocess.run(['docker', 'build', '-t', tag, '-f', dockerfile,
                            '--build-arg', f'IDRIS_VERSION={args.version}', '.'])
         else:
@@ -109,8 +94,8 @@ if __name__ == '__main__':
         print(f'Image built with tag {tag}')
 
     elif args.version == 'latest':
-        if args.image in ['base', 'devcontainer', 'pack']:
-            # base, devcontainer, and pack need idris' latest SHA to build
+        if args.image in ['base', 'devcontainer']:
+            # base and devcontainer need idris' latest SHA to build
             sha_info = get_latest_sha()
             tag = f'{args.image}-latest' if not args.tag else args.tag
             build_image_sha(args.image, sha_info, args.idris_base_version, tag)

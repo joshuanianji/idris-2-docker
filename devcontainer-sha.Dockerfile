@@ -1,75 +1,47 @@
-# Basically `devcontainer.Dockerfile` but takes in a SHA instead of a version
-# To read more, look at base-sha.Dockerfile
+# Basically `pack.Dockerfile` but takes in a SHA instead of a version
+# This is so that we can use the latest commit on the idris-lang/idris2 repo
 
-ARG IDRIS_VERSION=latest
-ARG BASE_IMG=ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION}
-
-# =====
-# Idris Builder
-# Rebuild with correct prefix. Somehow, building from scratch with a different prefix fails
-FROM $BASE_IMG AS idris-builder
-ARG IDRIS_VERSION
 ARG IDRIS_SHA
-
-WORKDIR /build
-RUN git clone https://github.com/idris-lang/Idris2.git && cd Idris2 && git checkout $IDRIS_SHA
-WORKDIR /build/Idris2
-RUN make all PREFIX=/usr/local/lib/idris2
-RUN make install PREFIX=/usr/local/lib/idris2
-
-# =====
-# LSP Builder
-FROM debian:bullseye as lsp-builder 
-
-RUN apt-get update && \
-    apt-get install -y git make gcc libgmp-dev curl
-
-# copy scheme + idris
-COPY --from=idris-builder /usr/bin/scheme /usr/bin/scheme
-COPY --from=idris-builder /root/scheme-lib/ /usr/lib/
-COPY --from=idris-builder /usr/local/lib/idris2 /usr/local/lib/idris2
-
-# necessary environment variables for building Idris and the LSP
-ENV PATH="/usr/local/lib/idris2/bin:${PATH}"
-ENV LD_LIBRARY_PATH="/usr/local/lib/idris2/lib:${LD_LIBRARY_PATH}"
-ENV IDRIS2_PREFIX="/usr/local/lib/idris2"
-
-# LSP_VERSION is in the form "idris2-0.5.1", or "latest"
-ARG IDRIS_LSP_VERSION=latest
-ARG IDRIS_LSP_SHA
-
-# git clone idris2-lsp, as well as underlying Idris2 submodule
-WORKDIR /build
-# Using --recurse-submodules, we get the underlying idris2 repo in the recorded state (https://stackoverflow.com/a/3797061)
-RUN git clone https://github.com/idris-community/idris2-lsp.git && cd idris2-lsp && git checkout $IDRIS_LSP_SHA
-WORKDIR /build/idris2-lsp
-RUN git submodule update --init --recursive
-
-COPY scripts/install-idris-lsp.sh ./install-idris-lsp.sh 
-RUN ./install-idris-lsp.sh
+ARG BASE_IMG=ghcr.io/joshuanianji/idris-2-docker/base:latest
+FROM $BASE_IMG AS base
 
 # =====
 # Final Image
 FROM mcr.microsoft.com/vscode/devcontainers/base:bullseye
 
-ARG IDRIS_LSP_VERSION=latest
-ARG IDRIS_LSP_SHA
 ARG IDRIS_SHA
+ARG BASE_IMG
 
-# idris2 + idris2-lsp compiled from source
-COPY --from=lsp-builder /usr/local/lib/idris2 /usr/local/lib/idris2
-# scheme + csv library
-COPY --from=idris-builder /usr/bin/scheme /usr/bin/scheme
-COPY --from=idris-builder /root/scheme-lib/ /usr/lib/ 
+# Install system dependencies required for pack
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && \
+    apt-get install -y \
+    git \
+    make \
+    gcc \
+    libgmp-dev \
+    curl \
+    coreutils \
+    && rm -rf /var/lib/apt/lists/*
 
-# set required environment variables
-ENV PATH="/usr/local/lib/idris2/bin:${PATH}"
-# LD_LIBRARY_PATH is only required for v0.5.1 and earlier
-ENV LD_LIBRARY_PATH="/usr/local/lib/idris2/lib:${LD_LIBRARY_PATH}" 
+# Copy scheme and csv libraries from base image
+COPY --from=base /usr/bin/scheme /usr/bin/scheme
+COPY --from=base /root/scheme-lib/ /usr/lib/
+
+# Set environment variables
 ENV SCHEME=scheme
 
-# re-expose version information
-ENV IDRIS_LSP_VERSION=$IDRIS_LSP_VERSION
-ENV IDRIS_LSP_SHA=$IDRIS_LSP_SHA
-ENV IDRIS_SHA=$IDRIS_SHA
+# install pack
+RUN mkdir -p /opt/pack-installer && chown -R vscode:vscode /opt/pack-installer
+USER vscode
+WORKDIR /opt/pack-installer
+RUN curl -o install.bash https://raw.githubusercontent.com/stefan-hoeck/idris2-pack/main/install.bash && \
+    echo "scheme" | bash install.bash
 
+ENV PATH="/home/vscode/.pack/bin:${PATH}"
+
+# Install Idris2 LSP via pack
+RUN echo "yes" | pack install-app idris2-lsp
+
+# Expose version information
+ENV IDRIS_SHA=$IDRIS_SHA
