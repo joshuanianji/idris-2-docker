@@ -1,0 +1,56 @@
+name: Deploy a single version (Pack)
+
+on:
+  workflow_call:
+    inputs:
+      idris-version:
+        required: true
+        type: string
+
+permissions:
+  packages: write
+  contents: read
+
+jobs:
+  deploy-pack:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v5
+
+      - name: Set up SSH
+        uses: MrSquaare/ssh-setup-action@v3
+        with:
+          host: ${{ secrets.SSH_IP }}
+          private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          private-key-name: oracle-arm
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          append: |
+            - endpoint: ssh://${{ secrets.SSH_USER }}@${{ secrets.SSH_IP }}
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker meta
+        id: create-meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ github.repository }}/pack
+
+      - name: Build Pack
+        uses: ./.github/actions/build-pack-img
+        with:
+          idris-version: ${{ inputs.idris-version }}
+          push: true
+          tags: ghcr.io/${{ github.repository }}/pack:${{ inputs.idris-version }}
+          labels: ${{ steps.create-meta.outputs.labels }}
+          base-tag: ghcr.io/joshuanianji/idris-2-docker/base:${{ inputs.idris-version }}
+          platforms: linux/arm64,linux/amd64
