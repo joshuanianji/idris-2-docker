@@ -1,15 +1,11 @@
-# Basically `pack.Dockerfile` but takes in a SHA instead of a version
-# This is so that we can use the latest commit on the idris-lang/idris2 repo
+# Devcontainer image that uses the latest pack from the GitHub repo
+# This builds from the latest commits rather than specific versions
 
-ARG IDRIS_SHA
 ARG BASE_IMG=ghcr.io/joshuanianji/idris-2-docker/base:latest
 FROM $BASE_IMG AS base
 
 # =====
 FROM mcr.microsoft.com/vscode/devcontainers/base:bullseye
-
-ARG IDRIS_SHA
-ARG BASE_IMG
 
 # Install system dependencies required for pack
 ENV DEBIAN_FRONTEND=noninteractive
@@ -41,6 +37,3 @@ ENV PATH="/home/vscode/.pack/bin:${PATH}"
 
 # Install Idris2 LSP via pack
 RUN echo "yes" | pack install-app idris2-lsp
-
-# re-expose version information
-ENV IDRIS_SHA=$IDRIS_SHA

@@ -78,7 +78,7 @@ runs:
       uses: docker/build-push-action@v6
       with:
         context: .
-        file: devcontainer-sha.Dockerfile
+        file: devcontainer-latest.Dockerfile
         platforms: ${{ inputs.platforms }}
         build-args: | 
           IDRIS_LSP_VERSION=${{ inputs.idris-lsp-version }}

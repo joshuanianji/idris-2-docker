@@ -50,8 +50,7 @@ function setup() {
     if [[ $IDRIS_VERSION != "latest" ]]; then
         # For versions that are not latest, IDRIS_VERSION should be set
         docker run $DOCKER_IMAGE bash -c "if [[ -z \$IDRIS_VERSION ]]; then exit 1; else exit 0; fi"
-    else
-        # For latest, IDRIS_SHA should be set
-        docker run $DOCKER_IMAGE bash -c "if [[ -z \$IDRIS_SHA ]]; then exit 1; else exit 0; fi"
     fi
+
+    # the devcontainer-latest has no $IDRIS_SHA env var - it just uses the latest pack repo.
 }
