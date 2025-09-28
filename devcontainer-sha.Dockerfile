@@ -6,7 +6,6 @@ ARG BASE_IMG=ghcr.io/joshuanianji/idris-2-docker/base:latest
 FROM $BASE_IMG AS base
 
 # =====
-# Final Image
 FROM mcr.microsoft.com/vscode/devcontainers/base:bullseye
 
 ARG IDRIS_SHA
