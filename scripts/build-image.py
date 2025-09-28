@@ -39,14 +39,9 @@ def build_image_sha(image: str, sha_info: dict, idris_base_version: str, tag: st
     dockerfile = f'{image}-sha.Dockerfile'
     print(f'Building {dockerfile} with tag {tag}')
     if image == 'devcontainer':
-        # for sha-specific devcontainer images, we also need to pass in the sha from the idris2 github repo
-        # by default, this is the latest idris2 sha.
-        idris_sha = sha_info['idris'] if idris_base_version == 'latest' else idris_base_version
+        # devcontainer images only need the idris SHA
         subprocess.run(['docker', 'build', '-t', tag, '-f', dockerfile,
-                        '--build-arg', f'IDRIS_SHA={idris_sha}',
-                        '--build-arg', f'IDRIS_LSP_SHA={sha_info["lsp"]}',
-                        '--build-arg', f'IDRIS_VERSION={idris_base_version}',
-                        '.'])
+                        '--build-arg', f'IDRIS_SHA={sha_info["idris"]}', '.'])
     else:
         subprocess.run(['docker', 'build', '-t', tag, '-f', dockerfile,
                         '--build-arg', f'IDRIS_SHA={sha_info["idris"]}', '.'])
@@ -91,11 +86,8 @@ if __name__ == '__main__':
 
         # build image
         if args.image == 'devcontainer':
-            lsp_version = get_lsp_version(args.version)
             subprocess.run(['docker', 'build', '-t', tag, '-f', dockerfile,
-                            '--build-arg', f'IDRIS_VERSION={args.version}',
-                            '--build-arg', f'IDRIS_LSP_VERSION={lsp_version}',
-                            '.'])
+                           '--build-arg', f'IDRIS_VERSION={args.version}', '.'])
         else:
             subprocess.run(['docker', 'build', '-t', tag, '-f', dockerfile,
                            '--build-arg', f'IDRIS_VERSION={args.version}', '.'])

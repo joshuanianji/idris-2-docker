@@ -13,12 +13,13 @@
     "customizations": {
         "vscode": {
             "extensions": [
-				"github.vscode-github-actions",
-				"yzhang.markdown-all-in-one",
-				"jetmartin.bats"
-			]
+                "github.vscode-github-actions",
+                "yzhang.markdown-all-in-one",
+                "jetmartin.bats"
+            ]
         }
-    }
+    },
+    "postCreateCommand": "pip install -U requests"
     // Features to add to the dev container. More info: https://containers.dev/features.
     // "features": {},
     // Use 'forwardPorts' to make a list of ports inside the container available locally.

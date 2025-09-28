@@ -1,15 +1,11 @@
-# Expects IDRIS_VERSION to NOT be `latest`
-# But a tag of the form `v0.7.0`
+# Devcontainer image that uses the latest pack from the GitHub repo
+# This builds from the latest commits rather than specific versions
 
-ARG IDRIS_VERSION=0.7.0
-ARG BASE_IMG=ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION}
+ARG BASE_IMG=ghcr.io/joshuanianji/idris-2-docker/base:latest
 FROM $BASE_IMG AS base
 
-
+# =====
 FROM mcr.microsoft.com/vscode/devcontainers/base:bullseye
-
-ARG IDRIS_VERSION
-ARG BASE_IMG
 
 # Install system dependencies required for pack
 ENV DEBIAN_FRONTEND=noninteractive
@@ -37,11 +33,7 @@ WORKDIR /opt/pack-installer
 RUN curl -o install.bash https://raw.githubusercontent.com/stefan-hoeck/idris2-pack/main/install.bash && \
     echo "scheme" | bash install.bash
 
-# Add pack to PATH
 ENV PATH="/home/vscode/.pack/bin:${PATH}"
 
 # Install Idris2 LSP via pack
 RUN echo "yes" | pack install-app idris2-lsp
-
-# re-expose version information
-ENV IDRIS_VERSION=$IDRIS_VERSION
