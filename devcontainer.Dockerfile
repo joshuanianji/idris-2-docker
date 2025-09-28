@@ -41,7 +41,7 @@ RUN curl -o install.bash https://raw.githubusercontent.com/stefan-hoeck/idris2-p
 ENV PATH="/home/vscode/.pack/bin:${PATH}"
 
 # Install Idris2 LSP via pack
-RUN pack install-app idris2-lsp
+RUN echo "yes" | pack install-app idris2-lsp
 
 # Expose version information
 ENV IDRIS_VERSION=$IDRIS_VERSION
