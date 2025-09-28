@@ -43,5 +43,5 @@ ENV PATH="/home/vscode/.pack/bin:${PATH}"
 # Install Idris2 LSP via pack
 RUN echo "yes" | pack install-app idris2-lsp
 
-# Expose version information
+# re-expose version information
 ENV IDRIS_VERSION=$IDRIS_VERSION
