@@ -5,6 +5,24 @@ ARG IDRIS_VERSION=0.7.0
 ARG BASE_IMG=ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION}
 FROM $BASE_IMG AS base
 
+FROM debian:bullseye AS rlwrap-builder
+RUN apt-get update && \
+    apt-get install -y \
+    git \
+    make \
+    gcc \
+    autotools-dev \
+    libreadline-dev \
+    autoconf
+
+# Build rlwrap from source
+WORKDIR /opt
+RUN git clone https://github.com/hanslub42/rlwrap.git
+WORKDIR /opt/rlwrap
+RUN autoreconf --install
+RUN ./configure --without-libptytty LDFLAGS='-static'
+RUN make
+RUN make install
 
 FROM mcr.microsoft.com/vscode/devcontainers/base:bullseye
 
@@ -26,6 +44,9 @@ RUN apt-get update && \
 # Copy scheme and csv libraries from base image
 COPY --from=base /usr/bin/scheme /usr/bin/scheme
 COPY --from=base /root/scheme-lib/ /usr/lib/
+
+# Copy statically built rlwrap from builder stage
+COPY --from=rlwrap-builder /usr/local/bin/rlwrap /usr/local/bin/rlwrap
 
 # Set environment variables
 ENV SCHEME=scheme
