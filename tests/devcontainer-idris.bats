@@ -54,3 +54,20 @@ function setup() {
 
     # the devcontainer-latest has no $IDRIS_SHA env var - it just uses the latest pack repo.
 }
+
+@test "Test rlwrap is available" {
+    echo "Testing rlwrap availability on docker image $DOCKER_IMAGE"
+
+    run docker run $DOCKER_IMAGE which rlwrap
+    assert_output '/usr/local/bin/rlwrap'
+}
+
+@test "Test rlwrap functionality" {
+    echo "Testing rlwrap basic functionality on docker image $DOCKER_IMAGE"
+
+    # Test that rlwrap can wrap a simple command and exit cleanly
+    # Using echo with immediate EOF to test basic wrapping without interaction
+    run docker run $DOCKER_IMAGE bash -c 'echo "" | rlwrap echo "test"'
+    assert_success
+    assert_output "test"
+}
