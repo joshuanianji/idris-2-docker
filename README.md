@@ -25,7 +25,7 @@ Idris Versions: `v0.5.1`, `v0.6.0`, `v0.7.0`, `latest` (Up to date with [Idris2/
 
 ## Motivation
 
-Installing Idris2 is [quite time consuming](https://idris2.readthedocs.io/en/latest/tutorial/starting.html) and [not very intuitive](https://github.com/idris-lang/Idris2/issues/2404), [especially for Apple Silicon](https://www.reddit.com/r/Idris/comments/wyox7i/building_idris2_for_apple_silicon_as_of_august/). That presents quite a bottleneck for new users. This project aims to provide a quick and easy way to get started with Idris2 without having to go through the entire process on your own machine.
+The most common way of installing [Idris2](https://github.com/idris-lang/Idris2) on your computer is by building it from source, which is pretty time consuming. This projects aims to make that easier by leveraging pre-built Docker images with [devcontainers](https://containers.dev/).
 
 ## Images
 
