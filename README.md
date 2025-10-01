@@ -1,6 +1,6 @@
 # Idris 2 Docker
 
-Multi-arch, multi-distro Docker images for Idris 2, primarily aimed for devcontainers.
+Multi-arch Docker images for Idris 2, primarily aimed for devcontainers.
 
 Architectures: `amd64`, `arm64`
 
@@ -30,7 +30,7 @@ Installing Idris2 is [quite time consuming](https://idris2.readthedocs.io/en/lat
 ## Images
 
 * [idris-2-docker/base](https://github.com/joshuanianji/idris-2-docker/pkgs/container/idris-2-docker%2Fbase) - Base image with Idris2 installed from source (debian-based)
-* [idris-2-docker/devcontainer](https://github.com/joshuanianji/idris-2-docker/pkgs/container/idris-2-docker%2Fdevcontainer) - Includes [Idris2 LSP](https://github.com/idris-community/idris2-lsp)
+* [idris-2-docker/devcontainer](https://github.com/joshuanianji/idris-2-docker/pkgs/container/idris-2-docker%2Fdevcontainer) - Uses [pack](https://github.com/stefan-hoeck/idris2-pack) to install Idris and [Idris-lsp](https://github.com/idris-community/idris2-lsp). Also includes [rlwrap](https://github.com/hanslub42/rlwrap).
 
 ## Example Project
 
@@ -59,10 +59,10 @@ Then, using Microsoft's Remote SSH tools, click "Reopen in container" and choose
 You can also run the image directly from the command line.
 
 ```bash
-docker run -it --rm ghcr.io/joshuanianji/idris-2-docker/ubuntu:v0.5.1 idris2 --version
+docker run -it --rm ghcr.io/joshuanianji/idris-2-docker/ubuntu:v0.7.0 idris2 --version
 Idris 2, version 0.5.1
 
-docker run -it --rm --entrypoint /bin/bash ghcr.io/joshuanianji/idris-2-docker/debian:v0.5.1
+docker run -it --rm --entrypoint /bin/bash ghcr.io/joshuanianji/idris-2-docker/debian:v0.7.0
 $ idris2 --version
 ```
 
@@ -71,14 +71,14 @@ $ idris2 --version
 You can also use one of the images as a base image for your own Dockerfile.
 
 ```dockerfile
-FROM ghcr.io/joshuanianji/idris-2-docker/debian:v0.5.1
+FROM ghcr.io/joshuanianji/idris-2-docker/debian:v0.7.0
 
 # ...
 ```
 
 ## Running Locally
 
-To run the images locally, I recommend opening the workspace in the Devcontainer to provide a fully-featured development environment. I made a `scripts/build-image.py` which can build the base, debian, ubuntu or devcontainer from an idris version or a SHA commit.
+To run the images locally, I recommend opening the workspace in the Devcontainer to provide a fully-featured development environment. I made a `scripts/build-image.py` which can build an image from from an idris version. You can also build the base image from an arbitrary SHA commit from the Idris2 repo.
 
 ### Build Latest
 
