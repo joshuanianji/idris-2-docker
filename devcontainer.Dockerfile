@@ -5,7 +5,7 @@ ARG IDRIS_VERSION=0.7.0
 ARG BASE_IMG=ghcr.io/joshuanianji/idris-2-docker/base:${IDRIS_VERSION}
 FROM $BASE_IMG AS base
 
-FROM debian:bullseye AS rlwrap-builder
+FROM debian:trixie AS rlwrap-builder
 RUN apt-get update && \
     apt-get install -y \
     git \
