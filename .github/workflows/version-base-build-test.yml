@@ -13,37 +13,43 @@ permissions:
 
 jobs:
   base-build:
-    name: Build Base
-    runs-on: ubuntu-latest
+    name: Build Base (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+            platform: linux/amd64
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v5
 
-      - name: Set up SSH
-        uses: MrSquaare/ssh-setup-action@v3
-        with:
-          host: ${{ secrets.SSH_IP }}
-          private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          private-key-name: oracle-arm
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        with:
-          append: |
-            - endpoint: ssh://${{ secrets.SSH_USER }}@${{ secrets.SSH_IP }}
 
-      - name: Test docker buildx
-        run: docker buildx ls
-      
       - name: Build Base Image
         uses: ./.github/actions/build-base-img
         with:
           idris-version: ${{ inputs.idris-version }}
+          platforms: ${{ matrix.platform }}
 
   base-test-1:
-    name: Test 1 Base
-    runs-on: ubuntu-latest
+    name: Test 1 Base (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
     needs: base-build
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+            platform: linux/amd64
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
     env:
       TAG: ghcr.io/${{ github.repository }}/base:${{ inputs.idris-version }}
     steps:
@@ -52,13 +58,14 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      
+
       - name: Build Base Image
         uses: ./.github/actions/build-base-img
         with:
           idris-version: ${{ inputs.idris-version }}
-          load: true 
+          load: true
           tags: ${{ env.TAG }}
+          platforms: ${{ matrix.platform }}
 
       - name: Setup Bats and Bats libs
         uses: bats-core/bats-action@3.0.1
@@ -70,7 +77,7 @@ jobs:
           assert-path: ${{ github.workspace }}/.bats/bats-assert
           file-install: false
           detik-install: false
-  
+
       # LIB_PATH is a env var I use in the setup() function of my bats tests
       # it points to the folder containing bats-assert and bats-support
       - name: Run Test
@@ -81,25 +88,35 @@ jobs:
         run: bats tests/base.bats
 
   base-test-2:
-    name: Test 2 Base
-    runs-on: ubuntu-latest
+    name: Test 2 Base (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
     needs: base-build
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+            platform: linux/amd64
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
     env:
       TAG: idris-base-${{ inputs.idris-version }}:test
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v5
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-              
+
       - name: Build Base Image
         uses: ./.github/actions/build-base-img
         with:
           idris-version: ${{ inputs.idris-version }}
-          load: true 
+          load: true
           tags: ${{ env.TAG }}
-      
+          platforms: ${{ matrix.platform }}
+
       - name: Run Test
         run: |
           docker run ${{ env.TAG }} /bin/bash -c "make test"

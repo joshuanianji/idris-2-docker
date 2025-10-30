@@ -34,16 +34,15 @@ runs:
       id: get-sha
       uses: ./.github/actions/get-idris-sha
     
-    # if platforms is not equal to linux/amd64, do not cache-to (output empty string)
-    # See: https://github.com/joshuanianji/idris-2-docker/pull/71
+    # Calculate cache scope based on platform
+    # Each architecture gets its own cache scope to avoid conflicts
     - name: Calculate cache-to
       id: calculate-cache-to
       run: |
-        if [ "${{ inputs.platforms }}" == "linux/amd64" ]; then
-          echo "cache-to=type=gha,mode=max,scope=build-base-${{ inputs.idris-version }}" >> $GITHUB_OUTPUT
-        else
-          echo "cache-to=" >> $GITHUB_OUTPUT
-        fi
+        # Extract arch from platform (e.g., linux/amd64 -> amd64)
+        ARCH=$(echo "${{ inputs.platforms }}" | cut -d'/' -f2)
+        echo "cache-to=type=gha,mode=max,scope=build-base-${{ inputs.idris-version }}-${ARCH}" >> $GITHUB_OUTPUT
+        echo "cache-from-scope=build-base-${{ inputs.idris-version }}-${ARCH}" >> $GITHUB_OUTPUT
       shell: bash
 
     - name: Build Base (versioned)
@@ -53,17 +52,15 @@ runs:
         context: .
         platforms: ${{ inputs.platforms }}
         file: base.Dockerfile
-        build-args: | 
+        build-args: |
           IDRIS_VERSION=${{ inputs.idris-version }}
         tags: ${{ inputs.tags }}
         load: ${{ inputs.load }}
         push: ${{ inputs.push }}
         labels: ${{ inputs.labels }}
-        # Along with caching from gha, also cache from gh registry
-        # the gha cache is limited to 10GB and I think i cause a lot of cache thrashing
-        # when I also make PRs, it seems that the cache is not shared, so I'll need to look into this
+        # Cache from GHA (arch-specific scope) and registry
         cache-from: |
-          type=gha,scope=build-base-${{ inputs.idris-version }}
+          type=gha,scope=${{ steps.calculate-cache-to.outputs.cache-from-scope }}
           type=registry,ref=ghcr.io/joshuanianji/idris-2-docker/base:${{ inputs.idris-version }}
         cache-to: ${{ steps.calculate-cache-to.outputs.cache-to }}
 
@@ -74,14 +71,15 @@ runs:
         context: .
         platforms: ${{ inputs.platforms }}
         file: base-sha.Dockerfile
-        build-args: | 
+        build-args: |
           IDRIS_VERSION=${{ inputs.idris-version }}
           IDRIS_SHA=${{ steps.get-sha.outputs.sha }}
         tags: ${{ inputs.tags }}
         load: ${{ inputs.load }}
         push: ${{ inputs.push }}
         labels: ${{ inputs.labels }}
+        # Cache from GHA (arch-specific scope) and registry
         cache-from: |
-          type=gha,scope=build-base-${{ inputs.idris-version }}
+          type=gha,scope=${{ steps.calculate-cache-to.outputs.cache-from-scope }}
           type=registry,ref=ghcr.io/joshuanianji/idris-2-docker/base:${{ inputs.idris-version }}
         cache-to: ${{ steps.calculate-cache-to.outputs.cache-to }}
