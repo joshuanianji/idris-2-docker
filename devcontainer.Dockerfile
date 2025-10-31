@@ -59,7 +59,7 @@ RUN curl -o install.bash https://raw.githubusercontent.com/stefan-hoeck/idris2-p
     echo "scheme" | bash install.bash
 
 # Add pack to PATH
-ENV PATH="/home/vscode/.pack/bin:${PATH}"
+ENV PATH="/home/vscode/.local/bin:${PATH}"
 
 # Install Idris2 LSP via pack
 RUN echo "yes" | pack install-app idris2-lsp

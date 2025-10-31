@@ -16,7 +16,7 @@ function setup() {
     echo "Running idris bin location tests on docker image $DOCKER_IMAGE"
 
     run docker run $DOCKER_IMAGE which idris2
-    assert_output '/home/vscode/.pack/bin/idris2'
+    assert_output '/home/vscode/.local/bin/idris2'
 }
 
 @test "Test pack info command" {
@@ -30,7 +30,7 @@ function setup() {
     echo "Testing pack binary location on docker image $DOCKER_IMAGE"
 
     run docker run $DOCKER_IMAGE which pack
-    assert_output '/home/vscode/.pack/bin/pack'
+    assert_output '/home/vscode/.local/bin/pack'
 }
 
 @test "Test Idris2 command output" {
