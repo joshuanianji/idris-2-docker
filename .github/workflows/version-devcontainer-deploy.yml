@@ -16,24 +16,23 @@ permissions:
 
 jobs:
   deploy-devcontainer:
-    name: Deploy
-    runs-on: ubuntu-latest
+    name: Deploy (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+            platform: linux/amd64
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v5
-      
-      - name: Set up SSH
-        uses: MrSquaare/ssh-setup-action@v3
-        with:
-          host: ${{ secrets.SSH_IP }}
-          private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          private-key-name: oracle-arm
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        with:
-          append: |
-            - endpoint: ssh://${{ secrets.SSH_USER }}@${{ secrets.SSH_IP }}
 
       - name: Login to GHCR
         uses: docker/login-action@v3
@@ -48,14 +47,32 @@ jobs:
         with:
           images: ${{ github.repository }}/devcontainer
 
-      - name: Build Devcontainer
+      - name: Build and Push Devcontainer
         uses: ./.github/actions/build-devcontainer-img
         with:
           idris-lsp-version: ${{ inputs.idris-lsp-version }}
           idris-version: ${{ inputs.idris-version }}
           push: true
-          tags: ghcr.io/${{ github.repository }}/devcontainer:${{ inputs.idris-version }}
+          tags: ghcr.io/${{ github.repository }}/devcontainer:${{ inputs.idris-version }}-${{ matrix.arch }}
           labels: ${{ steps.create-meta.outputs.labels }}
           base-tag: ghcr.io/joshuanianji/idris-2-docker/base:${{ inputs.idris-version }}
-          platforms: linux/arm64,linux/amd64
+          platforms: ${{ matrix.platform }}
+
+  create-manifest:
+    name: Create Multi-Arch Manifest
+    runs-on: ubuntu-latest
+    needs: deploy-devcontainer
+    steps:
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create and Push Manifest
+        run: |
+          docker buildx imagetools create -t ghcr.io/${{ github.repository }}/devcontainer:${{ inputs.idris-version }} \
+            ghcr.io/${{ github.repository }}/devcontainer:${{ inputs.idris-version }}-amd64 \
+            ghcr.io/${{ github.repository }}/devcontainer:${{ inputs.idris-version }}-arm64
 
