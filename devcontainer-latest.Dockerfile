@@ -4,7 +4,7 @@
 ARG BASE_IMG=ghcr.io/joshuanianji/idris-2-docker/base:latest
 FROM $BASE_IMG AS base
 
-FROM debian:bullseye AS rlwrap-builder
+FROM debian:trixie AS rlwrap-builder
 RUN apt-get update && \
     apt-get install -y \
     git \
