@@ -5,7 +5,7 @@
     "image": "mcr.microsoft.com/devcontainers/python:2-3.11-bullseye",
     "features": {
         "ghcr.io/devcontainers/features/common-utils:2": {},
-        "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+        "ghcr.io/devcontainers/features/docker-in-docker:4": {},
         "ghcr.io/devcontainers/features/github-cli:1": {},
         "ghcr.io/edouard-lopez/devcontainer-features/bats:0": {},
         "ghcr.io/joshuanianji/devcontainer-features/github-cli-persistence:1": {}
