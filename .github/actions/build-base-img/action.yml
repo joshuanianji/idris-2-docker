@@ -22,10 +22,19 @@ inputs:
     description: "The labels to apply to the image"
     required: false
     default: ""
-  platforms: 
+  platforms:
     description: "The platforms to build for"
     required: false
     default: "linux/amd64"
+  outputs:
+    description: "The output config for build-push-action (e.g. push-by-digest). Overrides push/load behaviour"
+    required: false
+    default: ""
+
+outputs:
+  digest:
+    description: "Digest of the built image"
+    value: ${{ steps.build-versioned.outputs.digest || steps.build-latest.outputs.digest }}
 
 runs:
   using: composite
@@ -46,6 +55,7 @@ runs:
       shell: bash
 
     - name: Build Base (versioned)
+      id: build-versioned
       uses: docker/build-push-action@v7
       if: ${{ inputs.idris-version != 'latest' }}
       with:
@@ -57,6 +67,7 @@ runs:
         tags: ${{ inputs.tags }}
         load: ${{ inputs.load }}
         push: ${{ inputs.push }}
+        outputs: ${{ inputs.outputs }}
         labels: ${{ inputs.labels }}
         # Cache from GHA (arch-specific scope) and registry
         cache-from: |
@@ -65,6 +76,7 @@ runs:
         cache-to: ${{ steps.calculate-cache-to.outputs.cache-to }}
 
     - name: Build Base (latest)
+      id: build-latest
       uses: docker/build-push-action@v7
       if: ${{ inputs.idris-version == 'latest' }}
       with:
@@ -77,6 +89,7 @@ runs:
         tags: ${{ inputs.tags }}
         load: ${{ inputs.load }}
         push: ${{ inputs.push }}
+        outputs: ${{ inputs.outputs }}
         labels: ${{ inputs.labels }}
         # Cache from GHA (arch-specific scope) and registry
         cache-from: |
