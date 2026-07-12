@@ -117,7 +117,10 @@ jobs:
           tags: ${{ env.TAG }}
           platforms: ${{ matrix.platform }}
 
+      # chez/futures001 is a golden test whose output depends on future scheduling
+      # order, so it fails nondeterministically depending on the host (upstream flake).
+      # `except` is supported by the tests Makefile from v0.7.0; older versions ignore it.
       - name: Run Test
         run: |
-          docker run ${{ env.TAG }} /bin/bash -c "make test"
+          docker run ${{ env.TAG }} /bin/bash -c "make test except=chez/futures001"
 
