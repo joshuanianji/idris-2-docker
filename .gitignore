@@ -1,2 +1,4 @@
 # we use this directory to install bats-assert and bats-support
 tests/test_helper/
+*.local.md
+*.local.json
