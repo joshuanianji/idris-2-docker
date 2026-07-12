@@ -59,10 +59,10 @@ Then, using Microsoft's Remote SSH tools, click "Reopen in container" and choose
 You can also run the image directly from the command line.
 
 ```bash
-docker run -it --rm ghcr.io/joshuanianji/idris-2-docker/ubuntu:v0.7.0 idris2 --version
-Idris 2, version 0.5.1
+docker run -it --rm ghcr.io/joshuanianji/idris-2-docker/base:v0.7.0 idris2 --version
+Idris 2, version 0.7.0
 
-docker run -it --rm --entrypoint /bin/bash ghcr.io/joshuanianji/idris-2-docker/debian:v0.7.0
+docker run -it --rm --entrypoint /bin/bash ghcr.io/joshuanianji/idris-2-docker/devcontainer:v0.7.0
 $ idris2 --version
 ```
 
@@ -71,7 +71,7 @@ $ idris2 --version
 You can also use one of the images as a base image for your own Dockerfile.
 
 ```dockerfile
-FROM ghcr.io/joshuanianji/idris-2-docker/debian:v0.7.0
+FROM ghcr.io/joshuanianji/idris-2-docker/base:v0.7.0
 
 # ...
 ```
