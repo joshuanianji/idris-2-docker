@@ -29,10 +29,19 @@ inputs:
     description: "The labels to apply to the image"
     required: false
     default: ""
-  platforms: 
+  platforms:
     description: "The platforms to build for"
     required: false
     default: "linux/amd64"
+  outputs:
+    description: "The output config for build-push-action (e.g. push-by-digest). Overrides push/load behaviour"
+    required: false
+    default: ""
+
+outputs:
+  digest:
+    description: "Digest of the built image"
+    value: ${{ steps.build-versioned.outputs.digest || steps.build-latest.outputs.digest }}
 
 runs:
   using: composite
@@ -41,46 +50,49 @@ runs:
       id: get-sha
       uses: ./.github/actions/get-idris-sha
     
-    # if platforms is not equal to linux/amd64, do not cache-to (output empty string)
-    # See: https://github.com/joshuanianji/idris-2-docker/pull/71
+    # Calculate cache scope based on platform
+    # Each architecture gets its own cache scope to avoid conflicts
     - name: Calculate cache-to
       id: calculate-cache-to
       run: |
-        if [ "${{ inputs.platforms }}" == "linux/amd64" ]; then
-          echo "cache-to=type=gha,mode=max,scope=build-devcontainer-${{ inputs.idris-version }}" >> $GITHUB_OUTPUT
-        else
-          echo "cache-to=" >> $GITHUB_OUTPUT
-        fi
+        # Extract arch from platform (e.g., linux/amd64 -> amd64)
+        ARCH=$(echo "${{ inputs.platforms }}" | cut -d'/' -f2)
+        echo "cache-to=type=gha,mode=max,scope=build-devcontainer-${{ inputs.idris-version }}-${ARCH}" >> $GITHUB_OUTPUT
+        echo "cache-from-scope=build-devcontainer-${{ inputs.idris-version }}-${ARCH}" >> $GITHUB_OUTPUT
       shell: bash
     
     - name: Build Devcontainer (versioned)
+      id: build-versioned
       if: ${{ inputs.idris-lsp-version != 'latest' }}
       uses: docker/build-push-action@v7
       with:
         context: .
         file: devcontainer.Dockerfile
         platforms: ${{ inputs.platforms }}
-        build-args: | 
+        build-args: |
           IDRIS_LSP_VERSION=${{ inputs.idris-lsp-version }}
           IDRIS_VERSION=${{ inputs.idris-version }}
           BASE_IMG=${{ inputs.base-tag }}
         tags: ${{ inputs.tags }}
         load: ${{ inputs.load }}
         push: ${{ inputs.push }}
+        outputs: ${{ inputs.outputs }}
         labels: ${{ inputs.labels }}
+        # Cache from GHA (arch-specific scope) and registry
         cache-from: |
-          type=gha,scope=build-devcontainer-${{ inputs.idris-version }}
+          type=gha,scope=${{ steps.calculate-cache-to.outputs.cache-from-scope }}
           type=registry,ref=ghcr.io/joshuanianji/idris-2-docker/devcontainer:${{ inputs.idris-version }}
         cache-to: ${{ steps.calculate-cache-to.outputs.cache-to }}
 
     - name: Build Devcontainer (latest)
+      id: build-latest
       if: ${{ inputs.idris-lsp-version == 'latest' }}
       uses: docker/build-push-action@v7
       with:
         context: .
         file: devcontainer-latest.Dockerfile
         platforms: ${{ inputs.platforms }}
-        build-args: | 
+        build-args: |
           IDRIS_LSP_VERSION=${{ inputs.idris-lsp-version }}
           IDRIS_LSP_SHA=${{ steps.get-sha.outputs.lsp-sha }}
           IDRIS_VERSION=${{ inputs.idris-version }}
@@ -89,8 +101,10 @@ runs:
         tags: ${{ inputs.tags }}
         load: ${{ inputs.load }}
         push: ${{ inputs.push }}
+        outputs: ${{ inputs.outputs }}
         labels: ${{ inputs.labels }}
+        # Cache from GHA (arch-specific scope) and registry
         cache-from: |
-          type=gha,scope=build-devcontainer-${{ inputs.idris-version }}
+          type=gha,scope=${{ steps.calculate-cache-to.outputs.cache-from-scope }}
           type=registry,ref=ghcr.io/joshuanianji/idris-2-docker/devcontainer:${{ inputs.idris-version }}
         cache-to: ${{ steps.calculate-cache-to.outputs.cache-to }}
