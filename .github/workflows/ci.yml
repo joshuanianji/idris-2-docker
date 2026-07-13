@@ -42,48 +42,24 @@ jobs:
       idris-version: ${{ matrix.idris-version }}
     secrets: inherit
   
+  # The devcontainer installs Idris + LSP via pack (always the current collection),
+  # so it is not genuinely versioned — we publish it latest-only. See README.
   devcontainer-build-test:
-    name: Devcontainer Build & Test - ${{ matrix.idris-lsp-version }}
+    name: Devcontainer Build & Test
     needs: [base-build-test] # needs cached base builds
-    strategy:
-      matrix:
-        # based off of the branches in the idris-lsp repo
-        idris-lsp-version: ["idris2-0.6.0", "idris2-0.7.0", "idris2-0.8.0", "latest"]
-        include:
-          - idris-lsp-version: "idris2-0.6.0"
-            idris-version: "v0.6.0"
-          - idris-lsp-version: "idris2-0.7.0"
-            idris-version: "v0.7.0"
-          - idris-lsp-version: "idris2-0.8.0"
-            idris-version: "v0.8.0"
-          - idris-lsp-version: "latest"
-            idris-version: "latest"
     uses: ./.github/workflows/version-devcontainer-build-test.yml
     with:
-      idris-lsp-version: ${{ matrix.idris-lsp-version }}
-      idris-version: ${{ matrix.idris-version }}
+      idris-lsp-version: latest
+      idris-version: latest
     secrets: inherit
-  
+
   devcontainer-deploy:
-    name: Devcontainer Deploy - ${{ matrix.idris-lsp-version }}
+    name: Devcontainer Deploy
     # only deploy if it's a push to main
     if: github.event_name == 'schedule' || github.event_name == 'push'
     needs: [base-deploy, devcontainer-build-test] # needs base deployed to registry
-    strategy:
-      matrix:
-        idris-lsp-version: ["idris2-0.6.0", "idris2-0.7.0", "idris2-0.8.0", "latest"]
-        include:
-          - idris-lsp-version: "idris2-0.6.0"
-            idris-version: "v0.6.0"
-          - idris-lsp-version: "idris2-0.7.0"
-            idris-version: "v0.7.0"
-          - idris-lsp-version: "idris2-0.8.0"
-            idris-version: "v0.8.0"
-          - idris-lsp-version: "latest"
-            idris-version: "latest"
-      max-parallel: 1
     uses: ./.github/workflows/version-devcontainer-deploy.yml
     with:
-      idris-lsp-version: ${{ matrix.idris-lsp-version }}
-      idris-version: ${{ matrix.idris-version }}
+      idris-lsp-version: latest
+      idris-version: latest
     secrets: inherit
