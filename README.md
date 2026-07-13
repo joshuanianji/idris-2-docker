@@ -6,6 +6,9 @@ Architectures: `amd64`, `arm64`
 
 Idris Versions: `v0.6.0`, `v0.7.0`, `v0.8.0`, `latest` (Up to date with [Idris2/main](https://github.com/idris-lang/Idris2/tree/main) - recompiled daily)
 
+> [!NOTE]
+> Versioned tags (`v0.6.0`, …) apply to the **`base`** image only. The **`devcontainer`** image is published `latest`-only, because it installs Idris and the LSP via [pack](https://github.com/stefan-hoeck/idris2-pack), which always uses the current package collection. (Pack _can_ target a specific Idris version, but only through an interactive terminal selection, so we don't pin devcontainer versions.) If you need a specific Idris version, use a versioned `base` image.
+
 ## Table of Contents
 
 - [Idris 2 Docker](#idris-2-docker)
@@ -49,7 +52,7 @@ code .
 Add devcontainers to your own project by copying the following contents to `Dockerfile` in the root of your project:
 
 ```dockerfile
-FROM ghcr.io/joshuanianji/idris-2-docker/devcontainer:v0.7.0
+FROM ghcr.io/joshuanianji/idris-2-docker/devcontainer:latest
 ```
 
 Then, using Microsoft's Remote SSH tools, click "Reopen in container" and choose that Dockerfile.
@@ -62,7 +65,7 @@ You can also run the image directly from the command line.
 docker run -it --rm ghcr.io/joshuanianji/idris-2-docker/base:v0.7.0 idris2 --version
 Idris 2, version 0.7.0
 
-docker run -it --rm --entrypoint /bin/bash ghcr.io/joshuanianji/idris-2-docker/devcontainer:v0.7.0
+docker run -it --rm --entrypoint /bin/bash ghcr.io/joshuanianji/idris-2-docker/devcontainer:latest
 $ idris2 --version
 ```
 
@@ -99,8 +102,9 @@ python scripts/build-image.py --image devcontainer --tag devcontainer-latest
 ```bash
 python scripts/build-image.py --image base --version v0.7.0
 python scripts/build-image.py --image base --sha 58e5d156621cfdd4c54df26abf7ac9620cfebdd8
-python scripts/build-image.py --image devcontainer --version v0.7.0
 ```
+
+The `devcontainer` image is only built as `latest` (see the note at the top), so it takes no `--version`/`--sha`.
 
 ### Running tests
 

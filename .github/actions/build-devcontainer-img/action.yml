@@ -41,7 +41,7 @@ inputs:
 outputs:
   digest:
     description: "Digest of the built image"
-    value: ${{ steps.build-versioned.outputs.digest || steps.build-latest.outputs.digest }}
+    value: ${{ steps.build-latest.outputs.digest }}
 
 runs:
   using: composite
@@ -61,32 +61,8 @@ runs:
         echo "cache-from-scope=build-devcontainer-${{ inputs.idris-version }}-${ARCH}" >> $GITHUB_OUTPUT
       shell: bash
     
-    - name: Build Devcontainer (versioned)
-      id: build-versioned
-      if: ${{ inputs.idris-lsp-version != 'latest' }}
-      uses: docker/build-push-action@v7
-      with:
-        context: .
-        file: devcontainer.Dockerfile
-        platforms: ${{ inputs.platforms }}
-        build-args: |
-          IDRIS_LSP_VERSION=${{ inputs.idris-lsp-version }}
-          IDRIS_VERSION=${{ inputs.idris-version }}
-          BASE_IMG=${{ inputs.base-tag }}
-        tags: ${{ inputs.tags }}
-        load: ${{ inputs.load }}
-        push: ${{ inputs.push }}
-        outputs: ${{ inputs.outputs }}
-        labels: ${{ inputs.labels }}
-        # Cache from GHA (arch-specific scope) and registry
-        cache-from: |
-          type=gha,scope=${{ steps.calculate-cache-to.outputs.cache-from-scope }}
-          type=registry,ref=ghcr.io/joshuanianji/idris-2-docker/devcontainer:${{ inputs.idris-version }}
-        cache-to: ${{ steps.calculate-cache-to.outputs.cache-to }}
-
     - name: Build Devcontainer (latest)
       id: build-latest
-      if: ${{ inputs.idris-lsp-version == 'latest' }}
       uses: docker/build-push-action@v7
       with:
         context: .

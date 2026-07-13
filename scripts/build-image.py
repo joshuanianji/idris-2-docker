@@ -15,23 +15,6 @@ def get_latest_sha():
     }
 
 
-def get_lsp_version(version: str):
-    '''
-    Given an idris version, return the corresponding lsp version
-    If the version is not supported by the LSP, exit with an error
-    '''
-    version_map = {
-        'latest': 'latest',
-        'v0.8.0': 'idris2-0.8.0',
-        'v0.7.0': 'idris2-0.7.0',
-        'v0.6.0': 'idris2-0.6.0',
-    }
-    if version not in version_map:
-        print(f'Idris2 version {version} not supported in LSP')
-        exit(1)
-    return version_map[version]
-
-
 def build_image_sha(image: str, sha_info: dict, tag: str):
     if image == 'devcontainer':
         dockerfile = f'{image}-latest.Dockerfile'
@@ -77,18 +60,22 @@ if __name__ == '__main__':
         exit(1)
 
     if args.version and args.version != 'latest':
-        # Build versioned image.
+        # Only the base image is genuinely versioned. The devcontainer installs
+        # Idris + LSP via pack (always the current collection), so it is built
+        # latest-only — there is no versioned devcontainer Dockerfile.
+        if args.image == 'devcontainer':
+            print('The devcontainer image is only built as `latest` '
+                  '(it installs Idris + LSP via pack). Omit `--version`, or use '
+                  '`--image base --version` for a specific Idris version.')
+            exit(1)
+
+        # Build versioned base image.
         dockerfile = f'{args.image}.Dockerfile'
         tag = f'{args.image}-{args.version}' if not args.tag else args.tag
         print(f'Building {dockerfile} with tag {tag}')
 
-        # build image
-        if args.image == 'devcontainer':
-            subprocess.run(['docker', 'build', '-t', tag, '-f', dockerfile,
-                           '--build-arg', f'IDRIS_VERSION={args.version}', '.'])
-        else:
-            subprocess.run(['docker', 'build', '-t', tag, '-f', dockerfile,
-                           '--build-arg', f'IDRIS_VERSION={args.version}', '.'])
+        subprocess.run(['docker', 'build', '-t', tag, '-f', dockerfile,
+                       '--build-arg', f'IDRIS_VERSION={args.version}', '.'])
         print(f'Image built with tag {tag}')
 
     elif args.version == 'latest':
