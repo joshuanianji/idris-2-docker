@@ -4,7 +4,7 @@ Multi-arch Docker images for Idris 2, primarily aimed for devcontainers.
 
 Architectures: `amd64`, `arm64`
 
-Idris Versions: `v0.5.1`, `v0.6.0`, `v0.7.0`, `latest` (Up to date with [Idris2/main](https://github.com/idris-lang/Idris2/tree/main) - recompiled daily)
+Idris Versions: `v0.6.0`, `v0.7.0`, `latest` (Up to date with [Idris2/main](https://github.com/idris-lang/Idris2/tree/main) - recompiled daily)
 
 ## Table of Contents
 

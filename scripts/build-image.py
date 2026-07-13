@@ -24,7 +24,6 @@ def get_lsp_version(version: str):
         'latest': 'latest',
         'v0.7.0': 'idris2-0.7.0',
         'v0.6.0': 'idris2-0.6.0',
-        'v0.5.1': 'idris2-0.5.1',
     }
     if version not in version_map:
         print(f'Idris2 version {version} not supported in LSP')
