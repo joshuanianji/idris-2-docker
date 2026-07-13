@@ -21,7 +21,7 @@ jobs:
     name: Base Build & Test - ${{ matrix.idris-version }}
     strategy:
       matrix:
-        idris-version: ["v0.5.1", "v0.6.0", "v0.7.0", "latest"]
+        idris-version: ["v0.6.0", "v0.7.0", "latest"]
     uses: ./.github/workflows/version-base-build-test.yml
     with:
       idris-version: ${{ matrix.idris-version }}
@@ -34,7 +34,7 @@ jobs:
     needs: [base-build-test]
     strategy:
       matrix:
-        idris-version: ["v0.5.1", "v0.6.0", "v0.7.0", "latest"]
+        idris-version: ["v0.6.0", "v0.7.0", "latest"]
       # deploy one at a time, so the latest is always the latest deployed
       max-parallel: 1 
     uses: ./.github/workflows/version-base-deploy.yml
