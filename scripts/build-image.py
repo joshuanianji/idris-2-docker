@@ -22,6 +22,7 @@ def get_lsp_version(version: str):
     '''
     version_map = {
         'latest': 'latest',
+        'v0.8.0': 'idris2-0.8.0',
         'v0.7.0': 'idris2-0.7.0',
         'v0.6.0': 'idris2-0.6.0',
     }
