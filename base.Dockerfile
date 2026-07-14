@@ -1,7 +1,7 @@
 # Expects IDRIS_VERSION to NOT be `latest`
 # But a tag of the form `v0.7.0`
 
-FROM debian:bullseye AS scheme-builder
+FROM debian:trixie AS scheme-builder
 
 WORKDIR /root
 
@@ -20,7 +20,7 @@ RUN which scheme
 # this makes it a bit easier for us to move the csv folder to other build steps, since it is necessary for scheme to run
 RUN mkdir scheme-lib && cp -r /usr/lib/csv* /root/scheme-lib
 
-FROM debian:bullseye AS idris-builder
+FROM debian:trixie AS idris-builder
 
 RUN apt-get update && \
     apt-get install -y git make gcc libgmp-dev curl
